@@ -123,6 +123,7 @@ class StockPredictionSystem:
             sell_triggers=actions['sell_triggers'],
             stop_loss=actions['stop_loss'],
             hedge_recommendations=actions['hedge_recommendations'],
+            confluence_zones=actions.get('confluence_zones'),
         )
 
     def _fetch_data(self, ticker: str, horizon_days: int = 5) -> Dict:

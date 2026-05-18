@@ -103,8 +103,45 @@ def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int])
         fitness = fitness_db.fitness(ticker)
         decision_label = _decision_label(r.composite_score, ev_pct, r.confidence)
 
-        # 모듈 score + 시나리오 + 매도/손절 zones
+        # 모듈 score + 시나리오 + 매도/손절 zones + EMA/POC/confluence
+        tech = r.modules["technical"].details
+        ds = r.modules["demand_supply"].details
+        opt = r.modules["options"].details
+
+        # 직관 신호 카드 (UI에서 그대로 노출)
+        signals = _build_signal_cards(cur, tech, ds, opt, r)
+
         payload = {
+            "decision": {
+                "label": decision_label,
+                "directional_bias": r.directional_bias,
+                "confidence": round(r.confidence, 3),
+                "ev_pct": round(ev_pct, 2),
+                "rr_ratio": _safe_rr(cur, r.sell_triggers, r.stop_loss),
+            },
+            "signals": signals,
+            "levels": {
+                "current": round(cur, 2),
+                "ema_20": _r2(tech.get("ema_20")),
+                "ema_50": _r2(tech.get("ema_50")),
+                "sma_20": _r2(tech.get("sma_20")),
+                "sma_50": _r2(tech.get("sma_50")),
+                "sma_200": _r2(tech.get("sma_200")),
+                "poc": _r2(ds.get("poc")),
+                "value_area_high": _r2(ds.get("value_area_high")),
+                "value_area_low": _r2(ds.get("value_area_low")),
+                "max_pain": _r2(opt.get("max_pain")),
+                "expected_5d": _r2(ev),
+                "ci_50_low": round(r.ci_50[0], 2),
+                "ci_50_high": round(r.ci_50[1], 2),
+                "ci_80_low": round(r.ci_80[0], 2),
+                "ci_80_high": round(r.ci_80[1], 2),
+            },
+            "indicators": {
+                "rsi": _r2(tech.get("rsi")),
+                "macd": _r2(tech.get("macd")),
+                "bb_position": _r2(tech.get("bb_position")),
+            },
             "modules": {
                 name: {
                     "score": round(m.score, 3),
@@ -133,6 +170,7 @@ def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int])
                 {"price": round(t.price, 2), "action": t.action, "reason": t.reason}
                 for t in r.stop_loss[:3]
             ],
+            "confluence_zones": _serialize_zones(r.confluence_zones, cur),
             "hedges": [
                 {
                     "type": h.type,
@@ -143,12 +181,12 @@ def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int])
                 for h in r.hedge_recommendations[:3]
             ],
             "options": {
-                "max_pain": r.modules["options"].details.get("max_pain"),
-                "implied_move": r.modules["options"].details.get("implied_move"),
-                "iv": r.modules["options"].details.get("iv"),
-                "hv": r.modules["options"].details.get("hv"),
-                "hv_iv_ratio": r.modules["options"].details.get("hv_iv_ratio"),
-                "iv_rank": r.modules["options"].details.get("iv_rank"),
+                "max_pain": opt.get("max_pain"),
+                "implied_move": opt.get("implied_move"),
+                "iv": opt.get("iv"),
+                "hv": opt.get("hv"),
+                "hv_iv_ratio": opt.get("hv_iv_ratio"),
+                "iv_rank": opt.get("iv_rank"),
             },
             "macro_breadth_mode": r.modules["macro"].details.get("sector_mode"),
         }
@@ -186,6 +224,156 @@ def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int])
             row["agreement"] = agree
 
     return rows
+
+
+def _r2(v):
+    """None-safe round to 2 decimals."""
+    if v is None:
+        return None
+    try:
+        f = float(v)
+        if f != f:  # NaN
+            return None
+        return round(f, 2)
+    except (TypeError, ValueError):
+        return None
+
+
+def _safe_rr(cur: float, sells, stops) -> float:
+    """1차 매도 vs 1차 손절의 R/R 비율."""
+    if not sells or not stops or not cur:
+        return 0.0
+    try:
+        upside = sells[0].price - cur
+        downside = cur - stops[0].price
+        if downside <= 0:
+            return 0.0
+        return round(upside / downside, 2)
+    except Exception:
+        return 0.0
+
+
+def _build_signal_cards(cur: float, tech: Dict, ds: Dict, opt: Dict, r) -> List[Dict]:
+    """직관 신호 카드 (UI 배지용). 각 카드: {key, label, tone, detail}.
+
+    tone: 'bull' / 'bear' / 'neutral' / 'warn'
+    """
+    out = []
+
+    # 1) MA 정배열 / 역배열
+    ema20, ema50, sma200 = tech.get("ema_20"), tech.get("ema_50"), tech.get("sma_200")
+    if ema20 and ema50 and sma200 and cur:
+        if cur > ema20 > ema50 > sma200:
+            out.append({"key": "ma_trend", "label": "정배열", "tone": "bull",
+                        "detail": f"현재가 > EMA20 > EMA50 > SMA200"})
+        elif cur < ema20 < ema50 < sma200:
+            out.append({"key": "ma_trend", "label": "역배열", "tone": "bear",
+                        "detail": f"현재가 < EMA20 < EMA50 < SMA200"})
+        else:
+            above = sum(1 for x in (ema20, ema50, sma200) if cur > x)
+            out.append({"key": "ma_trend",
+                        "label": f"MA {above}/3 위" if above >= 2 else f"MA {above}/3 위",
+                        "tone": "bull" if above >= 2 else "bear",
+                        "detail": f"EMA20 ${ema20:.2f} · EMA50 ${ema50:.2f} · SMA200 ${sma200:.2f}"})
+
+    # 2) RSI
+    rsi = tech.get("rsi")
+    if rsi is not None and not (rsi != rsi):
+        if rsi >= 70:
+            out.append({"key": "rsi", "label": f"RSI 과열 {rsi:.0f}", "tone": "warn",
+                        "detail": "70 이상 — 단기 조정 가능"})
+        elif rsi <= 30:
+            out.append({"key": "rsi", "label": f"RSI 과매도 {rsi:.0f}", "tone": "bull",
+                        "detail": "30 이하 — 반등 가능 구간"})
+        else:
+            tone = "bull" if rsi > 55 else "bear" if rsi < 45 else "neutral"
+            out.append({"key": "rsi", "label": f"RSI {rsi:.0f}", "tone": tone,
+                        "detail": "중립 구간"})
+
+    # 3) 매물대 위치 (POC / VAH / VAL)
+    poc = ds.get("poc")
+    vah = ds.get("value_area_high")
+    val = ds.get("value_area_low")
+    if poc and vah and val and cur:
+        if cur > vah:
+            out.append({"key": "vp", "label": "Value Area 위", "tone": "bull",
+                        "detail": f"VAH ${vah:.2f} 돌파 — 추세 강함, POC ${poc:.2f} 자석"})
+        elif cur < val:
+            out.append({"key": "vp", "label": "Value Area 아래", "tone": "bear",
+                        "detail": f"VAL ${val:.2f} 이탈 — 약세, POC ${poc:.2f}까지 반등 여지"})
+        else:
+            dist_to_poc = (cur - poc) / cur * 100
+            out.append({"key": "vp",
+                        "label": "Value Area 안",
+                        "tone": "neutral",
+                        "detail": f"POC ${poc:.2f} ({dist_to_poc:+.1f}%) · 횡보 가능"})
+
+    # 4) 옵션 Max Pain
+    mp = opt.get("max_pain")
+    if mp and cur:
+        diff = (mp - cur) / cur * 100
+        if abs(diff) < 1.5:
+            tone, label = "neutral", f"Max Pain ${mp:.2f} 근접"
+        elif diff > 0:
+            tone, label = "bull", f"Max Pain ${mp:.2f} 위 ({diff:+.1f}%)"
+        else:
+            tone, label = "bear", f"Max Pain ${mp:.2f} 아래 ({diff:+.1f}%)"
+        out.append({"key": "max_pain", "label": label, "tone": tone,
+                    "detail": "옵션 만기 시 가격이 향하는 자석 가격"})
+
+    # 5) IV / IV Rank
+    iv = opt.get("iv")
+    iv_rank = opt.get("iv_rank")
+    if iv_rank is not None:
+        rank_pct = iv_rank * 100 if iv_rank <= 1 else iv_rank
+        if rank_pct >= 70:
+            out.append({"key": "iv", "label": f"IV 높음 {rank_pct:.0f}%",
+                        "tone": "warn",
+                        "detail": "옵션 비싼 구간 — 매도자 유리"})
+        elif rank_pct <= 30:
+            out.append({"key": "iv", "label": f"IV 낮음 {rank_pct:.0f}%",
+                        "tone": "bull",
+                        "detail": "옵션 싼 구간 — 매수자 유리"})
+
+    # 6) Multi-horizon agreement (set by analyze_one 후처리에서)
+    return out
+
+
+def _serialize_zones(conf, cur: float) -> Dict:
+    """ActionEngine confluence_zones → JSON-safe dict (UI용).
+
+    Input: {'supply': [...], 'demand': [...], 'all_clusters': [...]}
+    Output: {'buy': [demand zones], 'sell': [supply zones]}
+    """
+    if not conf:
+        return {}
+    mapping = {"buy": "demand", "sell": "supply"}
+    out = {}
+    for ui_side, conf_side in mapping.items():
+        zones = conf.get(conf_side) or []
+        out[ui_side] = []
+        for z in zones[:6]:
+            low = z.get("low") or z.get("price")
+            high = z.get("high") or z.get("price")
+            if low is None:
+                continue
+            try:
+                low_f = float(low)
+                high_f = float(high) if high is not None else low_f
+                price = (low_f + high_f) / 2
+                dist_pct = (price - cur) / cur * 100 if cur else 0
+            except (TypeError, ValueError):
+                continue
+            out[ui_side].append({
+                "low": round(low_f, 2),
+                "high": round(high_f, 2),
+                "price": round(price, 2),
+                "dist_pct": round(dist_pct, 2),
+                "n_sources": int(z.get("n_sources") or 0),
+                "sources": list(z.get("sources") or [])[:6],
+                "strength": round(float(z.get("confluence_strength") or 0), 2),
+            })
+    return out
 
 
 def _decision_label(score: float, ev_pct: float, conf: float) -> str:

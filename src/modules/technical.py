@@ -27,6 +27,8 @@ class TechnicalAnalysisModule(AnalysisModule):
         sma_20 = prices['close'].rolling(20).mean().iloc[-1]
         sma_50 = prices['close'].rolling(50).mean().iloc[-1]
         sma_200 = prices['close'].rolling(200).mean().iloc[-1]
+        ema_20 = prices['close'].ewm(span=20, adjust=False).mean().iloc[-1]
+        ema_50 = prices['close'].ewm(span=50, adjust=False).mean().iloc[-1]
 
         rsi = self._compute_rsi(prices['close'], 14)
         macd, signal = self._compute_macd(prices['close'])
@@ -52,6 +54,8 @@ class TechnicalAnalysisModule(AnalysisModule):
                 'sma_20': sma_20,
                 'sma_50': sma_50,
                 'sma_200': sma_200,
+                'ema_20': ema_20,
+                'ema_50': ema_50,
                 'rsi': rsi,
                 'macd': macd,
                 'bb_position': bb_position,

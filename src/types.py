@@ -84,3 +84,6 @@ class PredictionResult:
     sell_triggers: List[SellTrigger]
     stop_loss: List[SellTrigger]
     hedge_recommendations: List[HedgeRecommendation]
+
+    # Confluence zones (action_engine 가공 결과, payload용)
+    confluence_zones: Optional[Dict] = None  # {'buy': [...], 'sell': [...], 'stop': [...]}
