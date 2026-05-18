@@ -19,6 +19,10 @@ on:
         description: 'Horizons (예: 1,3,5)'
         required: false
         default: '1,3,5'
+      force:
+        description: 'Cooldown 무시 (수동 trigger=1)'
+        required: false
+        default: ''
 
 jobs:
   predict:
@@ -50,9 +54,14 @@ jobs:
 
       - name: Run analysis
         run: |
-          python scripts/run_watchlist_analysis.py \
-            --tickers "${{ github.event.inputs.tickers }}" \
-            --horizons "${{ github.event.inputs.horizons || '1,3,5' }}"
+          ARGS="--horizons ${{ github.event.inputs.horizons || '1,3,5' }}"
+          if [ -n "${{ github.event.inputs.tickers }}" ]; then
+            ARGS="$ARGS --tickers ${{ github.event.inputs.tickers }}"
+          fi
+          if [ -n "${{ github.event.inputs.force }}" ]; then
+            ARGS="$ARGS --force"
+          fi
+          python scripts/run_watchlist_analysis.py $ARGS
 
       - name: Upload logs (on failure)
         if: failure()

@@ -54,6 +54,34 @@ def fetch_watchlist(base_url: str, auth_token: str, source: str = "") -> List[st
     return r.json().get("tickers", [])
 
 
+def fetch_settings(base_url: str, auth_token: str) -> Dict:
+    """예측 분석 주기 설정 (D1 kv → /api/predictions/settings)."""
+    try:
+        r = requests.get(
+            f"{base_url}/api/predictions/settings",
+            headers={"X-Auth-Token": auth_token},
+            timeout=10,
+        )
+        r.raise_for_status()
+        return r.json()
+    except Exception as e:
+        print(f"[settings] fetch fail (default 사용): {e}", flush=True)
+        return {"enabled": True, "interval_hours": 1, "cooldown_remaining_min": 0}
+
+
+def mark_run_now(base_url: str, auth_token: str) -> None:
+    """분석 완료 후 last_run_at 갱신."""
+    try:
+        requests.post(
+            f"{base_url}/api/predictions/settings",
+            headers={"X-Auth-Token": auth_token, "Content-Type": "application/json"},
+            json={"mark_run": True},
+            timeout=10,
+        )
+    except Exception as e:
+        print(f"[settings] mark_run fail: {e}", flush=True)
+
+
 def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int]) -> List[Dict]:
     """단일 ticker × N horizons → predictions list (DB row 1:N)."""
     now_iso = datetime.now(timezone.utc).isoformat()
@@ -208,6 +236,7 @@ def main():
     parser.add_argument("--tickers", help="comma-separated override")
     parser.add_argument("--horizons", default="1,3,5", help="comma-separated days")
     parser.add_argument("--dry-run", action="store_true", help="POST 하지 않음")
+    parser.add_argument("--force", action="store_true", help="cooldown/enabled 무시 (수동 trigger)")
     args = parser.parse_args()
 
     base_url = _env("TRADE_JOURNAL_URL", "https://trade-journal-1dv.pages.dev")
@@ -215,6 +244,27 @@ def main():
     if not auth and not args.dry_run:
         print("ERROR: AUTH_TOKEN 미설정", file=sys.stderr)
         sys.exit(1)
+
+    # 사용자 설정 체크 (cron 매시간 → 사용자 interval 적용)
+    # --tickers 수동 override 또는 --force는 cooldown 무시
+    if not args.tickers and not args.force and not args.dry_run:
+        settings = fetch_settings(base_url, auth)
+        if not settings.get("enabled", True):
+            print(f"[settings] disabled — skip (interval_hours={settings.get('interval_hours')})", flush=True)
+            return
+        cooldown = settings.get("cooldown_remaining_min", 0)
+        if cooldown > 0:
+            print(
+                f"[settings] cooldown {cooldown} min remaining "
+                f"(interval_hours={settings.get('interval_hours')}) — skip",
+                flush=True,
+            )
+            return
+        print(
+            f"[settings] enabled, interval={settings.get('interval_hours')}h, "
+            f"last_run={settings.get('last_run_at')}",
+            flush=True,
+        )
 
     horizons = [int(h) for h in args.horizons.split(",")]
 
@@ -249,6 +299,11 @@ def main():
     print("[post] /api/predictions/save", flush=True)
     resp = post_predictions(base_url, auth, all_rows)
     print(f"[done] saved {resp.get('saved')} / errors {len(resp.get('errors', []))}", flush=True)
+
+    # last_run_at 갱신 (cooldown 시작점)
+    if not args.tickers:
+        mark_run_now(base_url, auth)
+        print("[settings] last_run_at updated", flush=True)
 
 
 if __name__ == "__main__":
