@@ -9,6 +9,8 @@ __pycache__/
 .venv/
 venv/
 
+scripts/_set_gh_secrets.py
+
 data/cache/
 data/results/
 data/models/
