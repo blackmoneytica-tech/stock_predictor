@@ -1,0 +1,63 @@
+# Stock Predictor 시스템 기본 설정
+# 명세서: STOCK_PREDICTION_SYSTEM_SPEC.md v2.0
+
+system:
+  confidence_hard_cap: 0.75
+  default_horizon_days: 5
+
+# 8개 모듈 기본 가중치 (SPEC §4.1)
+module_weights:
+  technical: 0.15
+  options: 0.20          # 가장 중요
+  sentiment: 0.10
+  macro: 0.20            # 가장 중요
+  catalyst: 0.15
+  insider: 0.10
+  mean_reversion: 0.10
+  short_squeeze: 0.05
+
+# 이벤트 상황별 가중치 배수
+dynamic_weight_multipliers:
+  event_within_2d:
+    options: 1.5
+    catalyst: 1.5
+  recent_drop_8pct:
+    mean_reversion: 2.0
+  fomc_within_1d:
+    macro: 1.5
+  short_interest_15pct:
+    short_squeeze: 3.0
+
+# 매크로 lag effect (T+0~T+3)
+macro_lag_weights:
+  0: 0.30
+  1: 0.40
+  2: 0.25
+  3: 0.05
+
+# Sell-the-news 보정 임계
+sell_the_news:
+  pre_rally_threshold_pct: 0.30
+  base_rate: 0.80
+
+# Parabolic 보정 (1개월 +30% 이후)
+parabolic:
+  threshold_1m: 0.30
+  expected_retracement: [-0.15, -0.10]
+
+# Mean reversion 통계
+mean_reversion:
+  drop_9pct_bounce_prob: 0.55
+  max_pain_miss_monday_bounce: 0.045
+
+# 캐시 TTL (초)
+cache:
+  price_ttl: 300        # 5분
+  options_ttl: 1800     # 30분
+  macro_ttl: 86400      # 1일
+
+# Rate limit
+api_rate_limits:
+  yfinance_per_min: 60
+  fred_per_min: 120
+  polygon_per_min: 5    # free tier

@@ -1,0 +1,40 @@
+# Watchlist — 사용자가 추적하는 종목들
+
+watchlist:
+  - ticker: CRCL
+    note: USDC stablecoin issuer, options-heavy, macro-sensitive (Fed beta -0.95)
+    macro_betas:
+      fed: -0.95
+      yield: -0.80
+      btc: 0.70
+      gold: 0.20
+      dxy: -0.60
+
+  - ticker: COIN
+    note: Crypto exchange, BTC-correlated (beta 0.9)
+    macro_betas:
+      fed: -0.50
+      yield: -0.30
+      btc: 0.90
+      dxy: -0.40
+
+  - ticker: MSTR
+    note: BTC treasury proxy
+    macro_betas:
+      fed: -0.60
+      yield: -0.40
+      btc: 1.20
+      dxy: -0.50
+
+  - ticker: BMNR
+    note: Watchlist item
+    macro_betas: {}
+
+# 매크로 ETF (참고용)
+macro_etfs:
+  - SPY
+  - QQQ
+  - IWM
+  - VIX
+  - DXY
+  - TLT
