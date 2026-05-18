@@ -18,7 +18,6 @@ dependencies = [
     "scipy>=1.11",
     "requests>=2.31",
     "python-dotenv>=1.0",
-    "pandas-ta>=0.3.14b",
     "statsmodels>=0.14",
     "fredapi>=0.5",
     "cachetools>=5.3",
