@@ -185,10 +185,12 @@ def page_analyze():
                     for p in preds
                 ])
                 st.markdown(
-                    f"<div style='padding:10px;border-left:4px solid {color};background:#f8f9fa;margin-bottom:8px;'>"
+                    f"<div style='padding:10px;border-left:4px solid {color};"
+                    f"background:rgba(255,255,255,0.06);color:inherit;"
+                    f"border-radius:4px;margin-bottom:8px;'>"
                     f"<b>📊 Multi-horizon ensemble</b>: {ens_label}<br>"
-                    f"<span style='font-size:12px'>{rows}</span><br>"
-                    f"<span style='font-size:12px'>ensemble conf: <b>{ens['ensemble_conf']:.0%}</b> "
+                    f"<span style='font-size:12px;opacity:0.85'>{rows}</span><br>"
+                    f"<span style='font-size:12px;opacity:0.85'>ensemble conf: <b>{ens['ensemble_conf']:.0%}</b> "
                     f"(boost {ens['boost_factor']:.2f}×)</span>"
                     f"</div>",
                     unsafe_allow_html=True,
