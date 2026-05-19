@@ -311,17 +311,82 @@ def page_analyze():
     # 시나리오 (간단 표)
     # ─────────────────────────────────────────────────────
     st.markdown("### 🎯 5-시나리오 (각각 확률 + 도달 가격)")
+    SCEN_KO = {
+        "mega_bull": "🚀 폭등 (mega_bull)",
+        "bull": "📈 상승 (bull)",
+        "base": "➖ 횡보 (base)",
+        "bear": "📉 하락 (bear)",
+        "crisis": "💀 폭락 (crisis)",
+    }
     scen_data = []
     for s in result.scenarios:
-        emoji = {"mega_bull": "🚀", "bull": "📈", "base": "➖",
-                 "bear": "📉", "crisis": "💀"}.get(s.name, "")
         scen_data.append({
-            "시나리오": f"{emoji} {s.name}",
+            "시나리오": SCEN_KO.get(s.name, s.name),
             "확률": f"{s.probability:.0%}",
             "가격대": f"${s.price_range[0]:.2f} ~ ${s.price_range[1]:.2f}",
             "수익률": f"{(s.expected_value - cur) / cur * 100:+.1f}%",
         })
     st.dataframe(pd.DataFrame(scen_data), hide_index=True, use_container_width=True)
+
+    # 시나리오 확률 산출 근거 + 보정 적용 내역
+    with st.expander("📐 5-시나리오 확률의 근거 (어떻게 계산되나)", expanded=False):
+        impl_move = result.modules["options"].details.get("implied_move", 0)
+        impl_pct = result.modules["options"].details.get("implied_move_pct", 0)
+        comp = result.composite_score
+
+        st.markdown(f"""
+**1️⃣ Base 확률 (대칭 분포 — 2026-05-16 backtest 검증)**
+
+| 시나리오 | 기본 % | 가격대 (현재가 ± Implied Move) |
+|---|---:|---|
+| 🚀 폭등 | 10% | +1.5×IM ~ +2.5×IM (2σ 위) |
+| 📈 상승 | 20% | +0.5×IM ~ +1.5×IM (1σ 위) |
+| ➖ 횡보 | 40% | ±0.5×IM (1σ 안) |
+| 📉 하락 | 20% | -0.5×IM ~ -1.5×IM (1σ 아래) |
+| 💀 폭락 | 10% | -1.5×IM ~ -2.5×IM (2σ 아래) |
+
+**현재 종목 Implied Move**: ±${impl_move:.2f} ({impl_pct:.1f}%) — 옵션 IV × √(horizon/252)에서 도출
+
+---
+
+**2️⃣ 조건부 보정 (모듈 신호 + 이벤트에 따라 분포 이동)**
+
+| 조건 | 보정 | 이유 |
+|---|---|---|
+| 종합점수 > +5 | 🚀 +5%p · 📈 +10%p · 📉 −7%p · 💀 −8%p | 강한 매수 — 상방 확률↑ |
+| 종합점수 < −5 | 💀 +10%p · 📉 +10%p · 📈 −10%p · 🚀 −10%p | 강한 매도 — 하방 확률↑ |
+| 카탈리스트 발표 후 ≤5일 + 사전 랠리 +15% | 📉 최대 +15%p (감쇠) | **Sell-the-news**: 발표 후 차익실현 패턴 |
+| 직전일 −4%↓ 폭락 + macro≠BEAR | 📈 ~+5%p · 💀 ↓ | **Mean Reversion 반등** (CRCL 5/12→5/13 검증) |
+| 실적 ≤3일 + Beat 확률 ≥65% | 🚀📈 tilt+ | Finnhub beat proxy 활용 |
+| 실적 ≤3일 + Beat 확률 ≤35% | 📉💀 tilt+ | Miss 우려 |
+| 1개월 수익률 > +30% (parabolic) | 📉 +10%p · 🚀📈 −5%p 각 | 과열 — 조정 가능성 |
+| 지난 금요일 max_pain miss | 📈 +10%p · 📉 −5%p | 월요일 반등 패턴 |
+
+마지막에 normalize해서 합 100%.
+
+---
+
+**3️⃣ 가격대 산출 공식**
+
+```
+Implied Move (IM) = 현재가 × IV × √(horizon / 252)
+시나리오 가격 = 현재가 ± k × IM
+  k=2 → mega_bull/crisis (꼬리)
+  k=1 → bull/bear (1σ 밖)
+  k=0 → base (1σ 안)
+```
+
+**현재 종합점수**: `{comp:+.2f}` → {"강한 매수 보정 적용 중" if comp > 5 else "강한 매도 보정 적용 중" if comp < -5 else "조건부 보정 약함 (base 분포 가까움)"}
+
+---
+
+**4️⃣ 최종 예상 가격 = Σ (확률 × 시나리오 EV)**
+
+```
+{horizon}일 후 예상 ${ev:.2f}
+  = 10% × mega_bull + 20% × bull + 40% × base + 20% × bear + 10% × crisis (보정 후)
+```
+""")
 
     # ─────────────────────────────────────────────────────
     # 기술 디테일 (expander)
