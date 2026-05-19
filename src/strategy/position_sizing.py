@@ -95,11 +95,29 @@ def sizing_factor(macro_mode: str, ev_pct: float, confidence: float, horizon: in
 
 def compute_recommendation(
     macro_mode: str, ev_pct: float, confidence: float, horizon: int,
+    *,
+    cat: str = "", rs_grade: str = "", composite_score: float = 0.0,
 ) -> Tuple[int, float, str]:
-    """direction + size + 한국어 설명. PredictionResult에 채울 3-tuple."""
+    """direction + size + 한국어 설명. PredictionResult에 채울 3-tuple.
+
+    Optional kwargs(cat / rs_grade / composite_score)가 채워지면
+    contrarian sweet spot 룰 우선 적용 (in/out 검증 robust alpha).
+    """
     direction = trade_direction(macro_mode, ev_pct, horizon)
     size = sizing_factor(macro_mode, ev_pct, confidence, horizon)
     macro = (macro_mode or "?").upper()
+
+    # P1: contrarian sweet spot (in/out 검증된 robust alpha)
+    if cat and rs_grade and is_contrarian_sweet_spot(
+        macro_mode, cat, rs_grade, composite_score, confidence, ev_pct, horizon,
+    ):
+        direction = 1
+        size = 1.5
+        rationale = (
+            f"🟢 매수 1.5× — Contrarian sweet spot (DD≤-20% + RS weak + 시스템 확신). "
+            f"백테스트 in 45.5% / out 68.8% win, avg +1.67%~+6.48%/trade (Sharpe 1.03~4.62)"
+        )
+        return direction, size, rationale
 
     if direction == 0 or size == 0:
         rationale = _rationale_cash(macro, horizon)

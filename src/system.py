@@ -109,11 +109,25 @@ class StockPredictionSystem:
         # Walk-forward 검증 룰 기반 권장 사이즈 (Sharpe 2.51, 2026-05-19 backtest)
         from .strategy.position_sizing import compute_recommendation
         ev_pct_compute = (expected_value - data['current_price']) / data['current_price'] * 100
+
+        # macro 카테고리 + RS grade 계산 (contrarian sweet spot 검증용)
+        try:
+            from .strategy.position_sizing_helpers import classify_macro_cat_rs
+            mc_cat, mc_rs = classify_macro_cat_rs(
+                ticker, data['current_price'], data.get('ohlcv'),
+                as_of_date=data.get('as_of_date'),
+            )
+        except Exception:
+            mc_cat, mc_rs = "", ""
+
         rec_dir, rec_size, rec_rationale = compute_recommendation(
             macro_mode=context['macro_breadth_mode'],
             ev_pct=ev_pct_compute,
             confidence=aggregated['confidence'],
             horizon=horizon_days,
+            cat=mc_cat,
+            rs_grade=mc_rs,
+            composite_score=aggregated['composite_score'],
         )
 
         return PredictionResult(
