@@ -23,6 +23,41 @@ from __future__ import annotations
 from typing import Tuple
 
 
+def is_contrarian_sweet_spot(
+    macro_mode: str, cat: str, rs_grade: str,
+    composite_score: float, confidence: float, ev_pct: float, horizon: int,
+) -> bool:
+    """2026-05-19 grid search 검증 sweet spot (14개 robust).
+
+    공통 패턴: RS weak + 시스템 score<0 + drawdown buy cat = contrarian mean reversion.
+
+    1d out-sample: win 63.6%, avg +0.86%/trade
+    5d out-sample: win 66.7%, avg +5.36%/trade
+    """
+    macro = (macro_mode or "?").upper()
+    cat_s = (cat or "").lower()
+    rs = (rs_grade or "").lower()
+    rs_weak = rs in ("weak", "very_weak")
+
+    if horizon <= 1:
+        # 1d contrarian: BEAR macro + strong_buy + RS weak + score<-1 + conf>0.6
+        return (
+            macro in ("BEAR", "STRONG_BEAR")
+            and cat_s == "strong_buy"
+            and rs_weak
+            and composite_score < -1
+            and confidence > 0.6
+        )
+    # 5d contrarian: non_BEAR + buy_cat + RS weak + score<0 + (conf>0.7 or ev>0.3)
+    return (
+        macro in ("CHOPPY", "BULL", "STRONG_BULL")
+        and cat_s in ("strong_buy", "deep", "buy_zone")
+        and rs_weak
+        and composite_score < 0
+        and (confidence > 0.7 or ev_pct > 0.3)
+    )
+
+
 def trade_direction(macro_mode: str, ev_pct: float, horizon: int) -> int:
     """+1 long / 0 cash. Short은 walk-forward 검증으로 영구 금지."""
     macro = (macro_mode or "?").upper()
