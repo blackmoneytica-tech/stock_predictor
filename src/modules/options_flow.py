@@ -68,6 +68,7 @@ class OptionsFlowModule(AnalysisModule):
                 'hv_iv_ratio': hv_iv_ratio,
                 'skew': skew,
                 'days_to_expiration': days_to_exp,
+                'expiration_date': target_expiration,
                 'strikes': sorted(options_chain[target_expiration].keys()),
             },
         )

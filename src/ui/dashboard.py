@@ -510,7 +510,8 @@ Implied Move (IM) = 현재가 × IV × √(horizon / 252)
 **📏 Implied Move ({horizon}일)**: `±${impl_move:.2f}` ({impl_pct:.1f}%)
 > 옵션 시장이 예상하는 가격 변동폭. 위/아래 ±{impl_pct:.1f}% 안에서 움직일 확률 약 68%.
 
-**📅 만기까지**: `{dte}일`
+**📅 옵션 만기**: `D-{dte}` ({opt.get('expiration_date', '?')})
+> 분석에 사용된 옵션 체인의 만기일까지 남은 영업일.
 """)
         with ko2:
             st.markdown(f"""
