@@ -27,7 +27,11 @@ on:
 jobs:
   predict:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
+    concurrency:
+      # 중복 실행 방지 — 진행 중인 동일 워크플로 cancel 안 함 (대기)
+      group: predict-watchlist
+      cancel-in-progress: false
     env:
       TRADE_JOURNAL_URL: ${{ secrets.TRADE_JOURNAL_URL }}
       AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
