@@ -326,25 +326,34 @@ def page_analyze():
     # ─────────────────────────────────────────────────────
     # 기술 디테일 (expander)
     # ─────────────────────────────────────────────────────
-    with st.expander("⚙️ 모듈별 점수 (11개 분석 모듈)"):
+    with st.expander("⚙️ 모듈별 점수 (11개 분석 모듈)", expanded=True):
         st.markdown("""
-**점수 의미** (-10 ~ +10):
-- **+10**: 강한 매수 시그널 · **+5**: 매수 · **0**: 중립 · **-5**: 매도 · **-10**: 강한 매도
-- 11개 모듈 점수를 가중 평균 → composite_score → 최종 결정
+**📏 점수 의미** (-10 ~ +10):
+- **+10**: 매우 강한 매수 신호 · **+5**: 매수 · **0**: 중립 · **-5**: 매도 · **-10**: 매우 강한 매도
+- 11개 모듈 점수를 가중 평균하여 composite_score 산출 → 최종 매매 결정
         """)
 
         MOD_INFO = {
-            "technical": ("기술분석", "SMA20/50/200 + RSI + MACD + Bollinger. 추세 + 모멘텀."),
-            "options": ("옵션 흐름", "Max Pain 자석 + Put/Call ratio + IV/HV (옵션 underpriced) + Implied Move."),
-            "sentiment": ("시장 심리", "VIX 두려움 + News headlines + Options unusual flow 종합."),
-            "macro": ("매크로", "Fed 금리 + Sector breadth (XLF/XLK/...) + BTC/Gold/DXY 종목 beta."),
-            "catalyst": ("이벤트", "다음 발표일 (earnings/FOMC) + sell-the-news 80% 보정."),
-            "insider": ("내부자 매매", "SEC Form 4: 매도 ceiling = 저항, 매수 floor = 지지."),
+            "technical": ("기술분석", "SMA20/50/200 + RSI + MACD + 볼린저밴드. 추세 정렬과 모멘텀 종합."),
+            "options": ("옵션 흐름", "Max Pain 자석 + Put/Call 비율 + IV/HV 비교 + Implied Move."),
+            "sentiment": ("시장 심리", "VIX 두려움 + 뉴스 헤드라인 감성 + 옵션 비정상 거래 종합."),
+            "macro": ("매크로", "Fed 금리 + 섹터 폭(XLF/XLK 등) + BTC/Gold/DXY와의 상관도."),
+            "catalyst": ("이벤트/카탈리스트", "다음 발표일(실적/FOMC) + sell-the-news 효과 80% 보정."),
+            "insider": ("내부자 매매", "SEC Form 4: 임원 매도가 = 저항선, 매수가 = 지지선."),
             "mean_reversion": ("평균 회귀", "Z-score 과매수/과매도. 폭락 후 +0.8% 반등 통계."),
-            "short_squeeze": ("공매도 스퀴즈", "Short interest % + Days to cover + Borrow rate."),
+            "short_squeeze": ("공매도 스퀴즈", "Short interest % + Days to cover + 대차 수수료율."),
             "demand_supply": ("매물대 (검증)", "Volume Profile. 백테스트 76.7% bounce 검증 (n=1510)."),
-            "order_block": ("ICT Order Block", "큰 봉 직전 last opposite candle = 기관 매물 흔적."),
-            "trend": ("추세 추종", "MA 정렬 + ROC + ADX 강도. 1D/1W/1M multi-timeframe."),
+            "order_block": ("ICT Order Block", "큰 봉 직전의 반대 캔들 = 기관 매물 흔적."),
+            "trend": ("추세 추종", "MA 정렬 + ROC + ADX 강도. 1일/1주/1개월 다중 시간프레임."),
+        }
+
+        # 방향 한국어화
+        DIR_KO = {
+            "STRONG_BULL": "🚀 매우 강한 매수",
+            "BULL": "🟢 매수",
+            "NEUTRAL": "🟡 중립",
+            "BEAR": "🔴 매도",
+            "STRONG_BEAR": "💀 매우 강한 매도",
         }
 
         mods_data = []
@@ -353,7 +362,7 @@ def page_analyze():
             mods_data.append({
                 "모듈": label,
                 "점수": round(m.score, 2),
-                "방향": m.direction.name,
+                "방향": DIR_KO.get(m.direction.name, m.direction.name),
                 "신뢰도": f"{m.confidence:.0%}",
                 "설명": desc,
             })
@@ -375,6 +384,33 @@ def page_analyze():
         st.dataframe(df_mods[["모듈", "점수", "방향", "신뢰도", "설명"]],
                      hide_index=True, use_container_width=True)
 
+        # AI 종합 해석
+        bulls = df_mods[df_mods["점수"] > 1]
+        bears = df_mods[df_mods["점수"] < -1]
+        neutrals = df_mods[(df_mods["점수"] >= -1) & (df_mods["점수"] <= 1)]
+        mod_takeaways = []
+        if len(bulls):
+            top_bulls = ", ".join(bulls.head(3)["모듈"].tolist())
+            mod_takeaways.append(f"🟢 **매수 우세 모듈 ({len(bulls)}개)**: {top_bulls}")
+        if len(bears):
+            top_bears = ", ".join(bears.head(3)["모듈"].tolist())
+            mod_takeaways.append(f"🔴 **매도 우세 모듈 ({len(bears)}개)**: {top_bears}")
+        mod_takeaways.append(f"🟡 **중립 모듈 {len(neutrals)}개**")
+
+        comp = result.composite_score
+        if comp > 3:
+            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매수 모듈이 강하게 우세")
+        elif comp > 1:
+            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 약한 매수 우세")
+        elif comp < -3:
+            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매도 모듈이 강하게 우세")
+        elif comp < -1:
+            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 약한 매도 우세")
+        else:
+            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매수/매도 신호 균형 (관망)")
+
+        st.info("**🤖 종합 해석**\n\n" + "\n\n".join(f"- {t}" for t in mod_takeaways))
+
         # 가중치 + 백테스트 검증 영역
         st.markdown("""
 **Aggregator 가중치** (검증된 비중):
@@ -386,32 +422,130 @@ def page_analyze():
 - conf ≥ 0.6 + |pred| ≥ 1% → 66.7% + 평균 +4.22% PnL
         """)
 
-    with st.expander("⚙️ 옵션 데이터 디테일"):
-        st.write(f"**Max Pain**: ${opt.get('max_pain', 0):.2f}")
-        st.write(f"**Implied Move ({horizon}d)**: ${opt.get('implied_move', 0):.2f} ({opt.get('implied_move_pct', 0):.1f}%)")
-        st.write(f"**IV**: {opt.get('iv', 0):.3f}  /  **HV**: {opt.get('hv', 0):.3f}  /  **HV/IV**: {opt.get('hv_iv_ratio', 1):.2f}")
+    with st.expander("⚙️ 옵션 데이터 (만기·자석 가격·변동성 해석)", expanded=True):
+        max_pain = opt.get('max_pain', 0)
+        impl_move = opt.get('implied_move', 0)
+        impl_pct = opt.get('implied_move_pct', 0)
+        iv = opt.get('iv', 0)
+        hv = opt.get('hv', 0)
         ratio = opt.get('hv_iv_ratio', 1.0)
-        if ratio > 1.1:
-            st.success("⭐ HV > IV — 옵션 underpriced (Put 헷지 적기)")
-        st.write(f"**Put/Call Ratio**: {opt.get('put_call_ratio', 0):.2f}")
-        st.write(f"**IV Rank**: {opt.get('iv_rank', 0):.0%}")
-        st.write(f"**Days to Expiration**: {opt.get('days_to_expiration', 0)}")
+        pc = opt.get('put_call_ratio', 0)
+        iv_rank = opt.get('iv_rank', 0)
+        dte = opt.get('days_to_expiration', 0)
 
-    with st.expander("⚙️ 매물대 (Demand/Supply 76.7% bounce 검증)"):
+        mp_diff = (max_pain - cur) / cur * 100 if cur else 0
+        mp_dir = "위" if mp_diff > 0 else "아래"
+
+        ko1, ko2 = st.columns(2)
+        with ko1:
+            st.markdown(f"""
+**🧲 Max Pain (만기일 자석 가격)**: `${max_pain:.2f}` ({mp_diff:+.1f}% — 현재가의 {mp_dir})
+> 옵션 만기 시 매도자(시장 메이커)의 손실이 최소가 되는 가격. 만기 다가올수록 가격이 이쪽으로 향하는 경향. 현재가가 이 가격에서 ±1.5% 안이면 자석 효과 강함.
+
+**📏 Implied Move ({horizon}일)**: `±${impl_move:.2f}` ({impl_pct:.1f}%)
+> 옵션 시장이 예상하는 가격 변동폭. 위/아래 ±{impl_pct:.1f}% 안에서 움직일 확률 약 68%.
+
+**📅 만기까지**: `{dte}일`
+""")
+        with ko2:
+            st.markdown(f"""
+**📈 IV (Implied Volatility, 연환산)**: `{iv:.1%}`
+> 옵션 가격에 내재된 미래 변동성. 옵션 시장의 "두려움/기대" 수준.
+
+**📊 HV (Historic Volatility, 과거 30일)**: `{hv:.1%}`
+> 실제 과거 30일 가격 변동성.
+
+**⚖️ HV ÷ IV 비율**: `{ratio:.2f}` {"⭐ **옵션 싸다 — Put 헷지 적기**" if ratio > 1.1 else "*옵션 비쌈 — Call 매도/Spread 유리*" if ratio < 0.9 else "*정상 범위*"}
+> 1보다 크면 옵션이 underpriced (싸다 — 매수자 유리). 1보다 작으면 옵션이 overpriced (비싸다 — 매도자 유리).
+
+**🎯 IV Rank**: `{iv_rank:.0%}`
+> 지난 1년 IV 분포 중 현재 IV 위치. **{("70% 이상 — 변동성 매우 높음, 옵션 비쌈" if iv_rank > 0.7 else "30% 이하 — 변동성 낮음, 옵션 저렴" if iv_rank < 0.3 else "중간 — 정상 범위")}**
+
+**🐂🐻 Put/Call Ratio**: `{pc:.2f}`
+> 풋옵션 ÷ 콜옵션 거래량. {("1.0+ — 시장 약세 심리 (헷지 수요↑)" if pc > 1 else "0.7 이하 — 시장 강세 심리" if pc < 0.7 else "균형")}
+""")
+
+        # AI 해석
+        opt_takeaways = []
+        if abs(mp_diff) < 1.5:
+            opt_takeaways.append(f"🧲 Max Pain ${max_pain:.0f}에 매우 가까움 — 만기 다가올수록 이 가격으로 끌릴 가능성↑")
+        elif mp_diff > 3:
+            opt_takeaways.append(f"🎯 Max Pain ${max_pain:.0f}이 현재가보다 {mp_diff:+.1f}% 위 — 옵션 자석이 상방으로 작용")
+        elif mp_diff < -3:
+            opt_takeaways.append(f"⚠️ Max Pain ${max_pain:.0f}이 현재가보다 {mp_diff:+.1f}% 아래 — 만기 임박 시 하방 압력")
+        if ratio > 1.1:
+            opt_takeaways.append("📉 HV > IV — 실제 변동성이 옵션 시장보다 큼. Put 매수 헷지 유리.")
+        if iv_rank > 0.7:
+            opt_takeaways.append("💎 IV Rank 70%+ — 옵션 가격 비쌈. 매수자 불리, Cover Call/Spread 매도자 유리.")
+        elif iv_rank < 0.3:
+            opt_takeaways.append("🍃 IV Rank 30% 이하 — 옵션 가격 저렴. 옵션 매수자 유리.")
+        if opt_takeaways:
+            st.info("**🤖 종합 해석**\n\n" + "\n\n".join(f"- {t}" for t in opt_takeaways))
+
+    with st.expander("⚙️ 매물대 (Volume Profile) — 거래량 누적 가격대", expanded=True):
         ds = result.modules["demand_supply"].details
-        st.write(f"**POC (최대 거래량)**: ${ds.get('poc', 0):.2f}")
-        st.write(f"**Value Area**: ${ds.get('value_area_low', 0):.2f} ~ ${ds.get('value_area_high', 0):.2f}")
+        poc = ds.get('poc', 0)
+        val = ds.get('value_area_low', 0)
+        vah = ds.get('value_area_high', 0)
+
+        poc_diff = (poc - cur) / cur * 100 if cur else 0
+
+        st.markdown(f"""
+**🎯 POC (Point of Control, 최대 거래량 가격)**: `${poc:.2f}` ({poc_diff:+.1f}% — {"현재가와 일치" if abs(poc_diff)<0.5 else "현재가 위" if poc_diff>0 else "현재가 아래"})
+> 분석 기간 중 거래량이 가장 많이 쌓인 가격. **시장이 가장 합의한 공정가** — 가격이 이쪽으로 끌리는 자석 역할.
+
+**📦 Value Area (70% 거래량 구간)**: `${val:.2f} ~ ${vah:.2f}`
+> 전체 거래량의 70%가 이 가격 범위 안에서 형성됨. 이 범위 안 = 합의 영역, 밖 = 추세 구간.
+""")
         if ds.get("in_value_area"):
-            st.write("🎯 현재가 = Value Area 안 (합의 영역, mean reversion 기대)")
+            st.success(f"🎯 **현재가 ${cur:.2f}는 Value Area 안** (합의 영역, mean reversion / 횡보 가능성↑)")
+        elif cur > vah:
+            st.info(f"📈 **현재가 ${cur:.2f}가 VAH(${vah:.2f}) 위 돌파** — 상방 추세 강함, POC ${poc:.2f}가 1차 지지")
+        elif cur < val:
+            st.warning(f"📉 **현재가 ${cur:.2f}가 VAL(${val:.2f}) 아래** — 하방 약세, POC ${poc:.2f}까지 반등 여지")
+
+        st.markdown("---")
+        st.markdown("**📊 상세 zone 목록** (검증: VP only 84% bounce, VP×OPT +5.69% mean — 2026-05-19 백테스트 n=1055)")
+
         all_zones = ds.get("all_zones") or []
         if all_zones:
             zdf = pd.DataFrame(all_zones)
+            # 영어 → 한국어 매핑
+            zdf['방향'] = zdf['side'].map({'demand': '🟢 매수 (Demand)', 'supply': '🔴 매도 (Supply)'})
             zdf = zdf.rename(columns={
-                "low": "Zone Low", "high": "Zone High", "center": "Center",
-                "strength": "강도", "volume_pct": "거래량 %", "side": "방향",
+                "low": "낮은가", "high": "높은가", "center": "중심가",
+                "strength": "강도", "volume_pct": "거래량 비중",
             })
-            st.dataframe(zdf[["방향", "Zone Low", "Zone High", "강도", "거래량 %"]],
-                         hide_index=True)
+            # 거래량 비중 % 표시
+            zdf['거래량 비중'] = zdf['거래량 비중'].apply(lambda x: f"{x*100:.2f}%" if x < 1 else f"{x:.2f}%")
+            zdf['낮은가'] = zdf['낮은가'].apply(lambda x: f"${x:.2f}")
+            zdf['높은가'] = zdf['높은가'].apply(lambda x: f"${x:.2f}")
+            zdf['강도'] = zdf['강도'].apply(lambda x: f"{x:.2f}")
+            st.dataframe(zdf[["방향", "낮은가", "높은가", "강도", "거래량 비중"]],
+                         hide_index=True, use_container_width=True)
+
+            # AI 해석
+            demand_zones = [z for z in all_zones if z['side'] == 'demand']
+            supply_zones = [z for z in all_zones if z['side'] == 'supply']
+            takeaways = []
+            if demand_zones:
+                closest_dem = max(demand_zones, key=lambda z: z['high'])
+                pct = (closest_dem['high'] - cur) / cur * 100
+                takeaways.append(
+                    f"🟢 **가장 가까운 매수 매물대**: ${closest_dem['low']:.2f}~${closest_dem['high']:.2f} "
+                    f"({pct:+.1f}%) — 강도 {closest_dem['strength']:.1f}. "
+                    f"VP only zone은 검증 84% bounce."
+                )
+            if supply_zones:
+                closest_sup = min(supply_zones, key=lambda z: z['low'])
+                pct = (closest_sup['low'] - cur) / cur * 100
+                takeaways.append(
+                    f"🔴 **가장 가까운 매도 매물대**: ${closest_sup['low']:.2f}~${closest_sup['high']:.2f} "
+                    f"({pct:+.1f}%) — 강도 {closest_sup['strength']:.1f}. "
+                    f"⚠️ 강세 시장에선 supply reject < 32% — 전량 매도 X, 분할 익절만."
+                )
+            if takeaways:
+                st.info("**🤖 종합 해석**\n\n" + "\n\n".join(f"- {t}" for t in takeaways))
 
 
 # ── 메인 차트 빌더 ──────────────────────────────────────────
