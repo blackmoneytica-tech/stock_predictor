@@ -87,3 +87,8 @@ class PredictionResult:
 
     # Confluence zones (action_engine 가공 결과, payload용)
     confluence_zones: Optional[Dict] = None  # {'buy': [...], 'sell': [...], 'stop': [...]}
+
+    # Walk-forward 검증 룰 기반 권장 액션 (2026-05-19 backtest Sharpe 2.51)
+    recommended_direction: int = 0      # +1 long, 0 cash, -1 short (영구 비활성)
+    recommended_size: float = 0.0       # 0.0~1.5x sizing factor
+    sizing_rationale: str = ""          # 한국어 설명

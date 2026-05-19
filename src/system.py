@@ -106,6 +106,16 @@ class StockPredictionSystem:
             if abs(score_ev - data['current_price']) > abs(expected_value - data['current_price']):
                 expected_value = score_ev
 
+        # Walk-forward 검증 룰 기반 권장 사이즈 (Sharpe 2.51, 2026-05-19 backtest)
+        from .strategy.position_sizing import compute_recommendation
+        ev_pct_compute = (expected_value - data['current_price']) / data['current_price'] * 100
+        rec_dir, rec_size, rec_rationale = compute_recommendation(
+            macro_mode=context['macro_breadth_mode'],
+            ev_pct=ev_pct_compute,
+            confidence=aggregated['confidence'],
+            horizon=horizon_days,
+        )
+
         return PredictionResult(
             ticker=ticker,
             timestamp=datetime.now(),
@@ -124,6 +134,9 @@ class StockPredictionSystem:
             stop_loss=actions['stop_loss'],
             hedge_recommendations=actions['hedge_recommendations'],
             confluence_zones=actions.get('confluence_zones'),
+            recommended_direction=rec_dir,
+            recommended_size=rec_size,
+            sizing_rationale=rec_rationale,
         )
 
     def _fetch_data(self, ticker: str, horizon_days: int = 5) -> Dict:

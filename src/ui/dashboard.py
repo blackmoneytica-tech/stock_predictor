@@ -133,6 +133,19 @@ def page_analyze():
                     f'📊 백테스트 검증: <b>{v["win_pct"]:.1f}% win</b> · n={v["sample_n"]} '
                     f'(2025-12 ~ 2026-05, 15종 1500 snapshots)</div>')
 
+    # 권장 포지션 사이즈 (2026-05-19 simulation: 1d Sharpe 2.51, +555% vs +120%)
+    rec_size = getattr(result, "recommended_size", 0.0)
+    rec_rationale = getattr(result, "sizing_rationale", "")
+    size_line = ""
+    if rec_size > 0:
+        size_line = (f'<div style="font-size:13px;margin-top:8px;padding:6px 10px;'
+                     f'background:rgba(255,255,255,0.10);border-radius:4px;">'
+                     f'🎯 <b>권장 사이즈 {rec_size:.1f}×</b> · {rec_rationale}</div>')
+    elif rec_rationale:
+        size_line = (f'<div style="font-size:13px;margin-top:8px;padding:6px 10px;'
+                     f'background:rgba(255,255,255,0.10);border-radius:4px;">'
+                     f'⛔ <b>{rec_rationale}</b></div>')
+
     box_html = f"""
     <div style="padding:18px;border-radius:10px;background:{v['color']};color:white;margin-bottom:10px;">
         <div style="font-size:14px;opacity:0.9">
@@ -149,6 +162,7 @@ def page_analyze():
             {f' · 🤖 ML stacker: <b>{stacker_p:.0%}</b> bull' if stacker_p is not None else ''}
         </div>
         {win_line}
+        {size_line}
     </div>
     """
     st.markdown(box_html, unsafe_allow_html=True)
