@@ -233,7 +233,9 @@ def page_analyze():
     st.markdown("### 🎯 Confluence 가격대 (다중 시그널 겹친 곳만)")
     st.caption(
         "여러 시그널이 같은 가격대에 겹친 곳 = 진짜 강한 지지/저항. "
-        "**검증 bounce rate**: vol_profile 100% / POC 100% / call_oi 86% / put_oi 74% / sma_200 75%"
+        "**Zone type 검증** (n=1055 events, 2026-05-19): "
+        "**VP only 84% bounce ⭐ (안정)** · **VP×OPT 65% bounce + 5.69% mean ⭐ (큰 EV)** · "
+        "OPT only 62%/22%break (위험) · n=2 sweet spot · dist 5%+ 안전 · strength Q4(top25%) 오히려 break↑"
     )
     cz = _get_confluence(result, cur)
 
@@ -1005,8 +1007,60 @@ def _get_confluence(result, current_price: float):
     }
 
 
+def _zone_quality(c: dict, side: str) -> dict:
+    """zone type 분류 + 검증된 bounce/reject rate (2026-05-19 백테스트 n=1055).
+
+    Returns: {type, bounce_pct, badge, badge_color, comment}
+    """
+    sources = set(c.get('sources') or [])
+    vp = sources & {"vol_profile", "poc", "value_area_high", "value_area_low"}
+    opt = sources & {"call_oi", "put_oi", "max_pain"}
+    ma = sources & {"sma_20", "sma_50", "sma_200", "ema_20", "ema_50"}
+    n_sources = c.get('n_sources', 0)
+
+    if side == "demand":
+        # 검증된 bounce rate (백테스트 n=456 touched)
+        if vp and not opt:
+            return {"type": "VP only", "bounce_pct": 84, "badge": "★ 안정 매수 (84% 반등)",
+                    "badge_color": "#28a745", "comment": "단순 매물대 — 가장 안정 진입 zone"}
+        if vp and opt:
+            return {"type": "VP×OPT", "bounce_pct": 65, "badge": "⭐ 큰 EV 매수 (+5.69%/trade)",
+                    "badge_color": "#0d6efd", "comment": "매물대 + 옵션 — 65% bounce, 한 번 작동시 큰 PnL"}
+        if opt and ma and not vp:
+            return {"type": "OPT×MA", "bounce_pct": 86, "badge": "옵션+MA (86% bounce)",
+                    "badge_color": "#5cb85c", "comment": "옵션 strike + MA 지지"}
+        if opt and not vp and not ma:
+            return {"type": "OPT only", "bounce_pct": 62, "badge": "⚠️ 옵션만 (22% break 위험)",
+                    "badge_color": "#f0ad4e", "comment": "단독 옵션 strike — 사이즈 줄이거나 회피"}
+        if ma and not vp and not opt:
+            return {"type": "MA only", "bounce_pct": 70, "badge": "MA 지지 (sample 작음)",
+                    "badge_color": "#6c757d", "comment": "이동평균만 — sample 부족"}
+        if vp and opt and ma:
+            return {"type": "VP×OPT×MA", "bounce_pct": 56, "badge": "multi (효과 감소)",
+                    "badge_color": "#6c757d", "comment": "너무 많은 source — 효과 줄어듦"}
+        return {"type": "other", "bounce_pct": 0, "badge": "etc",
+                "badge_color": "#6c757d", "comment": "분류 불명"}
+    else:  # supply
+        # supply는 reject rate 모두 < 32% — 전량 매도 금지
+        if vp and opt:
+            return {"type": "VP×OPT", "bounce_pct": 32,
+                    "badge": "1차 익절 (32% reject)", "badge_color": "#dc3545",
+                    "comment": "매물대 + 옵션 — supply 중 가장 잘 막음. 분할 익절"}
+        if vp and not opt:
+            return {"type": "VP only", "bounce_pct": 22,
+                    "badge": "분할 익절 (22% reject)", "badge_color": "#dc3545",
+                    "comment": "강세 시장 38% 돌파 — 일부만 익절"}
+        if opt and not vp:
+            return {"type": "OPT", "bounce_pct": 23,
+                    "badge": "약한 익절 (47% 돌파)", "badge_color": "#f0ad4e",
+                    "comment": "단독 옵션 strike — 거의 돌파됨"}
+        return {"type": "multi", "bounce_pct": 12,
+                "badge": "거의 돌파 (~65~88%)", "badge_color": "#dc3545",
+                "comment": "multi-confluence supply — 강세 시장에서 거의 돌파"}
+
+
 def _render_cluster(c: dict, current_price: float, side: str):
-    """confluence cluster 카드 렌더."""
+    """confluence cluster 카드 렌더 (검증된 bounce rate 강조)."""
     price_str = (
         f"${c['low']:.2f} ~ ${c['high']:.2f}"
         if c['high'] - c['low'] > 0.5
@@ -1018,22 +1072,43 @@ def _render_cluster(c: dict, current_price: float, side: str):
     src_labels = []
     for src in sorted(set(c['sources'])):
         label, rate = _SOURCE_LABELS.get(src, (src, 0.5))
-        src_labels.append(f"{label} ({rate:.0%})")
-    src_text = ", ".join(src_labels[:3])
+        src_labels.append(f"{label}")
+    src_text = ", ".join(src_labels[:4])
 
     # 강도 시각화
     strength = c['confluence_strength']
     bar = "█" * min(10, int(strength / 2))
 
-    # 가까울수록 핵심
+    # zone quality (검증된 bounce rate)
+    q = _zone_quality(c, side)
+
+    # n_sources 2 sweet spot 표시
+    n_warn = ""
+    if n_src == 1:
+        n_warn = " <span style='color:#f0ad4e;font-size:10px'>· n=1 약함</span>"
+    elif n_src == 2:
+        n_warn = " <span style='color:#28a745;font-size:10px'>· n=2 sweet spot</span>"
+    elif n_src >= 4:
+        n_warn = " <span style='color:#6c757d;font-size:10px'>· n=4+ 효과↓</span>"
+
     bg = "rgba(0,200,0,0.10)" if side == "demand" else "rgba(200,0,0,0.10)"
 
     html = f"""
-    <div style='padding:10px;border-radius:8px;background:{bg};margin-bottom:6px;'>
-        <div style='font-size:18px;font-weight:700'>{price_str}</div>
-        <div style='font-size:12px;color:gray'>거리 {dist:+.1f}% · {n_src}개 시그널</div>
-        <div style='font-size:11px;color:#555'>{src_text}</div>
-        <div style='font-size:11px;color:#666;letter-spacing:-1px'>강도 {bar} ({strength:.1f})</div>
+    <div style='padding:10px;border-radius:8px;background:{bg};margin-bottom:6px;
+                border-left:4px solid {q["badge_color"]};'>
+        <div style='display:flex;justify-content:space-between;align-items:baseline'>
+            <div style='font-size:18px;font-weight:700'>{price_str}</div>
+            <span style='font-size:11px;padding:2px 8px;border-radius:10px;
+                background:{q["badge_color"]};color:white;font-weight:600'>
+                {q["badge"]}
+            </span>
+        </div>
+        <div style='font-size:12px;color:gray'>거리 {dist:+.1f}% · {n_src}개 시그널{n_warn}</div>
+        <div style='font-size:11px;opacity:0.85'>{src_text}</div>
+        <div style='font-size:10px;opacity:0.7;letter-spacing:-1px'>강도 {bar} ({strength:.1f})</div>
+        <div style='font-size:10px;opacity:0.7;margin-top:3px;font-style:italic'>
+            💡 {q["comment"]}
+        </div>
     </div>
     """
     st.markdown(html, unsafe_allow_html=True)
