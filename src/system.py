@@ -107,18 +107,20 @@ class StockPredictionSystem:
                 expected_value = score_ev
 
         # Walk-forward 검증 룰 기반 권장 사이즈 (Sharpe 2.51, 2026-05-19 backtest)
-        from .strategy.position_sizing import compute_recommendation
+        from .strategy.position_sizing import compute_recommendation, evaluate_sweet_spot
         ev_pct_compute = (expected_value - data['current_price']) / data['current_price'] * 100
 
         # macro 카테고리 + RS grade 계산 (contrarian sweet spot 검증용)
+        mc_cat, mc_rs, mc_dd, mc_rel = "", "", 0.0, 0.0
         try:
             from .strategy.position_sizing_helpers import classify_macro_cat_rs
-            mc_cat, mc_rs = classify_macro_cat_rs(
+            mc_cat, mc_rs, mc_dd, mc_rel = classify_macro_cat_rs(
                 ticker, data['current_price'], data.get('ohlcv'),
                 as_of_date=data.get('as_of_date'),
+                return_raw=True,
             )
         except Exception:
-            mc_cat, mc_rs = "", ""
+            pass
 
         rec_dir, rec_size, rec_rationale = compute_recommendation(
             macro_mode=context['macro_breadth_mode'],
@@ -128,6 +130,19 @@ class StockPredictionSystem:
             cat=mc_cat,
             rs_grade=mc_rs,
             composite_score=aggregated['composite_score'],
+        )
+
+        # Sweet spot 평가 (active/tier/conditions/backtest/tagline)
+        sweet_spot_info = evaluate_sweet_spot(
+            macro_mode=context['macro_breadth_mode'],
+            cat=mc_cat,
+            rs_grade=mc_rs,
+            composite_score=aggregated['composite_score'],
+            confidence=aggregated['confidence'],
+            ev_pct=ev_pct_compute,
+            horizon=horizon_days,
+            dd_pct=mc_dd,
+            rel_chg20=mc_rel,
         )
 
         return PredictionResult(
@@ -151,6 +166,7 @@ class StockPredictionSystem:
             recommended_direction=rec_dir,
             recommended_size=rec_size,
             sizing_rationale=rec_rationale,
+            sweet_spot=sweet_spot_info,
         )
 
     def _fetch_data(self, ticker: str, horizon_days: int = 5) -> Dict:

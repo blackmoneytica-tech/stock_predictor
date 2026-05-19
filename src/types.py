@@ -92,3 +92,6 @@ class PredictionResult:
     recommended_direction: int = 0      # +1 long, 0 cash, -1 short (영구 비활성)
     recommended_size: float = 0.0       # 0.0~1.5x sizing factor
     sizing_rationale: str = ""          # 한국어 설명
+
+    # Sweet spot — contrarian 진입 (UI 보라 박스 강조)
+    sweet_spot: Optional[Dict] = None   # {active, tier, conditions, backtest, tagline}

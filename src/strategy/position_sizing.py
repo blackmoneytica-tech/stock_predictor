@@ -27,35 +27,92 @@ def is_contrarian_sweet_spot(
     macro_mode: str, cat: str, rs_grade: str,
     composite_score: float, confidence: float, ev_pct: float, horizon: int,
 ) -> bool:
-    """2026-05-19 grid search 검증 sweet spot (14개 robust).
+    """2026-05-19 grid search 검증 sweet spot (14개 robust)."""
+    return evaluate_sweet_spot(
+        macro_mode, cat, rs_grade, composite_score, confidence, ev_pct, horizon,
+    )["active"]
 
-    공통 패턴: RS weak + 시스템 score<0 + drawdown buy cat = contrarian mean reversion.
 
-    1d out-sample: win 63.6%, avg +0.86%/trade
-    5d out-sample: win 66.7%, avg +5.36%/trade
+def evaluate_sweet_spot(
+    macro_mode: str, cat: str, rs_grade: str,
+    composite_score: float, confidence: float, ev_pct: float, horizon: int,
+    *,
+    dd_pct: float = None, rel_chg20: float = None,
+) -> dict:
+    """Sweet spot 적중 여부 + 적중 조건 체크리스트.
+
+    UI에서 보라 배경 큰 박스 + 체크리스트 렌더용.
+    Returns: {active, tier, conditions: [{label, met}], backtest}
     """
     macro = (macro_mode or "?").upper()
     cat_s = (cat or "").lower()
     rs = (rs_grade or "").lower()
     rs_weak = rs in ("weak", "very_weak")
 
+    # 가독성 라벨
+    cat_label = {
+        "strong_buy": "Drawdown ≤ -20% (strong_buy)",
+        "deep": "Drawdown -20%~-15% (deep)",
+        "buy_zone": "Drawdown -10%~-3% (buy_zone)",
+        "trap": "Drawdown -15%~-10% (trap ⚠️)",
+        "safe": "Drawdown > -3% (safe)",
+    }.get(cat_s, f"Drawdown cat = {cat_s or '?'}")
+    if dd_pct is not None:
+        cat_label = f"Drawdown {dd_pct:+.1f}% ({cat_s})"
+
+    rs_label = (f"RS {rs} (시장 underperform)" if rs_weak
+                else f"RS {rs} (시장 outperform — sweet spot 미충족)")
+    if rel_chg20 is not None:
+        rs_label = f"RS {rs} (20일 SPY 대비 {rel_chg20:+.1f}%p)"
+
+    score_label = f"시스템 score {composite_score:+.1f}"
+    conf_label = f"확신도 {confidence:.0%}"
+    ev_label = f"EV {ev_pct:+.2f}%"
+    macro_label = f"매크로 = {macro}"
+
     if horizon <= 1:
-        # 1d contrarian: BEAR macro + strong_buy + RS weak + score<-1 + conf>0.6
-        return (
-            macro in ("BEAR", "STRONG_BEAR")
-            and cat_s == "strong_buy"
-            and rs_weak
-            and composite_score < -1
-            and confidence > 0.6
-        )
-    # 5d contrarian: non_BEAR + buy_cat + RS weak + score<0 + (conf>0.7 or ev>0.3)
-    return (
-        macro in ("CHOPPY", "BULL", "STRONG_BULL")
-        and cat_s in ("strong_buy", "deep", "buy_zone")
-        and rs_weak
-        and composite_score < 0
-        and (confidence > 0.7 or ev_pct > 0.3)
-    )
+        conditions = [
+            {"label": macro_label + " (BEAR/STRONG_BEAR)",
+             "met": macro in ("BEAR", "STRONG_BEAR")},
+            {"label": cat_label + " (strong_buy 필요)",
+             "met": cat_s == "strong_buy"},
+            {"label": rs_label + " (weak/very_weak 필요)",
+             "met": rs_weak},
+            {"label": score_label + " (< -1 필요)",
+             "met": composite_score < -1},
+            {"label": conf_label + " (> 60% 필요)",
+             "met": confidence > 0.6},
+        ]
+        all_met = all(c["met"] for c in conditions)
+        return {
+            "active": all_met,
+            "tier": "1d_contrarian" if all_met else None,
+            "conditions": conditions,
+            "backtest": "in 73% / out 64% win, +0.86%/trade (n=22)",
+            "tagline": "약세장 바닥 + 시스템도 비관 → 반등 진입 (contrarian)",
+        }
+
+    # 5d contrarian
+    conditions = [
+        {"label": macro_label + " (CHOPPY / BULL / STRONG_BULL)",
+         "met": macro in ("CHOPPY", "BULL", "STRONG_BULL")},
+        {"label": cat_label + " (buy_zone / deep / strong_buy)",
+         "met": cat_s in ("strong_buy", "deep", "buy_zone")},
+        {"label": rs_label + " (weak/very_weak 필요)",
+         "met": rs_weak},
+        {"label": score_label + " (< 0 필요)",
+         "met": composite_score < 0},
+        {"label": f"{conf_label} > 70% 또는 {ev_label} > +0.3%",
+         "met": confidence > 0.7 or ev_pct > 0.3},
+    ]
+    all_met = all(c["met"] for c in conditions)
+    return {
+        "active": all_met,
+        "tier": "5d_contrarian" if all_met else None,
+        "conditions": conditions,
+        "backtest": "in 56% / out 66.7% win, +5.36%/trade (n=15)",
+        "tagline": "DD 깊은 종목 + 시장보다 더 떨어진 + 시스템도 비관 → 반등",
+    }
 
 
 def trade_direction(macro_mode: str, ev_pct: float, horizon: int) -> int:

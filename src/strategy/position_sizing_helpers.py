@@ -19,10 +19,14 @@ def classify_macro_cat_rs(
     current_price: float,
     ohlcv: Optional[pd.DataFrame],
     as_of_date: Optional[date] = None,
-) -> Tuple[str, str]:
-    """(cat, rs_grade) 반환. 실패 시 ('', '')."""
+    return_raw: bool = False,
+):
+    """(cat, rs_grade) 또는 return_raw=True 시 (cat, rs_grade, dd_pct, rel_chg20).
+
+    실패 시 ('', '', 0, 0).
+    """
     if ohlcv is None or ohlcv.empty or not current_price:
-        return "", ""
+        return ("", "", 0.0, 0.0) if return_raw else ("", "")
 
     if as_of_date:
         ts = pd.Timestamp(as_of_date)
@@ -31,7 +35,7 @@ def classify_macro_cat_rs(
         hist = ohlcv
 
     if len(hist) < 22:
-        return "", ""
+        return ("", "", 0.0, 0.0) if return_raw else ("", "")
 
     # 52주 high
     wk52 = hist.tail(252)
@@ -80,4 +84,6 @@ def classify_macro_cat_rs(
     else:
         rs_grade = "very_weak"
 
+    if return_raw:
+        return cat, rs_grade, round(dd_pct, 2), round(rel_chg20, 2)
     return cat, rs_grade

@@ -136,6 +136,8 @@ def page_analyze():
     # 권장 포지션 사이즈 (2026-05-19 simulation: 1d Sharpe 2.51, +555% vs +120%)
     rec_size = getattr(result, "recommended_size", 0.0)
     rec_rationale = getattr(result, "sizing_rationale", "")
+    sweet_spot = getattr(result, "sweet_spot", None) or {}
+
     size_line = ""
     if rec_size > 0:
         size_line = (f'<div style="font-size:13px;margin-top:8px;padding:6px 10px;'
@@ -166,6 +168,39 @@ def page_analyze():
     </div>
     """
     st.markdown(box_html, unsafe_allow_html=True)
+
+    # ⭐ Sweet Spot 보라 박스 + 체크리스트 (적중 시만)
+    if sweet_spot and sweet_spot.get("active"):
+        cond_rows = "".join([
+            f'<div style="padding:3px 0;font-size:13px;">'
+            f'<span style="color:#10b981;margin-right:6px">✓</span>{c["label"]}</div>'
+            for c in sweet_spot.get("conditions", []) if c["met"]
+        ])
+        sweet_html = f"""
+        <div style="padding:14px 18px;border-radius:10px;
+                    background:linear-gradient(135deg,#7c3aed,#a855f7);
+                    color:white;margin-bottom:12px;
+                    box-shadow:0 4px 16px rgba(168,85,247,0.4);">
+            <div style="font-size:18px;font-weight:800;letter-spacing:0.5px;margin-bottom:4px">
+                ⭐⭐⭐ SWEET SPOT — Contrarian 진입 기회 ⭐⭐⭐
+            </div>
+            <div style="font-size:13px;opacity:0.95;margin-bottom:8px;font-style:italic">
+                "{sweet_spot.get('tagline', '')}"
+            </div>
+            <div style="background:rgba(255,255,255,0.15);border-radius:6px;padding:8px 12px;margin-bottom:8px;">
+                <div style="font-size:11px;opacity:0.85;margin-bottom:4px">📊 백테스트 검증 (in/out-sample)</div>
+                <div style="font-size:13px;font-weight:600">{sweet_spot.get('backtest', '')}</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.10);border-radius:6px;padding:8px 12px;">
+                <div style="font-size:11px;opacity:0.85;margin-bottom:4px">✅ 적중 조건 (모두 충족)</div>
+                {cond_rows}
+            </div>
+            <div style="margin-top:8px;font-size:13px;font-weight:700">
+                ✨ 권장 사이즈 1.5× — 가장 신뢰성 높은 contrarian 진입
+            </div>
+        </div>
+        """
+        st.markdown(sweet_html, unsafe_allow_html=True)
 
     # 직관 신호 칩
     chips = _build_signal_chips(result)
