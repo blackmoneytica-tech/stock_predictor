@@ -145,6 +145,12 @@ class StockPredictionSystem:
             rel_chg20=mc_rel,
         )
 
+        # 모듈 합의 카운팅 tier (2026-05-20 backtest)
+        from .strategy.module_consensus import evaluate_module_consensus
+        consensus_info = evaluate_module_consensus(
+            module_outputs, context['macro_breadth_mode'],
+        )
+
         return PredictionResult(
             ticker=ticker,
             timestamp=datetime.now(),
@@ -167,6 +173,7 @@ class StockPredictionSystem:
             recommended_size=rec_size,
             sizing_rationale=rec_rationale,
             sweet_spot=sweet_spot_info,
+            module_consensus=consensus_info,
         )
 
     def _fetch_data(self, ticker: str, horizon_days: int = 5) -> Dict:

@@ -498,32 +498,87 @@ Implied Move (IM) = 현재가 × IV × √(horizon / 252)
         st.dataframe(df_mods[["모듈", "점수", "방향", "신뢰도", "설명"]],
                      hide_index=True, use_container_width=True)
 
-        # AI 종합 해석
+        # AI 종합 해석 + 합의 tier (2026-05-20 backtest 검증)
         bulls = df_mods[df_mods["점수"] > 1]
         bears = df_mods[df_mods["점수"] < -1]
         neutrals = df_mods[(df_mods["점수"] >= -1) & (df_mods["점수"] <= 1)]
-        mod_takeaways = []
-        if len(bulls):
-            top_bulls = ", ".join(bulls.head(3)["모듈"].tolist())
-            mod_takeaways.append(f"🟢 **매수 우세 모듈 ({len(bulls)}개)**: {top_bulls}")
-        if len(bears):
-            top_bears = ", ".join(bears.head(3)["모듈"].tolist())
-            mod_takeaways.append(f"🔴 **매도 우세 모듈 ({len(bears)}개)**: {top_bears}")
-        mod_takeaways.append(f"🟡 **중립 모듈 {len(neutrals)}개**")
-
+        n_bull = len(bulls)
+        n_bear = len(bears)
         comp = result.composite_score
-        if comp > 3:
-            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매수 모듈이 강하게 우세")
-        elif comp > 1:
-            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 약한 매수 우세")
-        elif comp < -3:
-            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매도 모듈이 강하게 우세")
-        elif comp < -1:
-            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 약한 매도 우세")
-        else:
-            mod_takeaways.append(f"📊 종합점수 **{comp:+.2f}** → 매수/매도 신호 균형 (관망)")
 
-        st.info("**🤖 종합 해석**\n\n" + "\n\n".join(f"- {t}" for t in mod_takeaways))
+        # 합의 tier (백테스트 검증)
+        consensus = getattr(result, "module_consensus", None) or {}
+        tier = consensus.get("tier", "noise")
+        tone = consensus.get("tone", "neutral")
+        tier_label = consensus.get("label", "")
+        tier_tagline = consensus.get("tagline", "")
+        tier_backtest = consensus.get("backtest", "")
+
+        # 색상별 큰 배지 (tier 마다 다른 강조)
+        if tier == "strong_consensus_buy":
+            bg = "linear-gradient(135deg,#7c3aed,#a855f7)"
+            color = "#fff"
+        elif tier == "contrarian_rebound":
+            bg = "linear-gradient(135deg,#0ea5e9,#06b6d4)"
+            color = "#fff"
+        elif tier == "strong_bear_trap":
+            bg = "linear-gradient(135deg,#dc2626,#991b1b)"
+            color = "#fff"
+        elif tier == "overhyped_warning":
+            bg = "linear-gradient(135deg,#f59e0b,#d97706)"
+            color = "#fff"
+        else:
+            bg = "rgba(255,255,255,0.08)"
+            color = "inherit"
+
+        tier_html = f"""
+        <div style="padding:14px 18px;border-radius:8px;background:{bg};color:{color};
+                    margin-top:10px;margin-bottom:10px;">
+            <div style="font-size:16px;font-weight:800;margin-bottom:4px">{tier_label}</div>
+            <div style="font-size:12px;opacity:0.95;margin-bottom:6px">{tier_tagline}</div>
+            <div style="font-size:11px;opacity:0.85">📊 백테스트 출처: {tier_backtest}</div>
+            <div style="font-size:12px;margin-top:8px;background:rgba(255,255,255,0.10);
+                        padding:4px 8px;border-radius:4px;display:inline-block;">
+                🟢 매수 {n_bull}개 · 🔴 매도 {n_bear}개 · 🟡 중립 {len(neutrals)}개 · 종합점수 {comp:+.2f}
+            </div>
+        </div>
+        """
+        st.markdown(tier_html, unsafe_allow_html=True)
+
+        # 보조 해석 (라이너 형태)
+        mod_takeaways = []
+        if n_bull >= 1:
+            top_bulls = ", ".join(bulls.head(3)["모듈"].tolist())
+            mod_takeaways.append(f"🟢 매수 우세: {top_bulls}")
+        if n_bear >= 1:
+            top_bears = ", ".join(bears.head(3)["모듈"].tolist())
+            mod_takeaways.append(f"🔴 매도 우세: {top_bears}")
+
+        if mod_takeaways:
+            st.caption(" · ".join(mod_takeaways))
+
+        # ⚠️ 카운팅 해석 가이드 (사용자 의문 해소)
+        with st.expander("ℹ️ 모듈 우세 개수의 진짜 의미 (백테스트 검증)", expanded=False):
+            st.markdown("""
+**1499 trade 백테스트 결과 — n_bull (매수 우세 모듈 개수)별 5d 실제 결과:**
+
+| n_bull | 적중률 | 평균 수익 | 평가 |
+|---:|---:|---:|---|
+| 0~3 | 44~47% | ≈ 0% | **noise (random level)** |
+| 4 | 52.7% | +1.16% | 약한 신호 |
+| **5+** | **65.7%** | **+4.89%** | **⭐ 강한 alpha (Sharpe 4.33)** |
+
+**n_bear (매도 우세 모듈 개수)별:**
+
+| 조건 | 적중률 | 평균 | 평가 |
+|---|---:|---:|---|
+| n_bear=0 (만장일치 매수) | **40%** | **-0.96%** | ⚠️ overhyped — 이미 priced in |
+| n_bear≥6 + STRONG_BEAR | **62.5%** | +2.66% | ⭐ contrarian 반등 기회 |
+| n_bear≥6 + BULL | 20% | -1.80% | 🛑 절대 매수 X |
+
+→ **단순히 "4 vs 3 우세"로 판단하면 안 됨**. 1~3개 카운팅은 noise.
+**5+ 합의** 또는 **macro × 합의** 결합이 진짜 alpha.
+            """)
 
         # 가중치 + 백테스트 검증 영역
         st.markdown("""

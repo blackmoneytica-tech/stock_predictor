@@ -122,6 +122,7 @@ def analyze_one(system: StockPredictionSystem, ticker: str, horizons: List[int])
                 "recommended_direction": getattr(r, "recommended_direction", 0),
                 "sizing_rationale": getattr(r, "sizing_rationale", ""),
                 "sweet_spot": getattr(r, "sweet_spot", None),
+                "module_consensus": getattr(r, "module_consensus", None),
             },
             "signals": signals,
             "levels": {

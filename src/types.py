@@ -95,3 +95,6 @@ class PredictionResult:
 
     # Sweet spot — contrarian 진입 (UI 보라 박스 강조)
     sweet_spot: Optional[Dict] = None   # {active, tier, conditions, backtest, tagline}
+
+    # 모듈 합의 카운팅 tier (2026-05-20 backtest)
+    module_consensus: Optional[Dict] = None  # {n_bull, n_bear, tier, label, tagline, backtest}
