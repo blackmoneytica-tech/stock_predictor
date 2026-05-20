@@ -1,17 +1,16 @@
 """실시간 옵션 chain 통합 fetcher.
 
-우선순위:
-  1) yfinance (무료, 무제한, 15분 지연) — primary
-  2) Alpha Vantage REALTIME_OPTIONS (무료 25/day, 15분 지연) — fallback
-  3) (향후) Tradier sandbox, Polygon 등
-
-진정한 0-지연 실시간 옵션은 무료로 거의 불가능. 두 source 모두 ~15분 지연.
+우선순위 (2026-05-20 갱신):
+  1) **CBOE** — 무료, 가입X, 한국 IP OK, 옵션 거래소 본가, 15분 지연 ⭐ primary
+  2) Marketdata.app — 무료 100/day, IP 1개 제한 → 차단 자주 발생
+  3) yfinance — 무료, 무제한, OI=0/IV=placeholder 자주
+  4) Alpha Vantage — 25 req/day, EOD only
 
 설계:
 - 동일 schema 반환: {expiration: {strike: {call_oi, put_oi, call_iv, put_iv, iv, ...}}}
 - get_realtime_chain(ticker, horizon_days) 단일 진입점
-- yfinance 실패 시 자동 AV fallback
-- 둘 다 실패 시 RuntimeError
+- 자동 fallback chain
+- 모든 source 실패 시 RuntimeError
 """
 from __future__ import annotations
 
@@ -22,6 +21,15 @@ from typing import Dict, Optional
 from ._common import env
 from .options_chain import get_options_chain as yf_get_chain
 from .options_chain import list_expirations as yf_list_expirations
+
+try:
+    from .cboe_options import (
+        get_chain as cboe_get_chain,
+        pick_horizon_expiration as cboe_pick_exp,
+    )
+    _HAS_CBOE = True
+except ImportError:
+    _HAS_CBOE = False
 
 try:
     from .alpha_vantage_options import get_realtime_chain as av_get_chain
@@ -53,30 +61,44 @@ def pick_expiration_horizon(expirations: list, horizon_days: int) -> Optional[st
 def get_realtime_chain(
     ticker: str,
     horizon_days: int = 5,
-    prefer: str = "marketdata",
+    prefer: str = "cboe",
 ) -> Dict:
     """실시간 옵션 chain — 우선순위:
-    1. Marketdata.app (무료 100/day, OI/IV 정확, 장 closed에도 EOD 정확)
-    2. yfinance (무제한, 단 주말/장 closed 시 OI=0, IV=placeholder)
-    3. Alpha Vantage REALTIME_OPTIONS (premium 거부 가능)
+    1. **CBOE** (무료, 가입X, 한국 IP OK, 옵션 거래소 본가) ⭐
+    2. Marketdata.app (무료 100/day, IP 1개 제한 → 차단 가능)
+    3. yfinance (무제한, 단 OI=0/IV placeholder 자주)
+    4. Alpha Vantage (25 req/day)
+
+    OI 신뢰도 게이트: chain의 총 OI 합이 너무 작으면 (1000 미만) 다음 source 시도.
 
     Args:
-        prefer: 'marketdata' | 'yfinance' | 'alphavantage' | 'auto'
+        prefer: 'cboe' | 'marketdata' | 'yfinance' | 'alphavantage'
     """
     sources_tried = []
     last_err: Optional[Exception] = None
 
     if prefer == "yfinance":
-        order = ["yfinance", "marketdata", "alphavantage"]
+        order = ["yfinance", "cboe", "marketdata", "alphavantage"]
+    elif prefer == "marketdata":
+        order = ["marketdata", "cboe", "yfinance", "alphavantage"]
     elif prefer == "alphavantage":
-        order = ["alphavantage", "marketdata", "yfinance"]
+        order = ["alphavantage", "cboe", "marketdata", "yfinance"]
     else:
-        # default: marketdata primary (key 있을 때만), 없으면 yfinance
-        order = ["marketdata", "yfinance", "alphavantage"]
+        # default: cboe primary (가입X, 한국 IP 안정), 그 후 marketdata → yfinance
+        order = ["cboe", "marketdata", "yfinance", "alphavantage"]
 
     for src in order:
         try:
-            if src == "marketdata":
+            if src == "cboe":
+                if not _HAS_CBOE:
+                    sources_tried.append(f"{src} (skipped: no module)")
+                    continue
+                exp = cboe_pick_exp(ticker, horizon_days=horizon_days)
+                if not exp:
+                    sources_tried.append(f"{src} (no exp)")
+                    continue
+                chain = cboe_get_chain(ticker, exp)
+            elif src == "marketdata":
                 if not _HAS_MD or not env("MARKETDATA_KEY"):
                     sources_tried.append(f"{src} (skipped: no key)")
                     continue
@@ -98,8 +120,20 @@ def get_realtime_chain(
             if chain:
                 exp = next(iter(chain))
                 if chain[exp]:
-                    log.info("realtime options [%s] %s exp=%s strikes=%d",
-                             src, ticker, exp, len(chain[exp]))
+                    # OI 신뢰도 체크
+                    total_oi = sum(
+                        (slot.get("call_oi", 0) or 0) + (slot.get("put_oi", 0) or 0)
+                        for slot in chain[exp].values()
+                    )
+                    if total_oi < 1000:
+                        log.warning(
+                            "realtime options [%s] %s exp=%s low OI (%d) — try next",
+                            src, ticker, exp, total_oi,
+                        )
+                        sources_tried.append(f"{src} (low_oi={total_oi})")
+                        continue
+                    log.info("realtime options [%s] %s exp=%s strikes=%d OI=%d",
+                             src, ticker, exp, len(chain[exp]), total_oi)
                     return chain
             sources_tried.append(f"{src} (empty)")
         except Exception as e:
