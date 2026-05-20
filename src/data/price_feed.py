@@ -60,21 +60,68 @@ def get_daily_ohlcv(
             return cached
 
     YFINANCE_LIMITER.wait()
-    df = yf.Ticker(ticker).history(
-        start=start_s,
-        end=end_s,
-        interval="1d",
-        auto_adjust=False,
-        actions=False,
-    )
+    df = pd.DataFrame()
+    try:
+        df = yf.Ticker(ticker).history(
+            start=start_s,
+            end=end_s,
+            interval="1d",
+            auto_adjust=False,
+            actions=False,
+        )
+    except Exception:
+        pass
 
+    # yfinance 빈 응답 (Streamlit Cloud / 일부 IP 차단) → Finnhub fallback
     if df.empty:
-        return _empty_ohlcv()
+        df = _fetch_finnhub_daily(ticker, start_s, end_s)
+        if df.empty:
+            return _empty_ohlcv()
+        if use_cache:
+            cache_store("ohlcv_daily", cache_key, df)
+        return df
 
     df = _normalize_ohlcv_frame(df)
     if use_cache:
         cache_store("ohlcv_daily", cache_key, df)
     return df
+
+
+def _fetch_finnhub_daily(ticker: str, start_s: str, end_s: str) -> pd.DataFrame:
+    """Finnhub /stock/candle fallback (yfinance 차단 시).
+
+    무료 60/min. FINNHUB_KEY 필요. 실패 시 빈 DataFrame.
+    """
+    import os
+    import requests
+    key = os.environ.get("FINNHUB_KEY", "").strip()
+    if not key:
+        return _empty_ohlcv()
+    try:
+        from_ts = int(datetime.fromisoformat(start_s).timestamp())
+        to_ts = int(datetime.fromisoformat(end_s).timestamp())
+        r = requests.get(
+            "https://finnhub.io/api/v1/stock/candle",
+            params={"symbol": ticker.upper(), "resolution": "D",
+                    "from": from_ts, "to": to_ts, "token": key},
+            timeout=15,
+        )
+        if r.status_code != 200:
+            return _empty_ohlcv()
+        j = r.json()
+        if j.get("s") != "ok" or not j.get("t"):
+            return _empty_ohlcv()
+        df = pd.DataFrame({
+            "open": j.get("o", []), "high": j.get("h", []),
+            "low": j.get("l", []), "close": j.get("c", []),
+            "volume": j.get("v", []),
+        })
+        df["adj_close"] = df["close"]
+        df.index = pd.to_datetime(j["t"], unit="s")
+        df.index.name = "Date"
+        return df
+    except Exception:
+        return _empty_ohlcv()
 
 
 # ── 인트라데이 ────────────────────────────────────────────────
@@ -161,13 +208,50 @@ def _get_current_price_uncached(ticker: str) -> float:
 
     # 2) fallback: 1d 1m 히스토리 마지막 close
     if price is None:
-        hist = t.history(period="1d", interval="1m", prepost=True)
-        if not hist.empty:
-            price = float(hist["Close"].iloc[-1])
+        try:
+            hist = t.history(period="1d", interval="1m", prepost=True)
+            if not hist.empty:
+                price = float(hist["Close"].iloc[-1])
+        except Exception:
+            pass
+
+    # 3) Finnhub fallback (yfinance Streamlit Cloud 차단 시)
+    if price is None:
+        price = _fetch_finnhub_quote(ticker)
+
+    # 4) CBOE fallback (옵션 chain response 안 underlying current_price)
+    if price is None:
+        try:
+            from .cboe_options import get_current_price as cboe_price
+            price = cboe_price(ticker)
+        except Exception:
+            pass
 
     if price is None or pd.isna(price):
         raise RuntimeError(f"현재가 fetch 실패: {ticker}")
     return float(price)
+
+
+def _fetch_finnhub_quote(ticker: str) -> Optional[float]:
+    """Finnhub /quote — 현재가 (실시간)."""
+    import os
+    import requests
+    key = os.environ.get("FINNHUB_KEY", "").strip()
+    if not key:
+        return None
+    try:
+        r = requests.get(
+            "https://finnhub.io/api/v1/quote",
+            params={"symbol": ticker.upper(), "token": key},
+            timeout=10,
+        )
+        if r.status_code != 200:
+            return None
+        j = r.json()
+        p = j.get("c")  # current price
+        return float(p) if p else None
+    except Exception:
+        return None
 
 
 if _USE_TTL_CACHE:
