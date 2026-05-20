@@ -592,6 +592,19 @@ Implied Move (IM) = 현재가 × IV × √(horizon / 252)
         """)
 
     with st.expander("⚙️ 옵션 데이터 (만기·자석 가격·변동성 해석)", expanded=True):
+        # 옵션 데이터 unavailable 시 명확한 경고
+        if opt.get('data_unavailable'):
+            st.error(
+                f"🚫 **옵션 데이터 신뢰할 수 없음** — {opt.get('data_unavailable_reason')}\n\n"
+                "**원인 후보**:\n"
+                "- Marketdata.app 무료 plan은 **한 IP만 허용** — 다른 IP에서 호출하면 차단\n"
+                "- yfinance는 한국 시간(US 장 close)에 OI/IV placeholder 반환\n\n"
+                "**해결**:\n"
+                "- Marketdata.app 대시보드에서 IP 재등록 (5분 대기 후 자동) — https://www.marketdata.app/\n"
+                "- 또는 GitHub Actions에서만 옵션 분석 사용 (이미 IP authorized)\n"
+                "- 분석은 이어서 진행되지만 **옵션 모듈 score=0**으로 처리됨 (다른 모듈 영향 X)"
+            )
+            st.stop()
         max_pain = opt.get('max_pain', 0)
         impl_move = opt.get('implied_move', 0)
         impl_pct = opt.get('implied_move_pct', 0)
@@ -602,7 +615,7 @@ Implied Move (IM) = 현재가 × IV × √(horizon / 252)
         iv_rank = opt.get('iv_rank', 0)
         dte = opt.get('days_to_expiration', 0)
 
-        mp_diff = (max_pain - cur) / cur * 100 if cur else 0
+        mp_diff = (max_pain - cur) / cur * 100 if cur and max_pain else 0
         mp_dir = "위" if mp_diff > 0 else "아래"
 
         ko1, ko2 = st.columns(2)

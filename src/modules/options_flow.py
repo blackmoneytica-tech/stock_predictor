@@ -30,11 +30,14 @@ class OptionsFlowModule(AnalysisModule):
         reference = data.get('as_of_date')
 
         max_pain = self.calculate_max_pain(options_chain, target_expiration)
-        max_pain_distance = (max_pain - current_price) / current_price
+        # data unreliable (OI 부족): max_pain None → score=0, confidence=0
+        data_unavailable = data.get('options_data_unavailable', False) or max_pain is None
+        max_pain_distance = (
+            (max_pain - current_price) / current_price if max_pain else 0.0
+        )
 
         iv = self._get_atm_iv(options_chain, current_price, target_expiration)
         days_to_exp = self._days_to_expiration(target_expiration, reference)
-        # implied_move ≥ 0 보장 (음수 days_to_exp 방어)
         implied_move = current_price * iv * np.sqrt(max(0, days_to_exp) / 252)
 
         pc_ratio = self._compute_pc_ratio(options_chain, target_expiration)
@@ -46,36 +49,59 @@ class OptionsFlowModule(AnalysisModule):
 
         skew = self._compute_skew(options_chain, current_price, target_expiration)
 
-        score = self._compute_options_score(
-            max_pain_distance, pc_ratio, iv_rank, skew, hv_iv_ratio,
-        )
+        if data_unavailable:
+            score = 0.0  # 데이터 신뢰 X → 옵션 모듈 무효화 (다른 모듈에 영향 X)
+            confidence = 0.0
+        else:
+            score = self._compute_options_score(
+                max_pain_distance, pc_ratio, iv_rank, skew, hv_iv_ratio,
+            )
+            confidence = 0.75
 
         return ModuleOutput(
             module_name=self.name,
             score=score,
             direction=self.score_to_direction(score),
-            confidence=0.75,
+            confidence=confidence,
             details={
-                'max_pain': max_pain,
-                'max_pain_distance_pct': max_pain_distance * 100,
+                'max_pain': max_pain,  # None일 수 있음
+                'max_pain_distance_pct': max_pain_distance * 100 if max_pain else None,
                 'implied_move': implied_move,
-                'implied_move_pct': implied_move / current_price * 100,
-                'put_call_ratio': pc_ratio,
+                'implied_move_pct': implied_move / current_price * 100 if current_price else 0,
+                'put_call_ratio': pc_ratio if not data_unavailable else None,
                 'iv': iv,
-                'iv_rank': iv_rank,
-                'iv_percentile': iv_percentile,
+                'iv_rank': iv_rank if not data_unavailable else None,
+                'iv_percentile': iv_percentile if not data_unavailable else None,
                 'hv': hv,
-                'hv_iv_ratio': hv_iv_ratio,
-                'skew': skew,
+                'hv_iv_ratio': hv_iv_ratio if not data_unavailable else None,
+                'skew': skew if not data_unavailable else None,
                 'days_to_expiration': days_to_exp,
                 'expiration_date': target_expiration,
                 'strikes': sorted(options_chain[target_expiration].keys()),
+                'data_unavailable': data_unavailable,
+                'data_unavailable_reason': (
+                    "옵션 OI 데이터 신뢰 X (Marketdata.app IP 차단 또는 "
+                    "yfinance placeholder 응답). 옵션 모듈 무효화. "
+                    "Max Pain/IV Rank/Skew 신뢰할 수 없음."
+                    if data_unavailable else None
+                ),
             },
         )
 
-    def calculate_max_pain(self, options_chain, expiration) -> float:
-        """Max Pain — 옵션 매도자에게 가장 유리한 가격 (call + put pain 최소)."""
+    def calculate_max_pain(self, options_chain, expiration):
+        """Max Pain — 옵션 매도자에게 가장 유리한 가격.
+
+        OI 합이 1000 미만이면 데이터 신뢰 X → None 반환 (잘못된 max_pain 회피).
+        """
         strikes = sorted(options_chain[expiration].keys())
+        # OI 신뢰도 게이트 (yfinance placeholder/Marketdata 차단 시)
+        total_oi = sum(
+            (options_chain[expiration][K].get('call_oi', 0) or 0)
+            + (options_chain[expiration][K].get('put_oi', 0) or 0)
+            for K in strikes
+        )
+        if total_oi < 1000:
+            return None  # 데이터 unreliable
 
         min_pain = float('inf')
         max_pain_strike = strikes[0]
@@ -84,9 +110,9 @@ class OptionsFlowModule(AnalysisModule):
             pain = 0
             for K in strikes:
                 if strike > K:
-                    pain += (strike - K) * options_chain[expiration][K].get('call_oi', 0) * 100
+                    pain += (strike - K) * (options_chain[expiration][K].get('call_oi', 0) or 0) * 100
                 if strike < K:
-                    pain += (K - strike) * options_chain[expiration][K].get('put_oi', 0) * 100
+                    pain += (K - strike) * (options_chain[expiration][K].get('put_oi', 0) or 0) * 100
 
             if pain < min_pain:
                 min_pain = pain
