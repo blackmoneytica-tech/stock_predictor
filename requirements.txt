@@ -1,0 +1,16 @@
+# Streamlit Cloud auto-install — pyproject.toml의 dependencies + UI 추가
+streamlit>=1.30
+plotly>=5.18
+pyarrow>=14.0
+streamlit-authenticator>=0.3.2
+
+yfinance>=0.2.40
+pandas>=2.0
+numpy>=1.24
+scipy>=1.11
+requests>=2.31
+python-dotenv>=1.0
+statsmodels>=0.14
+fredapi>=0.5
+cachetools>=5.3
+pyyaml>=6.0

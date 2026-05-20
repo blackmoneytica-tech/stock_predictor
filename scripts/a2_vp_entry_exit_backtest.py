@@ -32,17 +32,29 @@ from scipy import stats
 from src.data.price_feed import get_daily_ohlcv
 from src.modules.demand_supply import compute_volume_profile
 
+VP_CACHE_DIR = Path("data/cache/vp_rolling")
+VP_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def section(t): print(f"\n{'='*65}\n{t}\n{'='*65}")
 
 
-def _build_rolling_vp(ohlcv, lookback=90):
-    """각 date 에 대해 직전 lookback 일 VP (POC/VAH/VAL) rolling 계산."""
+def _build_rolling_vp(ohlcv, lookback=90, ticker=None):
+    """각 date 에 대해 직전 lookback 일 VP (POC/VAH/VAL) rolling 계산.
+
+    ticker 지정 시 디스크 캐시 사용 — 동일 ohlcv 길이면 재사용.
+    """
+    cache_key = None
+    if ticker:
+        last_date = pd.to_datetime(ohlcv.index[-1]).strftime("%Y%m%d")
+        cache_key = VP_CACHE_DIR / f"{ticker}_{lookback}d_{last_date}_{len(ohlcv)}.parquet"
+        if cache_key.exists():
+            return pd.read_parquet(cache_key)
+
     rows = []
-    closes = ohlcv["close"].values
     idx = ohlcv.index
     for i in range(len(ohlcv)):
-        if i < 30:  # 최소 30일 필요
+        if i < 30:
             rows.append((idx[i], np.nan, np.nan, np.nan))
             continue
         start = max(0, i - lookback)
@@ -53,6 +65,8 @@ def _build_rolling_vp(ohlcv, lookback=90):
         except Exception:
             rows.append((idx[i], np.nan, np.nan, np.nan))
     df = pd.DataFrame(rows, columns=["date", "poc", "vah", "val"]).set_index("date")
+    if cache_key:
+        df.to_parquet(cache_key)
     return df
 
 
@@ -74,7 +88,7 @@ def build_panel():
             hist = get_daily_ohlcv(t, start=start_d, end=end_d)
             if hist is None or len(hist) < 100:
                 continue
-            vp = _build_rolling_vp(hist, lookback=90)
+            vp = _build_rolling_vp(hist, lookback=90, ticker=t)
             merged = sub.merge(vp, left_on="date", right_index=True, how="left")
             merged["ticker"] = t
             # forward path = 다음 10 봉의 high/low (target/stop hit 측정)

@@ -1,11 +1,13 @@
 """Streamlit dashboard — 의사결정 중심 UI.
 
-실행: streamlit run src/ui/dashboard.py
+실행 (로컬): streamlit run src/ui/dashboard.py
+배포 (web): Streamlit Community Cloud — secrets로 API 키 + password 등록.
 
 페이지 1 (메인): 종목 입력 → 5일 forecast 차트 + 매수/매도 가격대 + 결정 요약
 """
 from __future__ import annotations
 
+import os
 import sys
 import warnings
 from datetime import date, datetime, timedelta
@@ -19,13 +21,59 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.system import StockPredictionSystem  # noqa: E402
-
 st.set_page_config(
     page_title="Stock Predictor",
     page_icon="📊",
     layout="wide",
 )
+
+# ── Streamlit Cloud secrets → 환경변수 동기화 ─────────────────
+# Cloud에 등록한 secrets를 기존 os.environ.get() 기반 코드가 읽을 수 있게.
+def _sync_secrets_to_env():
+    if not hasattr(st, "secrets"):
+        return
+    try:
+        keys = ["FRED_API_KEY", "ALPHA_VANTAGE_KEY", "FINNHUB_KEY",
+                "MARKETDATA_KEY", "SEC_USER_AGENT",
+                "TRADE_JOURNAL_URL", "AUTH_TOKEN"]
+        for k in keys:
+            if k in st.secrets and not os.environ.get(k):
+                os.environ[k] = str(st.secrets[k])
+    except Exception:
+        pass
+
+
+_sync_secrets_to_env()
+
+
+# ── 간단 password 인증 (Streamlit Cloud는 public URL이라 보호 필요) ──
+def _password_gate():
+    """st.secrets['APP_PASSWORD']가 등록된 경우만 password 체크."""
+    pw = None
+    try:
+        pw = st.secrets.get("APP_PASSWORD") if hasattr(st, "secrets") else None
+    except Exception:
+        pw = None
+    if not pw:
+        return  # 로컬 실행 시 password 없음 → 통과
+
+    if st.session_state.get("_auth_ok"):
+        return
+    st.markdown("# 🔐 로그인")
+    pwd_input = st.text_input("Password", type="password", key="_pw_input")
+    if st.button("로그인", type="primary"):
+        if pwd_input == pw:
+            st.session_state["_auth_ok"] = True
+            st.rerun()
+        else:
+            st.error("비밀번호가 일치하지 않습니다.")
+    st.stop()
+
+
+_password_gate()
+
+# src import는 secrets 동기화 후 (FRED_API_KEY 등이 환경변수에 있어야 모듈 로드 시 OK)
+from src.system import StockPredictionSystem  # noqa: E402
 
 # ── 캐시 ────────────────────────────────────────────────────
 @st.cache_resource

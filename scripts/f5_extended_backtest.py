@@ -27,18 +27,10 @@ import pandas as pd
 from scipy import stats
 
 from src.data.price_feed import get_daily_ohlcv
+from src.data.universe import get_universe
 
-
-UNIVERSE = [
-    # F5 backtest 11종
-    "AAPL", "AMD", "AMZN", "COIN", "CRCL", "HOOD", "META", "MSFT", "MSTR", "NVDA", "TSLA",
-    # 추가 large-cap 다양성
-    "GOOGL", "NFLX", "PLTR", "SMCI",
-    # ETF (macro 환경 sample)
-    "SPY", "QQQ", "IWM",
-    # F1 / F5 검증에 도움 — 반도체 추가
-    "AVGO", "MU", "ARM",
-]
+import os
+UNIVERSE = get_universe(os.environ.get("UNIVERSE", "full"))
 
 
 def section(t): print(f"\n{'='*65}\n{t}\n{'='*65}")

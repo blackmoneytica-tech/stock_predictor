@@ -9,6 +9,9 @@ __pycache__/
 .venv/
 venv/
 
+# Streamlit Cloud secrets (실제 키 commit 금지 — example만 commit OK)
+.streamlit/secrets.toml
+
 scripts/_set_gh_secrets.py
 
 data/cache/

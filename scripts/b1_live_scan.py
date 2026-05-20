@@ -26,25 +26,9 @@ import pandas as pd
 
 from src.data.price_feed import get_daily_ohlcv, get_current_price
 from src.modules.demand_supply import compute_volume_profile
+from src.data.universe import get_universe
 
-
-# ── 워치 종목 (메모리 + 백테스트 + 최근 push) ──
-WATCHLIST = [
-    # Track B HIGH conviction (2026-05-18 push)
-    "BWXT", "CRDO", "ALAB", "STRL",
-    # Track B Top 12 (Phase 2-3)
-    "ONTO", "RKLB", "MYRG", "COHR", "AEIS", "KTOS", "MOD", "VCEL",
-    "AMKR", "MKSI", "STVN",
-    # Sweet spot mentions
-    "PKE", "GLBE", "KLIC", "AAOI",
-    # Recent Q1 validation
-    "HBM", "GPOR", "RELY",
-    # Yesterday's re-analysis
-    "LQDA", "SMR", "ASTS", "CRCL", "MSTR",
-    # Mega-caps + F5 backtest universe
-    "NVDA", "AAPL", "AMD", "META", "MSFT", "GOOGL",
-    "AMZN", "TSLA", "AVGO", "NFLX", "PLTR",
-]
+WATCHLIST = get_universe(os.environ.get("UNIVERSE", "full"))
 
 
 def fetch_live_watchlist():
