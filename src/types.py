@@ -98,3 +98,6 @@ class PredictionResult:
 
     # 모듈 합의 카운팅 tier (2026-05-20 backtest)
     module_consensus: Optional[Dict] = None  # {n_bull, n_bear, tier, label, tagline, backtest}
+
+    # 옵션 신호 종합 (call/put walls + IV rank + 뉴스, 2026-05-20 검증)
+    options_signals: Optional[Dict] = None  # {tier, call_wall, put_wall, iv_rank_label, ...}

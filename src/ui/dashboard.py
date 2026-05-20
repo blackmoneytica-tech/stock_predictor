@@ -652,6 +652,35 @@ Implied Move (IM) = 현재가 × IV × √(horizon / 252)
         if opt_takeaways:
             st.info("**🤖 종합 해석**\n\n" + "\n\n".join(f"- {t}" for t in opt_takeaways))
 
+        # 옵션 tier (2026-05-20 backtest 검증)
+        opt_sig = getattr(result, "options_signals", None)
+        if opt_sig and opt_sig.get("tier") and opt_sig["tier"] != "normal":
+            tone = opt_sig.get("tone", "neutral")
+            bg = {
+                "bull": "linear-gradient(135deg,#7c3aed,#a855f7)",
+                "warn": "linear-gradient(135deg,#f59e0b,#d97706)",
+            }.get(tone, "rgba(255,255,255,0.08)")
+            color = "#fff" if tone in ("bull", "warn") else "inherit"
+            tier_html = f"""
+            <div style="padding:12px 16px;border-radius:8px;background:{bg};color:{color};
+                        margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+                <div style="font-size:15px;font-weight:800;margin-bottom:4px">
+                    {opt_sig.get('tagline', '')}
+                </div>
+                <div style="font-size:11px;opacity:0.9;margin-bottom:6px">
+                    📊 백테스트: {opt_sig.get('backtest', '')}
+                </div>
+                <div style="font-size:11px;background:rgba(255,255,255,0.15);
+                            padding:6px 10px;border-radius:4px;">
+                    Call Wall ${opt_sig.get('call_wall', '?')} ({opt_sig.get('call_wall_dist_pct', 0):+.1f}%)
+                    · Put Wall ${opt_sig.get('put_wall', '?')} ({opt_sig.get('put_wall_dist_pct', 0):+.1f}%)
+                    · vol/OI {opt_sig.get('vol_oi_ratio', 0):.2f}
+                    · 뉴스 {opt_sig.get('news_score', 0):+.1f}
+                </div>
+            </div>
+            """
+            st.markdown(tier_html, unsafe_allow_html=True)
+
     with st.expander("⚙️ 매물대 (Volume Profile) — 거래량 누적 가격대", expanded=True):
         ds = result.modules["demand_supply"].details
         poc = ds.get('poc', 0)

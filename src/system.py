@@ -151,6 +151,24 @@ class StockPredictionSystem:
             module_outputs, context['macro_breadth_mode'],
         )
 
+        # 옵션 신호 종합 (Tier 1 alpha: put_wall + 뉴스 + IV<50%, 또는 IV<30% 단독)
+        try:
+            from .strategy.options_signals import extract_walls, evaluate_options_signals
+            walls = extract_walls(
+                data.get('option_oi_by_strike') or {},
+                data.get('options_chain') or {},
+                data.get('target_expiration') or '',
+            )
+            options_signals_info = evaluate_options_signals(
+                current_price=data['current_price'],
+                options_details=module_outputs['options'].details,
+                walls=walls,
+                news_score=data.get('news_sentiment_score', 0) or 0,
+                news_n=data.get('news_sentiment_n', 0) or 0,
+            )
+        except Exception:
+            options_signals_info = None
+
         return PredictionResult(
             ticker=ticker,
             timestamp=datetime.now(),
@@ -174,6 +192,7 @@ class StockPredictionSystem:
             sizing_rationale=rec_rationale,
             sweet_spot=sweet_spot_info,
             module_consensus=consensus_info,
+            options_signals=options_signals_info,
         )
 
     def _fetch_data(self, ticker: str, horizon_days: int = 5) -> Dict:
