@@ -1,22 +1,26 @@
-"""Position sizing — walk-forward 검증 룰 (2026-05-19 backtest).
+"""Position sizing — Sweet Spot 중심 (2026-05-22 약세장 검증 후 재설계).
 
-1499-trade simulation에서 baseline 대비:
-  1d: Sharpe 0.33 → 2.51 (+2.18), Total +120% → +555% (4.6×), MDD -329% → -85% (3.9× 안전)
-  5d: Sharpe 0.45 → 0.73, Total +781% → +924%
+⚠️ 중요 — 룰 robustness 등급:
 
-Direction:
-  - Short 영구 비활성 (walk-forward에서 모든 short signal -3~-7%/trade)
-  - 1d × BEAR/CHOPPY: 시스템 EV 신호 따라감
-  - 그 외: long bias only
+✅ TIER 1 (강세장+약세장 둘 다 검증, 진짜 alpha):
+  - Sweet Spot contrarian (RS weak + 시스템 score<0 + DD buy_cat)
+    강세장 10d 95.8% win / 약세장 10d 66.1% win (-29.7%p but 여전히 64%+)
+    → 적중 시 1.5x size, horizon 5d/10d 우선
+  - Short 영구 금지 (강세장 -3~-7% / 약세장 33% win 일관)
 
-Sizing (0.0~1.5x):
-  1d × BEAR: 강한 신호 1.5x, 약함 0.5x
-  1d × CHOPPY: 강한 신호 1.2x, 약함 0.4x
-  1d × BULL/STRONG_*: 0.8x (baseline)
-  5d × BULL/STRONG_BULL: 1.0x
-  5d × STRONG_BEAR: 0.8x (oversold rebound)
-  5d × BEAR: 0.0x (cash)
-  5d × CHOPPY: 0.4x (small long)
+⚠️ TIER 2 (강세장 한정 = bull-only):
+  - Verified Rules + Sizing (강세장 Sharpe +2.18 → 약세장 -1.20)
+  - 모듈 합의 n_bull≥5 (강세장 65.7% win → 약세장 28.6%)
+  - 1d × BEAR + 시스템 신호 (강세장 64% / 약세장 sample 부족)
+
+🎯 운영 모드:
+  - Sweet Spot 적중: 1.5x 진입 (Tier 1, 둘 다 검증)
+  - 매크로 BULL/STRONG_BULL + 다른 강세장 룰: 보조 (1.0x baseline, warning 표시)
+  - 매크로 BEAR/STRONG_BEAR + Sweet Spot 미적중: cash (Tier 2 룰 음의 alpha)
+
+검증 출처:
+  강세장: 1499 trades, 2025-12 ~ 2026-05 (Sharpe 2.51 — bull only)
+  약세장: 720 trades, 2022-01 ~ 2022-11 (Sharpe -1.20 — bull rules fail)
 """
 from __future__ import annotations
 
@@ -92,10 +96,10 @@ def evaluate_sweet_spot(
             "tagline": "약세장 바닥 + 시스템도 비관 → 반등 진입 (contrarian)",
         }
 
-    # 5d contrarian
+    # 5d contrarian (2022 약세장 검증: BULL은 -2.01% 음의 alpha → 제외)
     conditions = [
-        {"label": macro_label + " (CHOPPY / BULL / STRONG_BULL)",
-         "met": macro in ("CHOPPY", "BULL", "STRONG_BULL")},
+        {"label": macro_label + " (STRONG_BULL / CHOPPY)",
+         "met": macro in ("STRONG_BULL", "CHOPPY")},
         {"label": cat_label + " (buy_zone / deep / strong_buy)",
          "met": cat_s in ("strong_buy", "deep", "buy_zone")},
         {"label": rs_label + " (weak/very_weak 필요)",
@@ -110,7 +114,10 @@ def evaluate_sweet_spot(
         "active": all_met,
         "tier": "5d_contrarian" if all_met else None,
         "conditions": conditions,
-        "backtest": "in 56% / out 66.7% win, +5.36%/trade (n=15)",
+        "backtest": (
+            "강세장 5d 66.7%/+5.36%, 약세장 10d 66.1%/+3.70% "
+            "(STRONG_BULL 81.8%/+6.36% · CHOPPY 60%/+4.38%)"
+        ),
         "tagline": "DD 깊은 종목 + 시장보다 더 떨어진 + 시스템도 비관 → 반등",
     }
 
@@ -155,31 +162,42 @@ def compute_recommendation(
     *,
     cat: str = "", rs_grade: str = "", composite_score: float = 0.0,
 ) -> Tuple[int, float, str]:
-    """direction + size + 한국어 설명. PredictionResult에 채울 3-tuple.
+    """direction + size + 한국어 설명 (2026-05-22 약세장 검증 후 재설계).
 
-    Optional kwargs(cat / rs_grade / composite_score)가 채워지면
-    contrarian sweet spot 룰 우선 적용 (in/out 검증 robust alpha).
+    P1 우선순위: Sweet Spot (TIER 1 — 강세장+약세장 둘 다 검증된 진짜 alpha)
+    P2 보조: 강세장 룰 (TIER 2 — bull-only, BEAR 시 음의 alpha)
     """
-    direction = trade_direction(macro_mode, ev_pct, horizon)
-    size = sizing_factor(macro_mode, ev_pct, confidence, horizon)
     macro = (macro_mode or "?").upper()
 
-    # P1: contrarian sweet spot (in/out 검증된 robust alpha)
+    # ────── P1: Sweet Spot (Tier 1, 강세장+약세장 robust) ──────
     if cat and rs_grade and is_contrarian_sweet_spot(
         macro_mode, cat, rs_grade, composite_score, confidence, ev_pct, horizon,
     ):
-        direction = 1
-        size = 1.5
         rationale = (
-            f"🟢 매수 1.5× — Contrarian sweet spot (DD≤-20% + RS weak + 시스템 확신). "
-            f"백테스트 in 45.5% / out 68.8% win, avg +1.67%~+6.48%/trade (Sharpe 1.03~4.62)"
+            "🟢 매수 1.5× — ⭐ Sweet Spot Contrarian (Tier 1 robust alpha). "
+            "강세장 10d 95.8% win / 약세장 10d 66.1% win — 시장 환경 독립 검증"
         )
-        return direction, size, rationale
+        return 1, 1.5, rationale
+
+    # ────── P2 보조: 약세장에선 cash 우선 (bull-only 룰 음의 alpha) ──────
+    if macro in ("BEAR", "STRONG_BEAR"):
+        # 강세장 룰 적용 X (2022 검증: Verified+Sizing Sharpe -1.20, 모듈 합의 28.6% win)
+        rationale = (
+            "🛑 cash 0× — 약세장에선 Sweet Spot 미적중 시 진입 금지. "
+            "2022 검증: bull 룰 약세장에서 음의 alpha (Sharpe -1.20)"
+        )
+        return 0, 0.0, rationale
+
+    # ────── P3: 강세장에서만 기존 sizing 적용 (bull-only warning) ──────
+    direction = trade_direction(macro_mode, ev_pct, horizon)
+    size = sizing_factor(macro_mode, ev_pct, confidence, horizon)
 
     if direction == 0 or size == 0:
         rationale = _rationale_cash(macro, horizon)
     else:
         rationale = _rationale_long(macro, ev_pct, confidence, horizon, size)
+        # bull-only warning 추가 (검증 사용자 인식)
+        rationale += " · ⚠️ Bull-only (약세장에선 검증 X)"
     return direction, size, rationale
 
 
