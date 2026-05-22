@@ -225,13 +225,39 @@ def main():
         except Exception:
             continue
 
-    today_df = pd.DataFrame(today_signals).T
-    today_df["F5_active"] = today_df["F5"].astype(bool)
-    f5_today = today_df[today_df["F5_active"]]
-    print(f"  F5 활성 종목: {len(f5_today)}")
-    print(f"\n  F5 + stack_T >= 1 종목:")
-    cand = f5_today[f5_today["stack_T"] >= 1].sort_values("stack_T", ascending=False)
-    print(cand[t_cols + ["iv_rank", "stack_T"]].to_string())
+    today_df = pd.DataFrame.from_dict(today_signals, orient="index")
+    print(f"  cols: {list(today_df.columns)}")
+    f5_today = today_df[today_df["F5"] == True]
+    print(f"\n  F5 활성 종목: {len(f5_today)}")
+
+    # 검증된 best combo: F5 + T1 + T4 + T6 (1+4+6: test +2.57%, win 67%, Sharpe 1.57)
+    print(f"\n  ★ BEST 룰 — F5 + T1 RSI<35 + T4 vol squeeze + T6 vol surge:")
+    best_mask = today_df["F5"] & today_df["T1_rsi_oversold"] & today_df["T4_vol_squeeze"] & today_df["T6_vol_surge"]
+    best_cand = today_df[best_mask]
+    if len(best_cand):
+        print(best_cand[["cur", "iv_rank"] + t_cols].to_string())
+    else:
+        print("  → 오늘 통과 종목 없음")
+
+    print(f"\n  중간 룰 — F5 + T1 + T3 (RSI + panic dip):")
+    mid_mask = today_df["F5"] & today_df["T1_rsi_oversold"] & today_df["T3_panic_dip"]
+    mid_cand = today_df[mid_mask]
+    if len(mid_cand):
+        print(mid_cand[["cur", "iv_rank"] + t_cols].to_string())
+    else:
+        print("  → 오늘 통과 종목 없음")
+
+    print(f"\n  완화 룰 — F5 + T1 (RSI<35):")
+    relax_mask = today_df["F5"] & today_df["T1_rsi_oversold"]
+    relax_cand = today_df[relax_mask]
+    if len(relax_cand):
+        print(relax_cand[["cur", "iv_rank"] + t_cols].to_string())
+    else:
+        print("  → 오늘 통과 종목 없음")
+
+    # save
+    today_df.to_parquet("data/results/b_today_signals.parquet")
+    print(f"\n  saved → data/results/b_today_signals.parquet")
 
 
 if __name__ == "__main__":

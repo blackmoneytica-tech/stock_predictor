@@ -195,8 +195,13 @@ class ActionEngine:
     ) -> List[HedgeRecommendation]:
         hedges = []
 
-        iv_rank = modules['options'].details.get('iv_rank', 0.5)
-        hv_iv_ratio = modules['options'].details.get('hv_iv_ratio', 1.0)
+        # iv_rank/hv_iv_ratio가 None일 수 있음 (options data_unavailable)
+        iv_rank = modules['options'].details.get('iv_rank')
+        if iv_rank is None:
+            iv_rank = 0.5
+        hv_iv_ratio = modules['options'].details.get('hv_iv_ratio')
+        if hv_iv_ratio is None:
+            hv_iv_ratio = 1.0
 
         # IV Rank 낮음 + HV>IV → Protective Put
         if iv_rank < 0.30 and hv_iv_ratio > 1.0:
