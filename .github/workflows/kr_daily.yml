@@ -52,5 +52,10 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "[kr-daily] $(date -u +%Y-%m-%d) data update"
-            git push
+            # Retry with rebase on conflict (race with monthly workflow)
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "push attempt $i failed, retrying..."
+              sleep 3
+            done
           fi
