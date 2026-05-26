@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
-      group: kr-monthly
+      # 두 KR workflow를 같은 group으로 묶어서 동시 push 충돌 방지
+      group: kr-dashboard
       cancel-in-progress: false
     permissions:
       contents: write

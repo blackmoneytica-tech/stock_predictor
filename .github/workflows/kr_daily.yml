@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
-      group: kr-daily
+      # 두 KR workflow를 같은 group으로 묶어서 동시 push 충돌 방지
+      group: kr-dashboard
       cancel-in-progress: false
     permissions:
       contents: write   # data/*.json commit 위해 필요
