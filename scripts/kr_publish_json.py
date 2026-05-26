@@ -169,6 +169,34 @@ def check_hb_peak_exit(holdings_codes, ret_thr=0.20, dv_spike_thr=3.0):
     }
 
 
+def refresh_pick_prices():
+    """monthly.json picks의 close 가격을 최신 데이터로 갱신.
+
+    매일 호출되어 picks의 가격이 fresh하도록 유지 (action plan 정확도 위해).
+    """
+    import time
+    monthly_path = DATA_DIR / 'monthly.json'
+    if not monthly_path.exists():
+        return
+    try:
+        with open(monthly_path, encoding='utf-8') as f:
+            data = json.load(f)
+        for pick in data.get('picks', []):
+            try:
+                df = fdr.DataReader(pick['code'], '2026-01-01')
+                df.columns = [c.lower() for c in df.columns]
+                if len(df) > 0:
+                    pick['close'] = float(df['close'].iloc[-1])
+                time.sleep(0.05)
+            except Exception as e:
+                print(f'  [price] {pick["code"]} fail: {e}')
+        with open(monthly_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f'[price] refreshed {len(data.get("picks", []))} picks')
+    except Exception as e:
+        print(f'[price] refresh fail: {e}')
+
+
 def do_daily():
     """매일 zone + lev 계산 → daily.json + history append + Telegram.
 
@@ -326,6 +354,9 @@ def do_daily():
         msg += f'  Effective lev: *{effective_lev:.2f}x*\n'
     msg += f'\nFinal lev: *{lev}x*'
 
+    # picks의 close 가격 refresh (action plan용)
+    refresh_pick_prices()
+
     send_telegram(msg)
     return payload
 
@@ -391,12 +422,15 @@ def do_rebal():
     for code in new_codes:
         mom_raw = mom_map.get(code)
         status = 'HOLD' if code in prev_holdings else 'BUY'
+        # 현재가 (rebal 시점 close)
+        close_kr = float(closes[code].iloc[-1]) if code in closes else None
         picks.append({
             'code': code,
             'name': STOCK_NAMES.get(code, '?'),
             'sector': SECTOR_MAP.get(code, 'Other'),
             'mom120': mom_raw,
             'status': status,
+            'close': close_kr,
         })
 
     # Compute sells (previous holdings not in new picks)
@@ -418,10 +452,14 @@ def do_rebal():
     save_state(state)
     print(f'[rebal] state updated: holdings={len(new_codes)}, deployed=1.0')
 
+    # next_rebal_date: 21 영업일 후 추정 (calendar로는 약 30일)
+    next_rebal_date = (today + pd.Timedelta(days=30)).date()
+
     payload = {
         'timestamp': now_kst().strftime('%Y-%m-%d %H:%M:%S'),
         'last_rebal': str(today.date()),
         'next_rebal': '21일 후',
+        'next_rebal_date': str(next_rebal_date),
         'zone': zone_label,
         'squeeze_weight': sq_w,
         'vkospi_proxy': float(current_proxy) if current_proxy is not None else None,

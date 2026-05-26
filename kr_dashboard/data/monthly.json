@@ -11,50 +11,58 @@
       "name": "삼성전기",
       "sector": "Semi",
       "mom120": 5.509316770186335,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 1572000.0
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
       "mom120": 3.5254237288135597,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 1068000.0
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
       "mom120": 2.953757225433526,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 2052000.0
     },
     {
       "code": "006800",
       "name": "미래에셋증권",
       "sector": "Finance",
       "mom120": 2.199579128604907,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 66900.0
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
       "mom120": 1.8110328638497655,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 239500.0
     },
     {
       "code": "005380",
       "name": "현대차",
       "sector": "Auto",
       "mom120": 1.6757281553398058,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 689000.0
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
       "mom120": 1.372188139059305,
-      "status": "HOLD"
+      "status": "HOLD",
+      "close": 348000.0
     }
   ],
-  "sells": []
+  "sells": [],
+  "next_rebal_date": "2026-06-25"
 }

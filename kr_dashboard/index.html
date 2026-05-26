@@ -13,6 +13,73 @@
     <div class="subtitle" id="last-update">Loading...</div>
   </header>
 
+  <!-- ⚡ Action Plan (TOP — 내일 정확한 액션) -->
+  <section class="card action-plan-card" id="action-plan-card">
+    <h2>⚡ 내일 실행 액션 <span class="action-date" id="action-date">-</span></h2>
+
+    <!-- Big Headline (BUY/SELL/HOLD/CASH/HB) -->
+    <div class="action-headline" id="action-headline">
+      <div class="headline-emoji" id="headline-emoji">⏳</div>
+      <div class="headline-text" id="headline-text">Loading...</div>
+      <div class="headline-sub" id="headline-sub"></div>
+    </div>
+
+    <!-- Capital Input -->
+    <div class="capital-input">
+      <label for="capital">💼 자본 (KRW):</label>
+      <input type="number" id="capital" placeholder="10000000" step="1000000">
+      <button id="capital-save">저장</button>
+      <div class="capital-summary" id="capital-summary"></div>
+    </div>
+
+    <!-- Per-Stock Order Table -->
+    <div class="order-table-wrap">
+      <table id="order-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>종목</th>
+            <th>현재가</th>
+            <th>배분 (KRW)</th>
+            <th>주 수</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody id="order-body">
+          <tr><td colspan="6" class="loading">자본 입력 후 계산됩니다</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sell List (rebal day only) -->
+    <div class="sell-list" id="sell-list" style="display:none;">
+      <div class="sell-header">🔴 매도 종목 (이번 rebal):</div>
+      <ul id="sell-body"></ul>
+    </div>
+
+    <!-- Trading Time Guide -->
+    <div class="time-guide">
+      <div class="time-guide-row">
+        <span class="time-label">⏰ 한국 정규장:</span>
+        <span class="time-value">09:00 ~ 15:30 (월~금)</span>
+      </div>
+      <div class="time-guide-row">
+        <span class="time-label">✅ 권장 매매:</span>
+        <span class="time-value">09:30 ~ 15:00 <small>(시초/마감 호가 회피)</small></span>
+      </div>
+      <div class="time-guide-row">
+        <span class="time-label">⚠️ 동시호가:</span>
+        <span class="time-value-warn">08:30-09:00 / 15:20-15:30 <small>(슬리피지 ↑)</small></span>
+      </div>
+    </div>
+
+    <!-- Tax/Fee Notice -->
+    <div class="tax-notice">
+      💰 <strong>세금/수수료:</strong>
+      매도 시 거래세 <strong>0.18%</strong> + 양도세 <strong>22%</strong> (연 250만원 면제)
+    </div>
+  </section>
+
   <!-- Daily Zone -->
   <section class="card" id="daily-card">
     <h2>📊 오늘의 Market Zone</h2>

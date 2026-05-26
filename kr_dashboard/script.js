@@ -169,14 +169,181 @@ function renderHistory(d) {
   document.getElementById('zone-history').innerHTML = html;
 }
 
+// ============================================================
+// ⚡ Action Plan — 내일 정확한 액션 + 종목별 주 수 계산
+// ============================================================
+const CAPITAL_STORAGE_KEY = 'kr_v25_capital_krw';
+
+function getCapital() {
+  const v = parseFloat(localStorage.getItem(CAPITAL_STORAGE_KEY) || '10000000');
+  return isNaN(v) ? 10000000 : v;
+}
+
+function saveCapital(v) {
+  localStorage.setItem(CAPITAL_STORAGE_KEY, String(v));
+}
+
+function fmtKRW(v) {
+  if (v === null || v === undefined || isNaN(v)) return '-';
+  return Math.round(v).toLocaleString('ko-KR');
+}
+
+function determineAction(daily, monthly) {
+  // 우선순위: H-B 발동 > Cash > Rebal day (매도/매수) > 보유 유지
+  if (daily?.hb_triggered) {
+    return {
+      emoji: '🚨',
+      text: 'H-B 익절 발동 — Portfolio 1/3 매도',
+      sub: `트리거: ${(daily.hb_triggered_stocks || []).join(', ')} · 5일 쿨다운 시작`,
+      class: 'hb',
+    };
+  }
+  if (daily?.final_lev === 0) {
+    return {
+      emoji: '💤',
+      text: 'CASH (전량 매도, MMF/예금 대기)',
+      sub: 'Macro Crisis gate 발동 — 시장 회복까지 보유 X',
+      class: 'cash',
+    };
+  }
+  // Rebal day 체크 (next_rebal_date가 내일이거나 오늘이면 rebal 임박)
+  const sells = monthly?.sells || [];
+  const buys = (monthly?.picks || []).filter(p => p.status === 'BUY');
+  // 최근 rebal이 오늘이면 = 방금 rebal됨
+  const today = daily?.market_date;
+  const lastRebal = monthly?.last_rebal;
+  const isRebalDay = today === lastRebal && (sells.length > 0 || buys.length > 0);
+
+  if (isRebalDay) {
+    return {
+      emoji: '🔄',
+      text: `월간 Rebal — 매도 ${sells.length}종, 매수 ${buys.length}종`,
+      sub: `Top-7 갱신. 매도 먼저 → 매수 진행 (현금 회수 후 진입)`,
+      class: 'rebal',
+    };
+  }
+  // 보유 유지
+  const lev = daily?.final_lev || 1.0;
+  const levText = lev === 1.5 ? '신용 50%' : lev === 2.0 ? '신용 100% (PANIC)' : '현금';
+  return {
+    emoji: '✅',
+    text: `보유 유지 (Lev ${lev}x, ${levText})`,
+    sub: monthly?.next_rebal_date ? `다음 rebal: ${monthly.next_rebal_date}` : '추가 액션 없음',
+    class: 'hold',
+  };
+}
+
+function renderActionPlan(daily, monthly) {
+  if (!daily || !monthly) return;
+
+  // Date
+  const today = new Date(daily.market_date);
+  const tomorrow = new Date(today.getTime() + 24*60*60*1000);
+  const dStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
+  document.getElementById('action-date').textContent = `(${dStr})`;
+
+  // Headline
+  const action = determineAction(daily, monthly);
+  document.getElementById('headline-emoji').textContent = action.emoji;
+  document.getElementById('headline-text').textContent = action.text;
+  document.getElementById('headline-sub').textContent = action.sub;
+  const headline = document.getElementById('action-headline');
+  headline.className = 'action-headline ' + action.class;
+
+  // Capital input
+  const capInput = document.getElementById('capital');
+  const cap = getCapital();
+  capInput.value = cap;
+
+  // Compute order table
+  renderOrderTable(daily, monthly, cap);
+
+  // Sell list (rebal day)
+  const sells = monthly.sells || [];
+  const sellList = document.getElementById('sell-list');
+  const sellBody = document.getElementById('sell-body');
+  if (sells.length > 0) {
+    sellList.style.display = 'block';
+    sellBody.innerHTML = sells.map(s =>
+      `<li><strong>${s.code}</strong> ${s.name} <small>(${s.sector})</small> — 전량 매도</li>`
+    ).join('');
+  } else {
+    sellList.style.display = 'none';
+  }
+}
+
+function renderOrderTable(daily, monthly, capital) {
+  const picks = monthly.picks || [];
+  if (picks.length === 0) {
+    document.getElementById('order-body').innerHTML =
+      '<tr><td colspan="6" class="loading">Picks 없음</td></tr>';
+    return;
+  }
+
+  const lev = daily.final_lev || 1.0;
+  const deployed = daily.deployed_pct !== undefined ? daily.deployed_pct : 1.0;
+  const effLev = lev * deployed;
+  const totalDeploy = capital * effLev;
+  const perStock = totalDeploy / picks.length;
+
+  // Capital summary
+  const summary = document.getElementById('capital-summary');
+  summary.innerHTML = `
+    <div>레버리지: <strong>${lev}x</strong>${deployed < 1.0 ? ` × deployed <strong>${(deployed*100).toFixed(0)}%</strong> = 실효 <strong>${effLev.toFixed(2)}x</strong>` : ''}</div>
+    <div>총 운용금: <strong>${fmtKRW(totalDeploy)}원</strong> (자본 ${fmtKRW(capital)} × ${effLev.toFixed(2)})</div>
+    <div>종목당 배분: <strong>${fmtKRW(perStock)}원</strong> (1/${picks.length})</div>
+  `;
+
+  // Order table rows
+  const rows = picks.map((p, i) => {
+    const close = p.close;
+    const shares = close && close > 0 ? Math.floor(perStock / close) : 0;
+    const actualKRW = shares * (close || 0);
+    const closeStr = close ? close.toLocaleString('ko-KR') : '-';
+    const statCls = p.status === 'BUY' ? 'status-buy' :
+                    p.status === 'HOLD' ? 'status-hold' : 'status-sell';
+    const statEmoji = p.status === 'BUY' ? '🟢 매수' :
+                      p.status === 'HOLD' ? '🔄 보유' : '🔴 매도';
+    return `<tr>
+      <td>${i+1}</td>
+      <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span></td>
+      <td class="num">${closeStr}</td>
+      <td class="num">${fmtKRW(actualKRW)}</td>
+      <td class="num shares">${shares}주</td>
+      <td class="${statCls}">${statEmoji}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('order-body').innerHTML = rows;
+}
+
+function bindCapitalInput() {
+  const input = document.getElementById('capital');
+  const btn = document.getElementById('capital-save');
+  const save = async () => {
+    const v = parseFloat(input.value);
+    if (!isNaN(v) && v > 0) {
+      saveCapital(v);
+      // Re-render with new capital
+      const [daily, monthly] = await Promise.all([
+        fetch('data/daily.json?t=' + Date.now()).then(r => r.json()),
+        fetch('data/monthly.json?t=' + Date.now()).then(r => r.json()),
+      ]);
+      renderActionPlan(daily, monthly);
+    }
+  };
+  btn.addEventListener('click', save);
+  input.addEventListener('keypress', e => { if (e.key === 'Enter') save(); });
+}
+
 // Init
 (async () => {
-  await Promise.all([loadDaily(), loadMonthly(), loadHistory()]);
+  bindCapitalInput();
+  const [daily, monthly] = await Promise.all([loadDaily(), loadMonthly(), loadHistory()]);
+  if (daily && monthly) renderActionPlan(daily, monthly);
 })();
 
 // Auto-refresh every 5 minutes
-setInterval(() => {
-  loadDaily();
-  loadMonthly();
-  loadHistory();
+setInterval(async () => {
+  const [daily, monthly] = await Promise.all([loadDaily(), loadMonthly(), loadHistory()]);
+  if (daily && monthly) renderActionPlan(daily, monthly);
 }, 5 * 60 * 1000);
