@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-05-26 17:52:41",
+  "market_date": "2026-05-26",
+  "ks200_close": 1260.53,
+  "vkospi_proxy": 73.20043821217564,
+  "zone": "PANIC (MAX BUY)",
+  "base_lev": 2.0,
+  "final_lev": 2.0,
+  "macro_gate": "normal",
+  "usdkrw": 1504.260009765625,
+  "us_vix": 16.790000915527344,
+  "krw_chg20": 0.0219227166932785,
+  "ks200_dd_60d": 0.0
+}

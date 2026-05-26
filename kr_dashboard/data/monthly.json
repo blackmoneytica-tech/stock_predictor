@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-05-26 17:53:09",
+  "last_rebal": "2026-05-26",
+  "next_rebal": "21일 후",
+  "zone": "PANIC",
+  "squeeze_weight": 0.3,
+  "vkospi_proxy": 73.20043821217564,
+  "picks": [
+    {
+      "code": "009150",
+      "name": "삼성전기",
+      "sector": "Semi",
+      "mom120": 5.509316770186335,
+      "status": "HOLD"
+    },
+    {
+      "code": "011070",
+      "name": "LG이노텍",
+      "sector": "Semi",
+      "mom120": 3.5254237288135597,
+      "status": "HOLD"
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "sector": "Semi",
+      "mom120": 2.953757225433526,
+      "status": "HOLD"
+    },
+    {
+      "code": "006800",
+      "name": "미래에셋증권",
+      "sector": "Finance",
+      "mom120": 2.199579128604907,
+      "status": "HOLD"
+    },
+    {
+      "code": "066570",
+      "name": "LG전자",
+      "sector": "Tech",
+      "mom120": 1.8110328638497655,
+      "status": "HOLD"
+    },
+    {
+      "code": "005380",
+      "name": "현대차",
+      "sector": "Auto",
+      "mom120": 1.6757281553398058,
+      "status": "HOLD"
+    },
+    {
+      "code": "032830",
+      "name": "삼성생명",
+      "sector": "Finance",
+      "mom120": 1.372188139059305,
+      "status": "HOLD"
+    }
+  ],
+  "sells": []
+}

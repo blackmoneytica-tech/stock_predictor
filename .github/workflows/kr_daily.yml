@@ -1,0 +1,56 @@
+name: KR V25-full Daily
+
+on:
+  # 매일 KST 16:00 (UTC 07:00) — 한국 장 마감 30분 후
+  schedule:
+    - cron: '0 7 * * 1-5'   # 월-금만
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '평일 외에도 강제 실행'
+        required: false
+        default: ''
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: kr-daily
+      cancel-in-progress: false
+    permissions:
+      contents: write   # data/*.json commit 위해 필요
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run KR daily publisher
+        env:
+          TG_BOT_TOKEN: ${{ secrets.KR_TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.KR_TG_CHAT_ID }}
+          PYTHONIOENCODING: utf-8
+        run: |
+          python scripts/kr_publish_json.py --mode daily
+
+      - name: Commit & push dashboard JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kr_dashboard/data/*.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[kr-daily] $(date -u +%Y-%m-%d) data update"
+            git push
+          fi

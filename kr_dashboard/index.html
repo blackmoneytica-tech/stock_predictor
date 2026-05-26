@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇰🇷 KR V25-full Champion</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🇰🇷 KR V25-full Champion</h1>
+    <div class="subtitle" id="last-update">Loading...</div>
+  </header>
+
+  <!-- Daily Zone -->
+  <section class="card" id="daily-card">
+    <h2>📊 오늘의 Market Zone</h2>
+    <div class="grid-2">
+      <div class="metric">
+        <div class="label">KS200 종가</div>
+        <div class="value" id="ks200-close">-</div>
+      </div>
+      <div class="metric">
+        <div class="label">VKOSPI proxy</div>
+        <div class="value" id="vkospi-proxy">-</div>
+      </div>
+    </div>
+    <div class="zone-banner" id="zone-banner">
+      <div class="zone-label">Zone</div>
+      <div class="zone-value" id="zone-value">-</div>
+    </div>
+    <div class="grid-2">
+      <div class="metric">
+        <div class="label">권장 Leverage</div>
+        <div class="value highlight" id="final-lev">-</div>
+      </div>
+      <div class="metric">
+        <div class="label">Macro Gate</div>
+        <div class="value" id="macro-gate">-</div>
+      </div>
+    </div>
+    <div class="macro-detail">
+      <div>USDKRW: <span id="usdkrw">-</span></div>
+      <div>^VIX: <span id="vix">-</span></div>
+      <div>KS200 60d DD: <span id="ks200-dd60">-</span></div>
+    </div>
+    <div class="action" id="action-msg"></div>
+  </section>
+
+  <!-- Monthly Picks -->
+  <section class="card" id="rebal-card">
+    <h2>📦 Top-7 Picks (Monthly Rebal)</h2>
+    <div class="rebal-meta">
+      <span>마지막 rebal: <strong id="last-rebal">-</strong></span>
+      <span>다음 rebal: <strong id="next-rebal">-</strong></span>
+    </div>
+    <div class="zone-info-small">Zone-dep squeeze weight: <span id="rebal-zone">-</span></div>
+    <table id="picks-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>종목</th>
+          <th>Sector</th>
+          <th>Mom120</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="picks-body">
+        <tr><td colspan="5" class="loading">Loading picks...</td></tr>
+      </tbody>
+    </table>
+    <div class="alloc">균등 배분: 14.3% per stock (1/7)</div>
+  </section>
+
+  <!-- History (last 30 days) -->
+  <section class="card" id="history-card">
+    <h2>📈 Zone History (최근 30일)</h2>
+    <div class="history-chart" id="zone-history">
+      <div class="loading">Loading history...</div>
+    </div>
+  </section>
+
+  <!-- System Info -->
+  <section class="card" id="info-card">
+    <h2>ℹ️ V25-full Champion 정보</h2>
+    <div class="info-grid">
+      <div><span class="info-label">백테스트 12.2y:</span> <span class="info-value">+19,796% / Sharpe 1.38 / DD -41%</span></div>
+      <div><span class="info-label">IS Sh → OOS Sh:</span> <span class="info-value">1.33 → 1.74 (Δ +0.41)</span></div>
+      <div><span class="info-label">WF mean alpha:</span> <span class="info-value">+232.4pp (6/6 windows)</span></div>
+      <div><span class="info-label">Picking:</span> <span class="info-value">mom120 + zone-dep squeeze + 52w_low_rebound</span></div>
+      <div><span class="info-label">Universe:</span> <span class="info-value">KOSPI200 시총 top 50 (PIT 분기별 갱신)</span></div>
+      <div><span class="info-label">Rebal:</span> <span class="info-value">월간 (21d), Top-7 균등, sector cap 3</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Powered by GitHub Actions cron · Cloudflare Pages</div>
+    <div>Source: <a href="https://github.com/" target="_blank">github.com</a> (private)</div>
+  </footer>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

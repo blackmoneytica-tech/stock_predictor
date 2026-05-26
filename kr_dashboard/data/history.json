@@ -1,0 +1,244 @@
+{
+  "history": [
+    {
+      "date": "2026-04-10",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 84.61279046280963,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-13",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 82.3343431325194,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-14",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 80.75002918200968,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-15",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 78.6480203410327,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-16",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 76.63927182484201,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-17",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 74.65000627878774,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-20",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 72.38606797218068,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-21",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 70.91667167859322,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-22",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 68.8157187747002,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-23",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 66.74087939701515,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-24",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 64.96305270386466,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-27",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 63.48833590681912,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-28",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 61.59602478075521,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-29",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 59.72026429958721,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-04-30",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 58.89264374175865,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-04",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 62.132574791621764,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-06",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 68.09572185766295,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-07",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 66.05000659110604,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-08",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 64.33688348698999,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-11",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 65.11783557792624,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-12",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 65.80771880811545,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-13",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 64.36574120256171,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-14",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 62.44148161523711,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-15",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 71.54160447584795,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-18",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 69.37022912852058,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-19",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 70.32760906853628,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-20",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 68.48036463845875,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-21",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 77.18398206129747,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-22",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 75.00587836773221,
+      "gate": "normal"
+    },
+    {
+      "date": "2026-05-26",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 73.20043821217564,
+      "gate": "normal"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+name: KR V25-full Monthly Rebal
+
+# 매월 21번째 영업일에 자동 실행 — GitHub cron은 정확한 영업일 trigger 어려우니
+# 매월 25-31일 KST 17:00에 trigger + 마지막 실행 21d+ 경과 시에만 rebal.
+# 더 간단: 매월 마지막 평일 또는 사용자 수동 trigger.
+
+on:
+  # 매월 마지막 주 금요일 (28-31일 사이 금요일) KST 17:00 (UTC 08:00)
+  # cron: 매월 28-31일 금요일 UTC 08:00
+  schedule:
+    - cron: '0 8 28-31 * 5'   # 28-31일 금요일 UTC 08:00
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '수동 rebal 사유 (선택)'
+        required: false
+        default: ''
+
+jobs:
+  monthly_rebal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: kr-monthly
+      cancel-in-progress: false
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run KR monthly rebal publisher
+        env:
+          TG_BOT_TOKEN: ${{ secrets.KR_TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.KR_TG_CHAT_ID }}
+          PYTHONIOENCODING: utf-8
+        run: |
+          python scripts/kr_publish_json.py --mode both
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kr_dashboard/data/*.json
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[kr-monthly] $(date -u +%Y-%m-%d) rebal picking"
+            git push
+          fi
