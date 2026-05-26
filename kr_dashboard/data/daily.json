@@ -1,14 +1,18 @@
 {
-  "timestamp": "2026-05-26 18:40:50",
+  "timestamp": "2026-05-26 19:02:04",
   "market_date": "2026-05-26",
   "ks200_close": 1260.53,
   "vkospi_proxy": 73.20043821217564,
   "zone": "PANIC (MAX BUY)",
-  "base_lev": 2.0,
-  "final_lev": 2.0,
+  "base_lev": 1.5,
+  "final_lev": 1.5,
   "macro_gate": "normal",
-  "usdkrw": 1503.9100341796875,
-  "us_vix": 16.75,
-  "krw_chg20": 0.021684959923015557,
-  "ks200_dd_60d": 0.0
+  "usdkrw": 1504.1199951171875,
+  "us_vix": 16.68000030517578,
+  "krw_chg20": 0.021827597399420196,
+  "ks200_dd_60d_today": 0.0,
+  "ks200_dd_60d_lagged": -0.013787333992937523,
+  "ks200_dd_60d": -0.013787333992937523,
+  "strict_panic_real": false,
+  "strict_panic_fallback": true
 }

@@ -85,7 +85,9 @@ function renderDaily(d) {
   document.getElementById('macro-gate').textContent = (d.macro_gate || 'normal').toUpperCase();
   document.getElementById('usdkrw').textContent = d.usdkrw ? Math.round(d.usdkrw) : '-';
   document.getElementById('vix').textContent = fmtNum(d.us_vix);
-  document.getElementById('ks200-dd60').textContent = d.ks200_dd_60d !== null ? fmtPct(d.ks200_dd_60d) : '-';
+  // Strict-Panic: lagged DD가 action 기준 (전일 종가까지의 60d high)
+  const ddLagged = d.ks200_dd_60d_lagged !== undefined ? d.ks200_dd_60d_lagged : d.ks200_dd_60d;
+  document.getElementById('ks200-dd60').textContent = ddLagged !== null ? fmtPct(ddLagged) + ' (lagged)' : '-';
 
   const zoneBanner = document.getElementById('zone-banner');
   zoneBanner.className = 'zone-banner ' + (ZONE_CLASS[d.zone] || '');
@@ -100,10 +102,19 @@ function renderDaily(d) {
     actionText = '✅ 정상 운영 (lev 1x, 종목 7개 균등)';
     actionClass = 'normal';
   } else if (d.final_lev === 1.5) {
-    actionText = '⚡ Elevated (lev 1.5x, 신용 50%)';
-    actionClass = 'elevated';
+    if (d.strict_panic_fallback) {
+      actionText = '⚡ Strong-Bull Elevated (lev 1.5x)\n신고가+변동성, 진짜 panic 아님 (Strict-Panic fallback)';
+      actionClass = 'elevated';
+    } else {
+      actionText = '⚡ Elevated (lev 1.5x, 신용 50%)';
+      actionClass = 'elevated';
+    }
   } else if (d.final_lev >= 2.0) {
-    actionText = '🔥 PANIC BUY (lev 2x, max 신용)';
+    if (d.strict_panic_real) {
+      actionText = '🔥 REAL PANIC BUY (lev 2x)\nproxy≥30 AND lagged DD≤-10%';
+    } else {
+      actionText = '🔥 PANIC BUY (lev 2x, max 신용)';
+    }
     actionClass = 'panic';
   }
   actionEl.textContent = actionText;

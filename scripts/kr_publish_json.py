@@ -113,7 +113,14 @@ def save_history(hist):
 
 
 def do_daily():
-    """매일 zone + lev 계산 → daily.json + history append + Telegram."""
+    """매일 zone + lev 계산 → daily.json + history append + Telegram.
+
+    V31 Strict-Panic 적용:
+      - proxy < 22.5 → lev 1.0
+      - 22.5-30 → lev 1.5
+      - proxy >= 30 AND lagged_DD <= -10% → real panic → lev 2.0
+      - proxy >= 30 AND lagged_DD > -10% (강세장 흥분) → lev 1.5 (fallback)
+    """
     print('[daily] start')
     # KS200 fetch (2y history for EWMA proxy)
     ks = fdr.DataReader('KS200', '2023-01-01')
@@ -122,9 +129,24 @@ def do_daily():
 
     zone, base_lev, proxy = compute_zone(ks['close'])
 
-    # KS200 60d DD (information only, not applied to lev — V27 retract)
+    # V31: lagged KS200 60d DD (전일 종가까지의 60d high 기준)
     ks_60d_high = ks['close'].rolling(60, min_periods=20).max()
-    ks_dd_60d = float(ks['close'].iloc[-1] / ks_60d_high.iloc[-1] - 1)
+    ks_dd_60d_same = float(ks['close'].iloc[-1] / ks_60d_high.iloc[-1] - 1)  # 당일 (참고)
+    if len(ks) >= 62:
+        ks_60d_high_lagged = ks_60d_high.iloc[-2]
+        ks_dd_60d_lagged = float(ks['close'].iloc[-2] / ks_60d_high_lagged - 1)  # 전일
+    else:
+        ks_dd_60d_lagged = None
+
+    # V31 Strict-Panic: proxy >= 30 인 경우만 lagged DD 확인
+    strict_panic_real = False
+    strict_panic_fallback = False
+    if proxy is not None and not pd.isna(proxy) and proxy >= 30:
+        if ks_dd_60d_lagged is not None and ks_dd_60d_lagged <= -0.10:
+            strict_panic_real = True   # real panic → lev 2.0
+        else:
+            strict_panic_fallback = True
+            base_lev = 1.5             # strong bull → fallback to 1.5x
 
     # Macro gate
     macro = fetch_macro_minimal()
@@ -133,7 +155,7 @@ def do_daily():
     if gate == 'crisis': lev = 0
     elif gate == 'caution': lev = min(lev, 1.0)
 
-    # Build payload
+    # Build payload (with Strict-Panic info)
     payload = {
         'timestamp': now_kst().strftime('%Y-%m-%d %H:%M:%S'),
         'market_date': str(today.date()),
@@ -146,7 +168,12 @@ def do_daily():
         'usdkrw': macro['usdkrw'],
         'us_vix': macro['us_vix'],
         'krw_chg20': macro['krw_chg20'],
-        'ks200_dd_60d': ks_dd_60d,
+        # Strict-Panic info
+        'ks200_dd_60d_today': ks_dd_60d_same,             # 당일 기준 (참고용)
+        'ks200_dd_60d_lagged': ks_dd_60d_lagged,           # 전일 기준 (action 결정 기준) ⭐
+        'ks200_dd_60d': ks_dd_60d_lagged,                  # backward compat
+        'strict_panic_real': strict_panic_real,
+        'strict_panic_fallback': strict_panic_fallback,
     }
     daily_path = DATA_DIR / 'daily.json'
     with open(daily_path, 'w', encoding='utf-8') as f:
@@ -178,18 +205,27 @@ def do_daily():
     elif lev <= 1.0:
         action = '✅ 정상 운영 (lev 1x)'
     elif lev <= 1.5:
-        action = '⚡ Elevated (lev 1.5x, 신용 50%)'
+        if strict_panic_fallback:
+            action = '⚡ Strong-Bull Elevated (lev 1.5x) — 신고가+변동성, 진짜 panic 아님'
+        else:
+            action = '⚡ Elevated (lev 1.5x, 신용 50%)'
     else:
-        action = '🔥 PANIC BUY (lev 2x, max 신용)'
+        action = '🔥 REAL PANIC BUY (lev 2x, max 신용) — proxy≥30 AND DD≤-10%'
 
-    msg = f'🇰🇷 *KR V25-full Daily*\n'
+    dd_lagged_str = f'{ks_dd_60d_lagged*100:+.1f}%' if ks_dd_60d_lagged is not None else '?'
+    msg = f'🇰🇷 *KR V25-full + Strict-Panic Daily*\n'
     msg += f'📅 {today.date()}\n\n'
     msg += f'📊 Market Zone\n'
     msg += f'  KS200: `{payload["ks200_close"]:,.2f}`\n'
     msg += f'  VKOSPI proxy: `{proxy_str}`\n'
-    msg += f'  60d DD: `{ks_dd_60d*100:+.1f}%`\n\n'
+    msg += f'  60d DD (lagged): `{dd_lagged_str}`\n\n'
     msg += f'🎯 Zone: *{zone}*\n'
-    msg += f'  Base lev: {base_lev}x\n\n'
+    msg += f'  Base lev: {base_lev}x\n'
+    if strict_panic_real:
+        msg += f'  ✅ REAL PANIC (proxy≥30 + DD≤-10%) → 2x\n'
+    elif strict_panic_fallback:
+        msg += f'  🟡 Strong-Bull (proxy≥30 + DD>-10%) → 1.5x fallback\n'
+    msg += '\n'
     msg += f'🌐 Macro Gate: *{gate.upper()}*\n'
     if macro['usdkrw']:
         krw20_str = f'{macro["krw_chg20"]*100:+.1f}%' if macro['krw_chg20'] is not None else '?'
