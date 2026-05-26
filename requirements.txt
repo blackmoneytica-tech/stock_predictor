@@ -14,3 +14,6 @@ statsmodels>=0.14
 fredapi>=0.5
 cachetools>=5.3
 pyyaml>=6.0
+
+# KR V25-full operational deps
+finance-datareader>=0.9
