@@ -5,10 +5,10 @@ name: KR V25-full Monthly Rebal
 # 더 간단: 매월 마지막 평일 또는 사용자 수동 trigger.
 
 on:
-  # 매월 마지막 주 금요일 (28-31일 사이 금요일) KST 17:00 (UTC 08:00)
-  # cron: 매월 28-31일 금요일 UTC 08:00
+  # 매월 마지막 금요일 (=25-31일 사이 금요일) KST 17:00 (UTC 08:00)
+  # 마지막 금요일이 25-27일일 수도 있으니 25-31 범위로 확장 + Python step에서 21d 경과 확인
   schedule:
-    - cron: '0 8 28-31 * 5'   # 28-31일 금요일 UTC 08:00
+    - cron: '0 8 25-31 * 5'   # 매월 25-31일 중 금요일 UTC 08:00
   workflow_dispatch:
     inputs:
       reason:

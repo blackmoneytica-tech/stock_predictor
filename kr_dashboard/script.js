@@ -102,22 +102,29 @@ function renderDaily(d) {
     actionText = '✅ 정상 운영 (lev 1x, 종목 7개 균등)';
     actionClass = 'normal';
   } else if (d.final_lev === 1.5) {
-    if (d.strict_panic_fallback) {
-      actionText = '⚡ Strong-Bull Elevated (lev 1.5x)\n신고가+변동성, 진짜 panic 아님 (Strict-Panic fallback)';
-      actionClass = 'elevated';
-    } else {
-      actionText = '⚡ Elevated (lev 1.5x, 신용 50%)';
-      actionClass = 'elevated';
-    }
+    actionText = '⚡ Elevated (lev 1.5x, 신용 50%)';
+    actionClass = 'elevated';
   } else if (d.final_lev >= 2.0) {
-    if (d.strict_panic_real) {
-      actionText = '🔥 REAL PANIC BUY (lev 2x)\nproxy≥30 AND lagged DD≤-10%';
-    } else {
-      actionText = '🔥 PANIC BUY (lev 2x, max 신용)';
-    }
+    actionText = '🔥 PANIC BUY (lev 2x, max 신용)';
     actionClass = 'panic';
   }
-  actionEl.textContent = actionText;
+
+  // H-B Peak Exit 상태 추가
+  let hbText = '';
+  if (d.hb_triggered) {
+    const stocks = (d.hb_triggered_stocks || []).join(', ');
+    hbText = `\n🚨 H-B PEAK EXIT 발동! 다음 거래일 portfolio 1/3 매도\n트리거: ${stocks}`;
+  } else if (d.hb_cooldown_active) {
+    hbText = `\n⏸ H-B 쿨다운 (${d.hb_cooldown_days_left}일 남음)`;
+  }
+
+  // Deployed_pct 표시 (H-B 1/3 매도 누적 시)
+  const dep = d.deployed_pct !== undefined ? d.deployed_pct : 1.0;
+  if (dep < 1.0) {
+    hbText += `\n💼 Deployed: ${(dep*100).toFixed(0)}% / Effective lev: ${d.effective_lev ? d.effective_lev.toFixed(2) : '?'}x`;
+  }
+
+  actionEl.textContent = actionText + hbText;
   actionEl.className = 'action ' + actionClass;
 }
 

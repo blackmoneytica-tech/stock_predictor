@@ -36,6 +36,26 @@ from kr_v07_universe_comparison import INDIVIDUAL_STOCKS
 DATA_DIR = Path(__file__).parent.parent / 'kr_dashboard' / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_PATH = DATA_DIR / 'history.json'
+STATE_PATH = DATA_DIR / 'state.json'   # H-B + holdings 추적
+
+
+def load_state():
+    if STATE_PATH.exists():
+        try:
+            with open(STATE_PATH, encoding='utf-8') as f:
+                return json.load(f)
+        except: pass
+    return {
+        'holdings': {},                # {code: weight}
+        'last_rebal_date': None,
+        'last_hb_exit_date': None,
+        'deployed_pct': 1.0,
+    }
+
+
+def save_state(s):
+    with open(STATE_PATH, 'w', encoding='utf-8') as f:
+        json.dump(s, f, ensure_ascii=False, indent=2)
 
 TG_BOT_TOKEN = os.environ.get('TG_BOT_TOKEN', '').strip()
 TG_CHAT_ID = os.environ.get('TG_CHAT_ID', '').strip()
@@ -112,14 +132,54 @@ def save_history(hist):
         json.dump(hist, f, ensure_ascii=False, indent=2)
 
 
+def check_hb_peak_exit(holdings_codes, ret_thr=0.20, dv_spike_thr=3.0):
+    """H-B Peak Exit signal: 보유 종목 중 전일 ret > 20% AND dv_spike > 3x 발생?
+
+    Returns: dict {triggered: bool, triggered_stocks: [code...], ret_dv_details: [...]}
+    """
+    import time
+    triggered = []
+    details = []
+    for code in holdings_codes:
+        try:
+            df = fdr.DataReader(code, '2025-06-01')
+            df.columns = [c.lower() for c in df.columns]
+            if len(df) < 65: continue
+            # 전일 (어제 close 까지의 정보)
+            ret_yesterday = float(df['close'].iloc[-1] / df['close'].iloc[-2] - 1)
+            # dv_spike: 어제 거래대금 / 최근 5일 평균 (어제 제외)
+            dv = df['close'] * df['volume']
+            dv_yesterday = float(dv.iloc[-1])
+            dv_5d_avg = float(dv.iloc[-6:-1].mean())
+            dv_spike = dv_yesterday / dv_5d_avg if dv_5d_avg > 0 else 1.0
+            details.append({
+                'code': code,
+                'ret_yesterday': ret_yesterday,
+                'dv_spike': dv_spike,
+            })
+            if ret_yesterday > ret_thr and dv_spike > dv_spike_thr:
+                triggered.append(code)
+            time.sleep(0.03)
+        except Exception as e:
+            print(f'  [hb] {code} fail: {e}')
+    return {
+        'triggered': len(triggered) > 0,
+        'triggered_stocks': triggered,
+        'details': details,
+    }
+
+
 def do_daily():
     """매일 zone + lev 계산 → daily.json + history append + Telegram.
 
-    V31 Strict-Panic 적용:
-      - proxy < 22.5 → lev 1.0
-      - 22.5-30 → lev 1.5
-      - proxy >= 30 AND lagged_DD <= -10% → real panic → lev 2.0
-      - proxy >= 30 AND lagged_DD > -10% (강세장 흥분) → lev 1.5 (fallback)
+    V25-full + H-B 20/3/34 portfolio (최종 Champion):
+      - Picking: mom120 + zone-dep squeeze + 52w_low_rebound
+      - Zone leverage: 0/1/1.5/2x (proxy 15/22.5/30 thresholds)
+      - Macro gate: USDKRW + ^VIX
+      - DD throttle: -30/-45/-55/-65% multi-stage
+      - H-B Peak Exit: 보유 중 전일 ret>20% AND dv_spike>3x → portfolio 1/3 매도 + 5d cooldown
+
+    Note: Strict-Panic은 채택 안 함 (사용자 결정 — Total/Cal/OOS Total 균형 위해 V25 + H-B 채택)
     """
     print('[daily] start')
     # KS200 fetch (2y history for EWMA proxy)
@@ -129,24 +189,14 @@ def do_daily():
 
     zone, base_lev, proxy = compute_zone(ks['close'])
 
-    # V31: lagged KS200 60d DD (전일 종가까지의 60d high 기준)
+    # KS200 60d DD (정보용 — lev에 적용 안 함, V25-full + H-B 채택)
     ks_60d_high = ks['close'].rolling(60, min_periods=20).max()
-    ks_dd_60d_same = float(ks['close'].iloc[-1] / ks_60d_high.iloc[-1] - 1)  # 당일 (참고)
+    ks_dd_60d_same = float(ks['close'].iloc[-1] / ks_60d_high.iloc[-1] - 1)
     if len(ks) >= 62:
         ks_60d_high_lagged = ks_60d_high.iloc[-2]
-        ks_dd_60d_lagged = float(ks['close'].iloc[-2] / ks_60d_high_lagged - 1)  # 전일
+        ks_dd_60d_lagged = float(ks['close'].iloc[-2] / ks_60d_high_lagged - 1)
     else:
         ks_dd_60d_lagged = None
-
-    # V31 Strict-Panic: proxy >= 30 인 경우만 lagged DD 확인
-    strict_panic_real = False
-    strict_panic_fallback = False
-    if proxy is not None and not pd.isna(proxy) and proxy >= 30:
-        if ks_dd_60d_lagged is not None and ks_dd_60d_lagged <= -0.10:
-            strict_panic_real = True   # real panic → lev 2.0
-        else:
-            strict_panic_fallback = True
-            base_lev = 1.5             # strong bull → fallback to 1.5x
 
     # Macro gate
     macro = fetch_macro_minimal()
@@ -155,7 +205,37 @@ def do_daily():
     if gate == 'crisis': lev = 0
     elif gate == 'caution': lev = min(lev, 1.0)
 
-    # Build payload (with Strict-Panic info)
+    # H-B Peak Exit 체크 (state의 holdings + last_peak_exit_idx 활용)
+    state = load_state()
+    hb_signal = {'triggered': False, 'triggered_stocks': [], 'cooldown_active': False}
+    H_B_COOLDOWN_DAYS = 5
+    last_hb_exit_date = state.get('last_hb_exit_date')
+    if last_hb_exit_date:
+        try:
+            last_d = pd.to_datetime(last_hb_exit_date).date()
+            days_since = (today.date() - last_d).days
+            if days_since < H_B_COOLDOWN_DAYS:
+                hb_signal['cooldown_active'] = True
+                hb_signal['cooldown_days_left'] = H_B_COOLDOWN_DAYS - days_since
+        except: pass
+
+    holdings = state.get('holdings', {})
+    if holdings and not hb_signal['cooldown_active']:
+        hb_check = check_hb_peak_exit(list(holdings.keys()), ret_thr=0.20, dv_spike_thr=3.0)
+        if hb_check['triggered']:
+            hb_signal['triggered'] = True
+            hb_signal['triggered_stocks'] = hb_check['triggered_stocks']
+            hb_signal['details'] = hb_check['details']
+            # State 갱신: portfolio 1/3 매도 권고
+            state['last_hb_exit_date'] = str(today.date())
+            state['deployed_pct'] = max(0.0, state.get('deployed_pct', 1.0) - 0.34)
+            save_state(state)
+
+    # Apply deployed_pct to effective lev display
+    deployed_pct = state.get('deployed_pct', 1.0)
+    effective_lev = lev * deployed_pct
+
+    # Build payload
     payload = {
         'timestamp': now_kst().strftime('%Y-%m-%d %H:%M:%S'),
         'market_date': str(today.date()),
@@ -164,16 +244,20 @@ def do_daily():
         'zone': zone,
         'base_lev': float(base_lev),
         'final_lev': float(lev),
+        'effective_lev': float(effective_lev),  # H-B 적용 후 실효 lev
+        'deployed_pct': float(deployed_pct),     # H-B 1/3 매도 누적 후 deployed
         'macro_gate': gate,
         'usdkrw': macro['usdkrw'],
         'us_vix': macro['us_vix'],
         'krw_chg20': macro['krw_chg20'],
-        # Strict-Panic info
-        'ks200_dd_60d_today': ks_dd_60d_same,             # 당일 기준 (참고용)
-        'ks200_dd_60d_lagged': ks_dd_60d_lagged,           # 전일 기준 (action 결정 기준) ⭐
-        'ks200_dd_60d': ks_dd_60d_lagged,                  # backward compat
-        'strict_panic_real': strict_panic_real,
-        'strict_panic_fallback': strict_panic_fallback,
+        'ks200_dd_60d_today': ks_dd_60d_same,
+        'ks200_dd_60d_lagged': ks_dd_60d_lagged,
+        'ks200_dd_60d': ks_dd_60d_lagged,
+        # H-B
+        'hb_triggered': hb_signal['triggered'],
+        'hb_triggered_stocks': hb_signal['triggered_stocks'],
+        'hb_cooldown_active': hb_signal.get('cooldown_active', False),
+        'hb_cooldown_days_left': hb_signal.get('cooldown_days_left', 0),
     }
     daily_path = DATA_DIR / 'daily.json'
     with open(daily_path, 'w', encoding='utf-8') as f:
@@ -205,34 +289,41 @@ def do_daily():
     elif lev <= 1.0:
         action = '✅ 정상 운영 (lev 1x)'
     elif lev <= 1.5:
-        if strict_panic_fallback:
-            action = '⚡ Strong-Bull Elevated (lev 1.5x) — 신고가+변동성, 진짜 panic 아님'
-        else:
-            action = '⚡ Elevated (lev 1.5x, 신용 50%)'
+        action = '⚡ Elevated (lev 1.5x, 신용 50%)'
     else:
-        action = '🔥 REAL PANIC BUY (lev 2x, max 신용) — proxy≥30 AND DD≤-10%'
+        action = '🔥 PANIC BUY (lev 2x, max 신용)'
 
     dd_lagged_str = f'{ks_dd_60d_lagged*100:+.1f}%' if ks_dd_60d_lagged is not None else '?'
-    msg = f'🇰🇷 *KR V25-full + Strict-Panic Daily*\n'
+    msg = f'🇰🇷 *KR V25-full + H-B Daily*\n'
     msg += f'📅 {today.date()}\n\n'
     msg += f'📊 Market Zone\n'
     msg += f'  KS200: `{payload["ks200_close"]:,.2f}`\n'
     msg += f'  VKOSPI proxy: `{proxy_str}`\n'
     msg += f'  60d DD (lagged): `{dd_lagged_str}`\n\n'
-    msg += f'🎯 Zone: *{zone}*\n'
-    msg += f'  Base lev: {base_lev}x\n'
-    if strict_panic_real:
-        msg += f'  ✅ REAL PANIC (proxy≥30 + DD≤-10%) → 2x\n'
-    elif strict_panic_fallback:
-        msg += f'  🟡 Strong-Bull (proxy≥30 + DD>-10%) → 1.5x fallback\n'
-    msg += '\n'
+    msg += f'🎯 Zone: *{zone}* → Base lev: *{base_lev}x*\n'
     msg += f'🌐 Macro Gate: *{gate.upper()}*\n'
     if macro['usdkrw']:
         krw20_str = f'{macro["krw_chg20"]*100:+.1f}%' if macro['krw_chg20'] is not None else '?'
         msg += f'  USDKRW: {macro["usdkrw"]:.0f} ({krw20_str})\n'
     if macro['us_vix']:
         msg += f'  ^VIX: {macro["us_vix"]:.1f}\n'
+
+    # H-B 상태 표시
+    if hb_signal['triggered']:
+        msg += f'\n🚨 *H-B PEAK EXIT 발동!*\n'
+        msg += f'  트리거 종목: {", ".join(hb_signal["triggered_stocks"])}\n'
+        msg += f'  → 다음 거래일 portfolio 1/3 매도\n'
+        msg += f'  → deployed_pct: {deployed_pct*100:.0f}% → {(deployed_pct-0.34)*100:.0f}%\n'
+        msg += f'  → 5일 cooldown 시작\n'
+    elif hb_signal.get('cooldown_active'):
+        msg += f'\n⏸ H-B 쿨다운 중 ({hb_signal["cooldown_days_left"]}일 남음)\n'
+    elif holdings:
+        msg += f'\n👀 H-B 감시 중 (ret>20% AND dv>3x 시 1/3 익절)\n'
+
     msg += f'\n💡 *{action}*\n'
+    if deployed_pct < 1.0:
+        msg += f'  현재 deployed: *{deployed_pct*100:.0f}%* (H-B 1/3 매도 후)\n'
+        msg += f'  Effective lev: *{effective_lev:.2f}x*\n'
     msg += f'\nFinal lev: *{lev}x*'
 
     send_telegram(msg)
@@ -317,6 +408,15 @@ def do_rebal():
                 'name': STOCK_NAMES.get(code, '?'),
                 'sector': SECTOR_MAP.get(code, 'Other'),
             })
+
+    # Rebal 시 state 갱신: holdings + deployed_pct reset (1.0)
+    state = load_state()
+    state['holdings'] = {c: 1.0/7 for c in new_codes}
+    state['last_rebal_date'] = str(today.date())
+    state['deployed_pct'] = 1.0   # H-B reset
+    state['last_hb_exit_date'] = None
+    save_state(state)
+    print(f'[rebal] state updated: holdings={len(new_codes)}, deployed=1.0')
 
     payload = {
         'timestamp': now_kst().strftime('%Y-%m-%d %H:%M:%S'),

@@ -236,7 +236,7 @@
       "date": "2026-05-26",
       "zone": "PANIC (MAX BUY)",
       "zone_label": "panic",
-      "lev": 1.5,
+      "lev": 2.0,
       "proxy": 73.20043821217564,
       "gate": "normal"
     }
