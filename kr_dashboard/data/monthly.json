@@ -12,7 +12,13 @@
       "sector": "Semi",
       "mom120": 5.509316770186335,
       "status": "HOLD",
-      "close": 1572000.0
+      "close": 1572000.0,
+      "frgn_5d_pct": -0.27040870714651205,
+      "inst_5d_pct": -0.03345463606515436,
+      "combo_5d_pct": -0.30386334321166636,
+      "flow_rank": 11,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -20,7 +26,13 @@
       "sector": "Semi",
       "mom120": 3.5254237288135597,
       "status": "HOLD",
-      "close": 1068000.0
+      "close": 1068000.0,
+      "frgn_5d_pct": -0.4486468240270502,
+      "inst_5d_pct": 0.2714819427148194,
+      "combo_5d_pct": -0.17716488131223074,
+      "flow_rank": 17,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -28,7 +40,13 @@
       "sector": "Semi",
       "mom120": 2.953757225433526,
       "status": "HOLD",
-      "close": 2052000.0
+      "close": 2052000.0,
+      "frgn_5d_pct": -0.3828939389856942,
+      "inst_5d_pct": 0.22920650049171026,
+      "combo_5d_pct": -0.1536874384939839,
+      "flow_rank": 18,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "006800",
@@ -36,7 +54,13 @@
       "sector": "Finance",
       "mom120": 2.199579128604907,
       "status": "HOLD",
-      "close": 66900.0
+      "close": 66900.0,
+      "frgn_5d_pct": -0.08352907291444235,
+      "inst_5d_pct": -0.3371653598049391,
+      "combo_5d_pct": -0.42069443271938145,
+      "flow_rank": 3,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "066570",
@@ -44,7 +68,13 @@
       "sector": "Tech",
       "mom120": 1.8110328638497655,
       "status": "HOLD",
-      "close": 239500.0
+      "close": 239500.0,
+      "frgn_5d_pct": -0.2792153376629995,
+      "inst_5d_pct": 0.19930808386793575,
+      "combo_5d_pct": -0.07990725379506372,
+      "flow_rank": 26,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "005380",
@@ -52,7 +82,13 @@
       "sector": "Auto",
       "mom120": 1.6757281553398058,
       "status": "HOLD",
-      "close": 689000.0
+      "close": 689000.0,
+      "frgn_5d_pct": -0.17692931859129735,
+      "inst_5d_pct": 0.02646204098562522,
+      "combo_5d_pct": -0.15046727760567213,
+      "flow_rank": 19,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -60,9 +96,16 @@
       "sector": "Finance",
       "mom120": 1.372188139059305,
       "status": "HOLD",
-      "close": 348000.0
+      "close": 348000.0,
+      "frgn_5d_pct": -0.42448629218305706,
+      "inst_5d_pct": 0.3866623745909115,
+      "combo_5d_pct": -0.037823917592145505,
+      "flow_rank": 29,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [],
-  "next_rebal_date": "2026-06-25"
+  "next_rebal_date": "2026-06-25",
+  "flow_updated": "2026-05-27 13:38:46"
 }

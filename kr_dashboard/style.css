@@ -160,6 +160,23 @@ td .name { font-size: 12px; color: #8b949e; display: block; margin-top: 2px; }
   padding-top: 12px;
   border-top: 1px solid #21262d;
 }
+/* Flow (수급) cell */
+.flow-combo { font-weight: 700; font-size: 14px; }
+.flow-pos { color: #56d364; }
+.flow-neg { color: #ff7b72; }
+.flow-na { color: #6e7681; }
+.flow-warn { font-size: 13px; }
+.flow-detail { display: block; font-size: 10px; color: #8b949e; margin-top: 2px; }
+.flow-detail .flow-pos { color: #3fb950; }
+.flow-detail .flow-neg { color: #da6b64; }
+.flow-legend {
+  font-size: 11px;
+  color: #6e7681;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #21262d;
+  line-height: 1.5;
+}
 .history-chart {
   display: grid;
   grid-template-columns: repeat(30, 1fr);

@@ -21,6 +21,11 @@ data/models/
 *.csv
 *.pkl
 
+# KIS 토큰 (secret — 절대 commit 금지)
+data/.kis_token.json
+# forward-collecting 수급 데이터는 예외적으로 commit (GitHub Actions 누적용)
+!data/flow_history.csv
+
 .ipynb_checkpoints/
 .DS_Store
 Thumbs.db

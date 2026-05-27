@@ -150,9 +150,37 @@ function renderMonthly(d) {
       <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span></td>
       <td>${SECTOR_NAMES[p.sector] || p.sector}</td>
       <td class="${momCls}">${fmtPct(p.mom120, 1)}</td>
+      <td>${renderFlowCell(p)}</td>
       <td class="${statCls}">${statEmoji} ${p.status}</td>
     </tr>`;
   }).join('');
+
+  // Flow legend / 업데이트 시각
+  const legend = document.getElementById('flow-legend');
+  if (legend) {
+    const anyBottom = d.picks.some(p => p.flow_bottom);
+    let txt = '수급 = 외국인/기관 5일 누적 순매수 (거래대금 대비 %). 외=외국인, 기=기관.';
+    if (anyBottom) {
+      txt += ' ⚠️ = universe Bottom 20% (강한 매도 압력 — 단기 약세 주의).';
+    }
+    if (d.flow_updated) txt += ` · 수급 갱신: ${d.flow_updated}`;
+    legend.textContent = txt;
+  }
+}
+
+function renderFlowCell(p) {
+  const combo = p.combo_5d_pct;
+  if (combo === null || combo === undefined) return '<span class="flow-na">-</span>';
+  const frgn = p.frgn_5d_pct;
+  const inst = p.inst_5d_pct;
+  const comboCls = combo >= 0 ? 'flow-pos' : 'flow-neg';
+  const bottomMark = p.flow_bottom ? ' <span class="flow-warn">⚠️</span>' : '';
+  const fStr = frgn !== null && frgn !== undefined ?
+    `<span class="${frgn >= 0 ? 'flow-pos' : 'flow-neg'}">외${fmtPct(frgn, 0)}</span>` : '';
+  const iStr = inst !== null && inst !== undefined ?
+    `<span class="${inst >= 0 ? 'flow-pos' : 'flow-neg'}">기${fmtPct(inst, 0)}</span>` : '';
+  return `<span class="flow-combo ${comboCls}">${fmtPct(combo, 0)}</span>${bottomMark}
+    <span class="flow-detail">${fStr} ${iStr}</span>`;
 }
 
 function renderHistory(d) {
@@ -304,9 +332,10 @@ function renderOrderTable(daily, monthly, capital) {
                     p.status === 'HOLD' ? 'status-hold' : 'status-sell';
     const statEmoji = p.status === 'BUY' ? '🟢 매수' :
                       p.status === 'HOLD' ? '🔄 보유' : '🔴 매도';
+    const flowWarn = p.flow_bottom ? ' <span class="flow-warn" title="외국인+기관 강한 매도 — 단기 약세 주의">⚠️</span>' : '';
     return `<tr>
       <td>${i+1}</td>
-      <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span></td>
+      <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span>${flowWarn}</td>
       <td class="num">${closeStr}</td>
       <td class="num">${fmtKRW(actualKRW)}</td>
       <td class="num shares">${shares}주</td>

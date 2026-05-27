@@ -32,6 +32,12 @@ from kr_v18_operational_system import (
 from kr_v17_attribution_analysis import STOCK_NAMES
 from kr_v07_universe_comparison import INDIVIDUAL_STOCKS
 
+try:
+    import kis_flow
+    KIS_AVAILABLE = True
+except Exception:
+    KIS_AVAILABLE = False
+
 
 DATA_DIR = Path(__file__).parent.parent / 'kr_dashboard' / 'data'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -197,6 +203,71 @@ def refresh_pick_prices():
         print(f'[price] refresh fail: {e}')
 
 
+def update_flow_signals():
+    """KIS 수급 데이터 수집 → forward-collecting 누적 + monthly.json picks 신호 갱신.
+
+    A: monthly.json picks에 frgn/inst/combo 5d 신호 + universe rank (Bottom 여부)
+    B: data/flow_history.csv 누적 (forward-collecting, 미래 정량 검증용)
+    """
+    if not KIS_AVAILABLE:
+        print('[flow] kis_flow 모듈 없음 — skip')
+        return
+    try:
+        # universe 전체 수급 fetch (rank 계산 위해)
+        print(f'[flow] fetching {len(INDIVIDUAL_STOCKS)} stocks...')
+        flows = kis_flow.get_recent_flow(INDIVIDUAL_STOCKS)
+        print(f'[flow] got {len(flows)} stocks')
+
+        # B: forward-collecting 누적
+        total = kis_flow.append_to_history(flows)
+        print(f'[flow] history accumulated: {total} total rows')
+
+        # universe 전체 신호 계산 → rank
+        sigs = {}
+        for code, df in flows.items():
+            sig = kis_flow.compute_flow_signals(df).dropna(subset=['combo_5d_pct'])
+            if len(sig) == 0: continue
+            last = sig.iloc[-1]
+            sigs[code] = {
+                'date': str(last['date'].date()),
+                'frgn_5d_pct': float(last['frgn_5d_pct']) if pd.notna(last['frgn_5d_pct']) else None,
+                'inst_5d_pct': float(last['inst_5d_pct']) if pd.notna(last['inst_5d_pct']) else None,
+                'combo_5d_pct': float(last['combo_5d_pct']) if pd.notna(last['combo_5d_pct']) else None,
+            }
+        # combo_5d_pct rank (낮을수록 매도 압력 → Bottom)
+        valid = [(c, s['combo_5d_pct']) for c, s in sigs.items() if s['combo_5d_pct'] is not None]
+        valid.sort(key=lambda x: x[1])
+        n = len(valid)
+        rank_map = {c: i for i, (c, _) in enumerate(valid)}   # 0 = 가장 강한 매도
+
+        # A: monthly.json picks 갱신
+        monthly_path = DATA_DIR / 'monthly.json'
+        if monthly_path.exists():
+            with open(monthly_path, encoding='utf-8') as f:
+                mdata = json.load(f)
+            bottom_threshold = max(1, int(n * 0.20))   # Bottom 20%
+            for pick in mdata.get('picks', []):
+                code = pick['code']
+                s = sigs.get(code)
+                if s:
+                    pick['frgn_5d_pct'] = s['frgn_5d_pct']
+                    pick['inst_5d_pct'] = s['inst_5d_pct']
+                    pick['combo_5d_pct'] = s['combo_5d_pct']
+                    rk = rank_map.get(code)
+                    pick['flow_rank'] = rk
+                    pick['flow_universe_n'] = n
+                    pick['flow_bottom'] = (rk is not None and rk < bottom_threshold)
+                else:
+                    pick['combo_5d_pct'] = None
+                    pick['flow_bottom'] = False
+            mdata['flow_updated'] = now_kst().strftime('%Y-%m-%d %H:%M:%S')
+            with open(monthly_path, 'w', encoding='utf-8') as f:
+                json.dump(mdata, f, ensure_ascii=False, indent=2)
+            print(f'[flow] monthly.json picks 갱신 완료')
+    except Exception as e:
+        print(f'[flow] fail: {type(e).__name__}: {e}')
+
+
 def do_daily():
     """매일 zone + lev 계산 → daily.json + history append + Telegram.
 
@@ -356,6 +427,9 @@ def do_daily():
 
     # picks의 close 가격 refresh (action plan용)
     refresh_pick_prices()
+
+    # KIS 수급 신호 갱신 + forward-collecting
+    update_flow_signals()
 
     send_telegram(msg)
     return payload
