@@ -16,10 +16,13 @@ const ZONE_CLASS = {
 // 표시용 라벨 — "PANIC"은 공포를 연상시켜 오해 부름. proxy는 방향 무관 변동성이라
 // 급등 변동성도 PANIC으로 분류됨 (검증: 급등형도 사후 +6.4% alpha). 정확한 표현으로.
 const ZONE_LABEL = {
+  // daily zone (긴형) + monthly zone (짧은형) 둘 다 매핑
   'CALM (CASH)': '저변동 · 현금',
+  'CASH': '저변동 · 현금',
   'NORMAL': '정상',
   'ELEVATED': '변동성 확대',
   'PANIC (MAX BUY)': '고변동 · 적극매수',
+  'PANIC': '고변동 · 적극매수',
 };
 
 const ACTION_CLASS = {
@@ -145,7 +148,7 @@ function renderMonthly(d) {
   document.getElementById('last-rebal').textContent = d.last_rebal || '-';
   document.getElementById('next-rebal').textContent = d.next_rebal || '21일 후';
   document.getElementById('rebal-zone').textContent =
-    `${d.zone || '-'} (w=${d.squeeze_weight || '-'})`;
+    `${ZONE_LABEL[d.zone] || d.zone || '-'} (w=${d.squeeze_weight || '-'})`;
 
   const tbody = document.getElementById('picks-body');
   if (!d.picks || d.picks.length === 0) {
@@ -213,7 +216,7 @@ function renderHistory(d) {
   const last30 = d.history.slice(-30);
   const html = last30.map(h => {
     const cls = (h.zone_label || 'normal').toLowerCase();
-    return `<div class="bar ${cls}" data-tooltip="${h.date} · ${h.zone} · lev ${h.lev}x"></div>`;
+    return `<div class="bar ${cls}" data-tooltip="${h.date} · ${ZONE_LABEL[h.zone] || h.zone} · lev ${h.lev}x"></div>`;
   }).join('');
   document.getElementById('zone-history').innerHTML = html;
 }
@@ -273,7 +276,7 @@ function determineAction(daily, monthly) {
   }
   // 보유 유지
   const lev = daily?.final_lev || 1.0;
-  const levText = lev === 1.5 ? '신용 50%' : lev === 2.0 ? '신용 100% (PANIC)' : '현금';
+  const levText = lev === 1.5 ? '신용 50%' : lev === 2.0 ? '신용 100% (고변동)' : '현금';
   return {
     emoji: '✅',
     text: `보유 유지 (Lev ${lev}x, ${levText})`,
