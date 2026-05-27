@@ -63,3 +63,10 @@ jobs:
               sleep 3
             done
           fi
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cf2d2ff56ad968ff1845660517b88fe7
+        run: |
+          npx --yes wrangler@4 pages deploy kr_dashboard --project-name=kr-v25 --commit-dirty=true
