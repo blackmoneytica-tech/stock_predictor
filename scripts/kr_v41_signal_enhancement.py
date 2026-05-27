@@ -34,6 +34,8 @@ def sim_flex_enh(data, macro, top_k=7, sector_cap=3,
                   rs_w=0.0,              # 상대강도 가산 weight
                   rs_regime='always',    # 'always'/'bear'/'bull'/'panic'/'high_dd10'/'high_dd15'
                   vol_w=0.0,             # 거래량 품질 가산 weight
+                  universe_n=50,         # 선정 풀 크기 (거래대금 top N)
+                  mom_lb=120,            # 모멘텀 lookback (ret_120d 기본)
                   track_counts=False):   # True면 (series, count_log) 반환
     """V25-full + H-B + 이미지 신호 (이평선/RS/거래량). H-B portfolio exit 고정."""
     ks200 = compute_regime(data['KS200'])
@@ -116,7 +118,7 @@ def sim_flex_enh(data, macro, top_k=7, sector_cap=3,
             if lev > 0:
                 qk = (d.year, (d.month-1)//3)
                 if qk not in pit_cache:
-                    pit_cache[qk] = pit_universe(data, d, n=50, lookback_days=60)
+                    pit_cache[qk] = pit_universe(data, d, n=universe_n, lookback_days=60)
                 universe = pit_cache[qk]
                 if zone_label_for(v) == 'normal': w_sq = normal_w
                 elif zone_label_for(v) == 'elevated': w_sq = elevated_w
@@ -142,10 +144,11 @@ def sim_flex_enh(data, macro, top_k=7, sector_cap=3,
                     elif rs_regime == 'high_dd15': rs_apply = ks_dd60 <= -15
 
                 scored = []
+                mom_col = f'ret_{mom_lb}d'
                 for c in universe:
                     if c in feat_data and d in feat_data[c].index:
                         row = feat_data[c].loc[d]
-                        m_val = row.get('ret_120d', None)
+                        m_val = row.get(mom_col, None)
                         if m_val is None or pd.isna(m_val): continue
                         score = m_val * 100
                         sq = row.get('bb_squeeze_ratio', 1) or 1
