@@ -125,13 +125,16 @@ function renderDaily(d) {
     actionClass = 'panic';
   }
 
-  // H-B Peak Exit 상태 추가
+  // H-B Peak Exit 상태 (pending=신호·매도대기 / executed=오늘 매도확정)
   let hbText = '';
-  if (d.hb_triggered) {
+  if (d.hb_executed) {
+    const stocks = (d.hb_executed_stocks || []).join(', ');
+    hbText = `\n✅ H-B 매도 실행 확정 (${stocks}) · deployed ${Math.round((d.deployed_pct||1)*100)}% · 거래일 5일 쿨다운`;
+  } else if (d.hb_triggered || d.hb_pending) {
     const stocks = (d.hb_triggered_stocks || []).join(', ');
-    hbText = `\n🚨 H-B PEAK EXIT 발동! 다음 거래일 portfolio 1/3 매도\n트리거: ${stocks}`;
+    hbText = `\n🚨 H-B 신호! 다음 거래일 portfolio 1/3 매도 실행\n트리거: ${stocks}`;
   } else if (d.hb_cooldown_active) {
-    hbText = `\n⏸ H-B 쿨다운 (${d.hb_cooldown_days_left}일 남음)`;
+    hbText = `\n⏸ H-B 쿨다운 (거래일 ${d.hb_cooldown_days_left}일 남음)`;
   }
 
   // Deployed_pct 표시 (H-B 1/3 매도 누적 시)
@@ -241,12 +244,20 @@ function fmtKRW(v) {
 }
 
 function determineAction(daily, monthly) {
-  // 우선순위: H-B 발동 > Cash > Rebal day (매도/매수) > 보유 유지
-  if (daily?.hb_triggered) {
+  // 우선순위: H-B 신호/실행 > Cash > Rebal day > 보유 유지
+  if (daily?.hb_executed) {
+    return {
+      emoji: '✅',
+      text: 'H-B 매도 실행 확정 — Portfolio 1/3 매도 완료 가정',
+      sub: `${(daily.hb_executed_stocks || []).join(', ')} · deployed ${Math.round((daily.deployed_pct||1)*100)}% · 거래일 5일 쿨다운`,
+      class: 'hb',
+    };
+  }
+  if (daily?.hb_triggered || daily?.hb_pending) {
     return {
       emoji: '🚨',
-      text: 'H-B 익절 발동 — Portfolio 1/3 매도',
-      sub: `트리거: ${(daily.hb_triggered_stocks || []).join(', ')} · 5일 쿨다운 시작`,
+      text: 'H-B 신호 — 다음 거래일 Portfolio 1/3 매도',
+      sub: `트리거: ${(daily.hb_triggered_stocks || []).join(', ')} · 매도 실행 후 deployed 확정`,
       class: 'hb',
     };
   }

@@ -56,6 +56,7 @@ def load_state():
         'last_rebal_date': None,
         'last_hb_exit_date': None,
         'deployed_pct': 1.0,
+        'pending_hb_exit': None,       # {date, stocks} — 신호 후 매도 실행 대기
     }
 
 
@@ -151,19 +152,21 @@ def check_hb_peak_exit(holdings_codes, ret_thr=0.20, dv_spike_thr=3.0):
             df = fdr.DataReader(code, '2025-06-01')
             df.columns = [c.lower() for c in df.columns]
             if len(df) < 65: continue
-            # 전일 (어제 close 까지의 정보)
-            ret_yesterday = float(df['close'].iloc[-1] / df['close'].iloc[-2] - 1)
-            # dv_spike: 어제 거래대금 / 최근 5일 평균 (어제 제외)
+            # 최신 거래일(iloc[-1]) 종가 기준 일일 ret (백테스트 ret 컬럼과 동일)
+            ret_today = float(df['close'].iloc[-1] / df['close'].iloc[-2] - 1)
+            # dv_spike: 당일 거래대금 / 당일 포함 최근 5일 평균
+            #   백테스트 add_features_v30: dv_spike = dv / dv.rolling(5).mean() (당일 포함)와 일치.
+            #   (이전 버그: iloc[-6:-1]로 당일 제외 → 분모↓ → 라이브가 더 자주 발동)
             dv = df['close'] * df['volume']
-            dv_yesterday = float(dv.iloc[-1])
-            dv_5d_avg = float(dv.iloc[-6:-1].mean())
-            dv_spike = dv_yesterday / dv_5d_avg if dv_5d_avg > 0 else 1.0
+            dv_today = float(dv.iloc[-1])
+            dv_5d_avg = float(dv.iloc[-5:].mean())   # 당일 포함 5일 (rolling(5) 동일)
+            dv_spike = dv_today / dv_5d_avg if dv_5d_avg > 0 else 1.0
             details.append({
                 'code': code,
-                'ret_yesterday': ret_yesterday,
+                'ret_today': ret_today,
                 'dv_spike': dv_spike,
             })
-            if ret_yesterday > ret_thr and dv_spike > dv_spike_thr:
+            if ret_today > ret_thr and dv_spike > dv_spike_thr:
                 triggered.append(code)
             time.sleep(0.03)
         except Exception as e:
@@ -271,14 +274,18 @@ def update_flow_signals():
 def do_daily():
     """매일 zone + lev 계산 → daily.json + history append + Telegram.
 
-    V25-full + H-B 20/3/34 portfolio (최종 Champion):
-      - Picking: mom120 + zone-dep squeeze + 52w_low_rebound
-      - Zone leverage: 0/1/1.5/2x (proxy 15/22.5/30 thresholds)
-      - Macro gate: USDKRW + ^VIX
-      - DD throttle: -30/-45/-55/-65% multi-stage
-      - H-B Peak Exit: 보유 중 전일 ret>20% AND dv_spike>3x → portfolio 1/3 매도 + 5d cooldown
+    V25-full + H-B 20/3/34 portfolio + EMA200 penalty (최종 Champion):
+      - Picking(월간 rebal): mom120 + zone-dep squeeze + 52w_low_rebound + EMA200 penalty 30
+      - Zone leverage: 0/1/1.5/2x (proxy 15/22.5/30 thresholds). proxy=EWMA 변동성×1.25 (방향무관)
+      - Macro gate: USDKRW + ^VIX → crisis=0, caution=min(lev,1.0)
+      - H-B Peak Exit: 보유 중 당일 ret>20% AND dv_spike>3x(당일포함 5일) → 다음 거래일 1/3 매도
+        + 거래일 5일 cooldown. pending→executed 2단계 (신호일 pending, 매도일 deployed 확정).
 
-    Note: Strict-Panic은 채택 안 함 (사용자 결정 — Total/Cal/OOS Total 균형 위해 V25 + H-B 채택)
+    Note:
+      - Strict-Panic 미채택 (V25+H-B가 Total/Cal/OOS 균형 우수). proxy는 급등도 PANIC 분류하나
+        검증상 급등형도 사후 +6.4% alpha (kr_v55) → lev 2.0 유지. 대시보드 라벨은 "고변동".
+      - DD throttle(백테스트 dd_multistage_lev)은 라이브 미적용: 계좌 equity/peak 미추적.
+        약세장 방어는 EMA200 penalty(picking) + macro gate로 대체. 자본 -30%+ 시 수동 lev 축소 권장.
     """
     print('[daily] start')
     # KS200 fetch (2y history for EWMA proxy)
@@ -304,30 +311,55 @@ def do_daily():
     if gate == 'crisis': lev = 0
     elif gate == 'caution': lev = min(lev, 1.0)
 
-    # H-B Peak Exit 체크 (state의 holdings + last_peak_exit_idx 활용)
+    # H-B Peak Exit (백테스트 일치: 거래일 기준 cooldown + pending→executed 2단계)
+    #   - 신호 detect(당일 종가) → pending 표시 (deployed 유지, "내일 1/3 매도")
+    #   - 다음 거래일 cron → 매도 실행 가정하고 deployed 확정 + cooldown 시작
+    #   백테스트 매핑: i-1 신호 → i 실행 = 라이브 T 신호 → T+1 실행.
     state = load_state()
-    hb_signal = {'triggered': False, 'triggered_stocks': [], 'cooldown_active': False}
-    H_B_COOLDOWN_DAYS = 5
+    hb_signal = {'triggered': False, 'triggered_stocks': [], 'cooldown_active': False,
+                 'pending': False, 'executed': False}
+    H_B_COOLDOWN_TRADING_DAYS = 5
+    H_B_EXIT_PCT = 0.34
+
+    def trading_days_since(date_str):
+        """date_str(거래일) 이후 ~ today까지 경과한 거래일 수 (KS200 인덱스 기준)."""
+        try:
+            d0 = pd.to_datetime(date_str)
+            return int((ks.index > d0).sum())
+        except Exception:
+            return 999
+
+    # 0. pending 확정: 전일 신호 → 오늘(다음 거래일) 매도 실행 가정 → deployed 감소 + cooldown 시작
+    pending = state.get('pending_hb_exit')
+    if pending and trading_days_since(pending.get('date')) >= 1:
+        state['deployed_pct'] = max(0.0, state.get('deployed_pct', 1.0) - H_B_EXIT_PCT)
+        state['last_hb_exit_date'] = str(today.date())   # cooldown은 실행일부터
+        state['pending_hb_exit'] = None
+        save_state(state)
+        hb_signal['executed'] = True
+        hb_signal['executed_stocks'] = pending.get('stocks', [])
+
+    # 1. cooldown 체크 (거래일 기준)
     last_hb_exit_date = state.get('last_hb_exit_date')
     if last_hb_exit_date:
-        try:
-            last_d = pd.to_datetime(last_hb_exit_date).date()
-            days_since = (today.date() - last_d).days
-            if days_since < H_B_COOLDOWN_DAYS:
-                hb_signal['cooldown_active'] = True
-                hb_signal['cooldown_days_left'] = H_B_COOLDOWN_DAYS - days_since
-        except: pass
+        td = trading_days_since(last_hb_exit_date)
+        if td < H_B_COOLDOWN_TRADING_DAYS:
+            hb_signal['cooldown_active'] = True
+            hb_signal['cooldown_days_left'] = H_B_COOLDOWN_TRADING_DAYS - td
 
+    # 2. 신규 신호 detect (cooldown 아니고 pending 없을 때만)
     holdings = state.get('holdings', {})
-    if holdings and not hb_signal['cooldown_active']:
+    still_pending = state.get('pending_hb_exit')
+    if holdings and not hb_signal['cooldown_active'] and not still_pending:
         hb_check = check_hb_peak_exit(list(holdings.keys()), ret_thr=0.20, dv_spike_thr=3.0)
         if hb_check['triggered']:
             hb_signal['triggered'] = True
+            hb_signal['pending'] = True
             hb_signal['triggered_stocks'] = hb_check['triggered_stocks']
             hb_signal['details'] = hb_check['details']
-            # State 갱신: portfolio 1/3 매도 권고
-            state['last_hb_exit_date'] = str(today.date())
-            state['deployed_pct'] = max(0.0, state.get('deployed_pct', 1.0) - 0.34)
+            # pending만 설정 — deployed는 다음 거래일(매도 실행 후) 확정
+            state['pending_hb_exit'] = {'date': str(today.date()),
+                                         'stocks': hb_check['triggered_stocks']}
             save_state(state)
 
     # Apply deployed_pct to effective lev display
@@ -352,9 +384,12 @@ def do_daily():
         'ks200_dd_60d_today': ks_dd_60d_same,
         'ks200_dd_60d_lagged': ks_dd_60d_lagged,
         'ks200_dd_60d': ks_dd_60d_lagged,
-        # H-B
+        # H-B (pending=신호·매도대기, executed=오늘 매도확정)
         'hb_triggered': hb_signal['triggered'],
         'hb_triggered_stocks': hb_signal['triggered_stocks'],
+        'hb_pending': hb_signal.get('pending', False),
+        'hb_executed': hb_signal.get('executed', False),
+        'hb_executed_stocks': hb_signal.get('executed_stocks', []),
         'hb_cooldown_active': hb_signal.get('cooldown_active', False),
         'hb_cooldown_days_left': hb_signal.get('cooldown_days_left', 0),
     }
@@ -407,15 +442,18 @@ def do_daily():
     if macro['us_vix']:
         msg += f'  ^VIX: {macro["us_vix"]:.1f}\n'
 
-    # H-B 상태 표시
+    # H-B 상태 표시 (pending=신호·매도대기 / executed=오늘 매도확정)
     if hb_signal['triggered']:
-        msg += f'\n🚨 *H-B PEAK EXIT 발동!*\n'
+        msg += f'\n🚨 *H-B 신호 발동! (다음 거래일 매도)*\n'
         msg += f'  트리거 종목: {", ".join(hb_signal["triggered_stocks"])}\n'
-        msg += f'  → 다음 거래일 portfolio 1/3 매도\n'
-        msg += f'  → deployed_pct: {deployed_pct*100:.0f}% → {(deployed_pct-0.34)*100:.0f}%\n'
-        msg += f'  → 5일 cooldown 시작\n'
+        msg += f'  → 다음 거래일 portfolio 1/3 매도 실행\n'
+        msg += f'  → deployed {deployed_pct*100:.0f}% (매도 실행 후 확정)\n'
+    elif hb_signal.get('executed'):
+        msg += f'\n✅ *H-B 매도 실행 확정*\n'
+        msg += f'  종목: {", ".join(hb_signal.get("executed_stocks", []))}\n'
+        msg += f'  → deployed {deployed_pct*100:.0f}% / 거래일 5일 cooldown 시작\n'
     elif hb_signal.get('cooldown_active'):
-        msg += f'\n⏸ H-B 쿨다운 중 ({hb_signal["cooldown_days_left"]}일 남음)\n'
+        msg += f'\n⏸ H-B 쿨다운 중 (거래일 {hb_signal["cooldown_days_left"]}일 남음)\n'
     elif holdings:
         msg += f'\n👀 H-B 감시 중 (ret>20% AND dv>3x 시 1/3 익절)\n'
 
@@ -536,6 +574,7 @@ def do_rebal():
     state['last_rebal_date'] = str(today.date())
     state['deployed_pct'] = 1.0   # H-B reset
     state['last_hb_exit_date'] = None
+    state['pending_hb_exit'] = None   # rebal 시 미실행 pending도 reset
     save_state(state)
     print(f'[rebal] state updated: holdings={len(new_codes)}, deployed=1.0')
 
@@ -580,11 +619,26 @@ def do_rebal():
     return payload
 
 
+def is_last_friday(d):
+    """d가 그 달의 마지막 금요일인가 (d가 금요일 전제). d+7일이 다음 달이면 마지막."""
+    return (d + datetime.timedelta(days=7)).month != d.month
+
+
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--mode', default='daily', choices=['daily', 'rebal', 'both'])
     args = p.parse_args()
+    # 수동 실행(workflow_dispatch) 또는 mode=rebal은 강제 rebal
+    force_rebal = (os.environ.get('KR_FORCE_REBAL') == '1') or (args.mode == 'rebal')
+
     if args.mode in ('daily', 'both'):
         do_daily()
-    if args.mode in ('rebal', 'both'):
+    if args.mode == 'rebal':
         do_rebal()
+    elif args.mode == 'both':
+        # cron은 22-31일 금요일마다 trigger → 이번달 마지막 금요일에만 rebal (중복 방지)
+        today_kst = now_kst().date()
+        if force_rebal or is_last_friday(today_kst):
+            do_rebal()
+        else:
+            print(f'[monthly] {today_kst}는 이번달 마지막 금요일 아님 — rebal skip (daily만 실행)')

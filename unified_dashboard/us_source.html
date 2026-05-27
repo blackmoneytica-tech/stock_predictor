@@ -489,10 +489,20 @@ function render(data) {
       ${r.emoji} Regime: <span style="color:${r.color};">${r.label}</span> — ${r.desc}
       ${cashW > 0 ? ` · 현금 비중 <strong>${(cashW * 100).toFixed(0)}%</strong>` : ""}
     </div>` : "";
+  // 펀더멘털 오버레이 (매출 YoY>20% +2 / 2분기 역성장 -2) — 주1회 EDGAR 자동수집
+  const ff = signal.fund_flags || {};
+  const ffBoost = Object.entries(ff).filter(([, v]) => v > 0).map(([t]) => t);
+  const ffPen = Object.entries(ff).filter(([, v]) => v < 0).map(([t]) => t);
+  const fundLine = (ffBoost.length || ffPen.length) ? `
+    <div style="font-size: 12px; font-weight: 500; margin-top: 6px; padding: 6px 10px; border-radius: 6px; background: #1e293b; border: 1px solid #334155;">
+      📈 펀더멘털 오버레이 (leader M2 가산):
+      ${ffBoost.length ? ` <span style="color:#34d399;">▲ 매출↑ +2 ${ffBoost.join(", ")}</span>` : ""}
+      ${ffPen.length ? ` <span style="color:#f87171;">▼ 역성장 -2 ${ffPen.join(", ")}</span>` : ""}
+    </div>` : "";
   banner.innerHTML = `${getModeEmoji(mode.mode)} ${mode.mode} × ${mode.leverage}x
     <div style="font-size: 13px; font-weight: 500; margin-top: 6px; opacity: 0.95;">
       → 매수 여력 = 자본의 <strong>${levPct}%</strong> (레버리지 ${mode.leverage}x 적용됨) · ${mode.desc}
-    </div>${regimeLine}`;
+    </div>${regimeLine}${fundLine}`;
 
   // 매수 여력 strip (자본 카드 안)
   const bpStrip = document.getElementById("buying-power-strip");
@@ -565,9 +575,11 @@ function render(data) {
     picks.combined.forEach((p, i) => {
       const e = execMap[p.ticker];
       const tr = document.createElement("tr");
+      const ffTag = p.fund_flag > 0 ? ` <span style="color:#34d399;font-size:10px;" title="매출 YoY>20%">▲+2</span>`
+                  : p.fund_flag < 0 ? ` <span style="color:#f87171;font-size:10px;" title="2분기 연속 역성장">▼-2</span>` : "";
       tr.innerHTML = `
         <td>${i + 1}</td>
-        <td class="ticker">${p.ticker}</td>
+        <td class="ticker">${p.ticker}${ffTag}</td>
         <td class="num">${(p.weight * 100).toFixed(2)}%</td>
         <td class="num">$${p.price.toFixed(2)}</td>
         <td class="num exec-shares">${e ? e.shares + "주" : "-"}</td>
@@ -1053,7 +1065,9 @@ async function loadUniverse() {
 async function selectUniverse(preset) {
   const presetName = preset === "canonical" ? "Canonical (안전)" : preset;
   if (preset !== "canonical") {
-    if (!confirm(`⚠️ Universe를 "${presetName}"으로 변경합니다.\n\nbacktest 결과 Sharpe 하락 확인됨 (V46/V56).\n변경 시 rotation_state도 reset됩니다.\n\n계속하시겠습니까?`)) return;
+    // 2단 확인 — 검증서 기각된 실험 preset. 실수로 켜면 라이브 자동매매 전략이 바뀜
+    if (!confirm(`⚠️ [1/2] Universe를 "${presetName}"으로 변경합니다.\n\nbacktest 전부 Sharpe 하락 (V46/V56/확장검증). core 자동편입은 기각된 후보입니다. 테마는 advisory/satellite가 정답.\n변경 시 rotation_state reset.\n\n계속?`)) return;
+    if (!confirm(`🚨 [2/2] 최종 확인: "${presetName}"는 실험/비추천입니다.\n실거래 자동매매 picks가 즉시 바뀝니다.\n\n정말 적용하시겠습니까?`)) return;
   }
   const token = getAuthToken();
   if (!token) return;

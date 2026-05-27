@@ -430,25 +430,14 @@ def update_pnl(current_value_won):
 
 
 if __name__ == '__main__':
-    import argparse
-    parser = argparse.ArgumentParser(description='KR Champion 운영 시스템')
-    parser.add_argument('--mode', default='daily',
-                          choices=['daily', 'monthly', 'rebal', 'pnl', 'state'],
-                          help='daily=오늘 zone, monthly=월간 picking, pnl=자본 업데이트, state=현 상태')
-    parser.add_argument('--tg', action='store_true', help='Telegram 전송')
-    parser.add_argument('--capital', type=float, default=None,
-                          help='--mode pnl 시 현재 자본 (원)')
-    args = parser.parse_args()
-
-    if args.mode == 'daily':
-        daily_report(send_telegram=args.tg)
-    elif args.mode in ('monthly', 'rebal'):
-        monthly_rebal_report(send_telegram=args.tg)
-    elif args.mode == 'pnl':
-        if args.capital is None:
-            print('--capital 필요')
-        else:
-            update_pnl(args.capital)
-    elif args.mode == 'state':
-        state = load_state()
-        print(json.dumps(state, indent=2, ensure_ascii=False, default=str)[:2000])
+    # ⚠️ DEPRECATED: 이 스크립트의 daily_report/monthly_rebal_report는 구버전 운영 리포트로
+    #    H-B·EMA200 penalty·pending state가 반영되지 않습니다. 실제 운영(대시보드/cron)은
+    #    scripts/kr_publish_json.py가 단일 SSOT입니다. 이 파일은 함수 라이브러리
+    #    (compute_zone/v25_full_score_v2/dd_multistage_lev 등 — kr_publish_json이 import)로만 유지.
+    print('=' * 72)
+    print('⚠️  DEPRECATED 운영 진입점. 실제 운영은 kr_publish_json.py 사용하세요.')
+    print('    이 스크립트의 daily/monthly 리포트는 H-B·EMA200 미반영 구버전입니다.')
+    print('    (compute_zone 등 함수는 라이브러리로 계속 사용됨)')
+    print('=' * 72)
+    import sys as _sys
+    _sys.exit(1)

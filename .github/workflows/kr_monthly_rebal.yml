@@ -8,7 +8,9 @@ on:
   # 매월 마지막 금요일 (=25-31일 사이 금요일) KST 17:00 (UTC 08:00)
   # 마지막 금요일이 25-27일일 수도 있으니 25-31 범위로 확장 + Python step에서 21d 경과 확인
   schedule:
-    - cron: '0 8 25-31 * 5'   # 매월 25-31일 중 금요일 UTC 08:00
+    # 매월 22-31일 중 금요일 UTC 08:00 — 마지막 금요일이 22~24일인 달도 커버.
+    # 스크립트(do_rebal)가 "이번달 마지막 금요일"인지 체크해 중복 실행 방지.
+    - cron: '0 8 22-31 * 5'
   workflow_dispatch:
     inputs:
       reason:
@@ -48,6 +50,8 @@ jobs:
           KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
           KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
           PYTHONIOENCODING: utf-8
+          # 수동 실행은 마지막 금요일 체크 없이 강제 rebal, cron은 마지막 금요일에만
+          KR_FORCE_REBAL: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
         run: |
           python scripts/kr_publish_json.py --mode both
 
