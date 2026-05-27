@@ -1,0 +1,48 @@
+name: Trader Hub Rebuild
+
+# kr_dashboard UI(html/css/js) 또는 unified_dashboard(build.py/us_source/planner) 변경 시
+# 통합 사이트(trader-hub) 자동 재빌드 + 배포.
+# ⚠️ kr_dashboard/data/*.json (cron 데이터 갱신)은 trigger 안 함 — 통합사이트는 데이터를
+#    kr-v25.pages.dev에서 live fetch하므로 재빌드 불필요. UI/script 변경만 재빌드 필요.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'kr_dashboard/index.html'
+      - 'kr_dashboard/script.js'
+      - 'kr_dashboard/style.css'
+      - 'unified_dashboard/build.py'
+      - 'unified_dashboard/us_source.html'
+      - 'unified_dashboard/planner.html'
+      - 'unified_dashboard/planner.css'
+      - 'unified_dashboard/planner.js'
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild unified dashboard
+        run: |
+          cd unified_dashboard
+          python build.py
+
+      - name: Deploy to Cloudflare Pages (trader-hub)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cf2d2ff56ad968ff1845660517b88fe7
+        run: |
+          npx --yes wrangler@4 pages deploy unified_dashboard \
+            --project-name=trader-hub \
+            --commit-message="auto rebuild" \
+            --commit-hash=0000000000000000000000000000000000000000
