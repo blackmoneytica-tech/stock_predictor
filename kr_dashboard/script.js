@@ -13,6 +13,15 @@ const ZONE_CLASS = {
   'PANIC (MAX BUY)': 'panic',
 };
 
+// 표시용 라벨 — "PANIC"은 공포를 연상시켜 오해 부름. proxy는 방향 무관 변동성이라
+// 급등 변동성도 PANIC으로 분류됨 (검증: 급등형도 사후 +6.4% alpha). 정확한 표현으로.
+const ZONE_LABEL = {
+  'CALM (CASH)': '저변동 · 현금',
+  'NORMAL': '정상',
+  'ELEVATED': '변동성 확대',
+  'PANIC (MAX BUY)': '고변동 · 적극매수',
+};
+
 const ACTION_CLASS = {
   cash: 'cash', normal: 'normal', elevated: 'elevated', panic: 'panic',
 };
@@ -80,7 +89,7 @@ function renderDaily(d) {
   document.getElementById('ks200-close').textContent =
     d.ks200_close ? Number(d.ks200_close).toLocaleString('ko-KR', {maximumFractionDigits: 2}) : '-';
   document.getElementById('vkospi-proxy').textContent = fmtNum(d.vkospi_proxy);
-  document.getElementById('zone-value').textContent = d.zone || '-';
+  document.getElementById('zone-value').textContent = ZONE_LABEL[d.zone] || d.zone || '-';
   document.getElementById('final-lev').textContent = d.final_lev !== null ? d.final_lev + 'x' : '-';
   document.getElementById('macro-gate').textContent = (d.macro_gate || 'normal').toUpperCase();
   document.getElementById('usdkrw').textContent = d.usdkrw ? Math.round(d.usdkrw) : '-';
@@ -105,7 +114,11 @@ function renderDaily(d) {
     actionText = '⚡ Elevated (lev 1.5x, 신용 50%)';
     actionClass = 'elevated';
   } else if (d.final_lev >= 2.0) {
-    actionText = '🔥 PANIC BUY (lev 2x, max 신용)';
+    // 급등형/공포형 구분 (lagged 60d DD): 둘 다 lev 2x지만 성격 다름
+    const dd = d.ks200_dd_60d_lagged !== undefined ? d.ks200_dd_60d_lagged : (d.ks200_dd_60d || 0);
+    const kind = (dd === null || dd > -0.05) ? '급등형 (하락 아님)' :
+                 (dd <= -0.10) ? '공포형 (급락 후 반등)' : '중간';
+    actionText = `🔥 고변동 적극매수 (lev 2x, 신용 max) · ${kind}`;
     actionClass = 'panic';
   }
 
