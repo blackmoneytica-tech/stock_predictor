@@ -159,12 +159,10 @@ function renderMonthly(d) {
   // Flow legend / 업데이트 시각
   const legend = document.getElementById('flow-legend');
   if (legend) {
-    const anyBottom = d.picks.some(p => p.flow_bottom);
-    let txt = '수급 = 외국인/기관 5일 누적 순매수 (거래대금 대비 %). 외=외국인, 기=기관.';
-    if (anyBottom) {
-      txt += ' ⚠️ = universe Bottom 20% (강한 매도 압력 — 단기 약세 주의).';
-    }
-    if (d.flow_updated) txt += ` · 수급 갱신: ${d.flow_updated}`;
+    let txt = '수급 5d = 외국인+기관 5일 누적 순매수 (거래대금 대비 %, 외=외국인 기=기관). ';
+    txt += '🔴 천장주의 = universe 최하위 강한 매도 (검증: 폭등 직후 외인·기관 매도 시 +5d 평균 -7%, 음수 73%). ';
+    txt += '⚠ 매도세 / 🟢 매수세는 참고용 (매수 신호는 사후 상승 예측력 약함 — 선반영). ';
+    if (d.flow_updated) txt += `· 수급 갱신: ${d.flow_updated}`;
     legend.textContent = txt;
   }
 }
@@ -175,12 +173,21 @@ function renderFlowCell(p) {
   const frgn = p.frgn_5d_pct;
   const inst = p.inst_5d_pct;
   const comboCls = combo >= 0 ? 'flow-pos' : 'flow-neg';
-  const bottomMark = p.flow_bottom ? ' <span class="flow-warn">⚠️</span>' : '';
   const fStr = frgn !== null && frgn !== undefined ?
     `<span class="${frgn >= 0 ? 'flow-pos' : 'flow-neg'}">외${fmtPct(frgn, 0)}</span>` : '';
   const iStr = inst !== null && inst !== undefined ?
     `<span class="${inst >= 0 ? 'flow-pos' : 'flow-neg'}">기${fmtPct(inst, 0)}</span>` : '';
-  return `<span class="flow-combo ${comboCls}">${fmtPct(combo, 0)}</span>${bottomMark}
+
+  // 검증된 신호: Bottom 20%(강한 매도) = 천장주의 (폭등+매도 시 사후 -7% 경향)
+  let label = '';
+  if (p.flow_bottom) {
+    label = '<span class="flow-label flow-danger">🔴 천장주의</span>';
+  } else if (combo <= -0.15) {
+    label = '<span class="flow-label flow-caution">⚠ 매도세</span>';
+  } else if (combo >= 0.10) {
+    label = '<span class="flow-label flow-ok">🟢 매수세</span>';
+  }
+  return `<span class="flow-combo ${comboCls}">${fmtPct(combo, 0)}</span> ${label}
     <span class="flow-detail">${fStr} ${iStr}</span>`;
 }
 
@@ -333,7 +340,7 @@ function renderOrderTable(daily, monthly, capital) {
                     p.status === 'HOLD' ? 'status-hold' : 'status-sell';
     const statEmoji = p.status === 'BUY' ? '🟢 매수' :
                       p.status === 'HOLD' ? '🔄 보유' : '🔴 매도';
-    const flowWarn = p.flow_bottom ? ' <span class="flow-warn" title="외국인+기관 강한 매도 — 단기 약세 주의">⚠️</span>' : '';
+    const flowWarn = p.flow_bottom ? ' <span class="flow-label flow-danger" title="외국인+기관 강한 매도 (천장주의) — 폭등 직후 매도 시 사후 -7% 경향">🔴 천장</span>' : '';
     return `<tr>
       <td>${i+1}</td>
       <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span>${flowWarn}</td>

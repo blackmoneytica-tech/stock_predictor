@@ -167,6 +167,18 @@ td .name { font-size: 12px; color: #8b949e; display: block; margin-top: 2px; }
 .flow-na { color: #6e7681; }
 .flow-warn { font-size: 13px; }
 .trend-down { font-size: 11px; }
+.flow-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-left: 2px;
+  white-space: nowrap;
+}
+.flow-danger { background: rgba(255,123,114,0.2); color: #ff7b72; border: 1px solid rgba(255,123,114,0.4); }
+.flow-caution { background: rgba(240,177,50,0.15); color: #f0b132; }
+.flow-ok { background: rgba(86,211,100,0.12); color: #56d364; }
 .flow-detail { display: block; font-size: 10px; color: #8b949e; margin-top: 2px; }
 .flow-detail .flow-pos { color: #3fb950; }
 .flow-detail .flow-neg { color: #da6b64; }
