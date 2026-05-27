@@ -1,12 +1,11 @@
 name: Predict Watchlist
 
 on:
-  # 매시간 (UTC 기준 매 정각, KST = +9시간)
-  # ── 사용자가 cron 조정 가능: https://crontab.guru ──
-  # 예: '0 */2 * * *' = 매 2시간, '0 */4 * * *' = 매 4시간
-  # 현재: 매시간
+  # 미국 장중심 평일 5회 (UTC, KST = +9시간) — 과도한 hourly 실행이 abuse 플래그/정지를 유발했던 것 축소
+  # UTC 13/15/17/19/21시 = KST 22/00/02/04/06시 (미국 프리마켓~정규장~마감 커버)
+  # 5d/1d 예측이라 매시간은 과잉. 조정: https://crontab.guru
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 13,15,17,19,21 * * 1-5'
 
   # 수동 트리거 (GitHub UI "Run workflow" 또는 gh CLI)
   workflow_dispatch:
