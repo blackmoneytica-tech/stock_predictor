@@ -30,9 +30,9 @@
       "status": "HOLD",
       "close": 1044000.0,
       "below_ema200": false,
-      "frgn_5d_pct": -0.34789023646465167,
-      "inst_5d_pct": -0.05586337058468335,
-      "combo_5d_pct": -0.40375360704933505,
+      "frgn_5d_pct": -0.3479699533366213,
+      "inst_5d_pct": -0.055761599453697026,
+      "combo_5d_pct": -0.4037315527903183,
       "flow_rank": 6,
       "flow_universe_n": 50,
       "flow_bottom": true
@@ -45,9 +45,9 @@
       "status": "HOLD",
       "close": 2243000.0,
       "below_ema200": false,
-      "frgn_5d_pct": -0.2728726690141364,
-      "inst_5d_pct": 0.4242202853822092,
-      "combo_5d_pct": 0.15134761636807278,
+      "frgn_5d_pct": -0.263452856109285,
+      "inst_5d_pct": 0.4211646190661404,
+      "combo_5d_pct": 0.1577117629568554,
       "flow_rank": 45,
       "flow_universe_n": 50,
       "flow_bottom": false
@@ -90,9 +90,9 @@
       "status": "HOLD",
       "close": 681000.0,
       "below_ema200": false,
-      "frgn_5d_pct": -0.13486425391955184,
-      "inst_5d_pct": 0.13218027614099928,
-      "combo_5d_pct": -0.002683977778552584,
+      "frgn_5d_pct": -0.13486946043063566,
+      "inst_5d_pct": 0.13217825989370302,
+      "combo_5d_pct": -0.0026912005369326415,
       "flow_rank": 31,
       "flow_universe_n": 50,
       "flow_bottom": false
@@ -114,5 +114,5 @@
     }
   ],
   "sells": [],
-  "flow_updated": "2026-05-27 15:45:33"
+  "flow_updated": "2026-05-27 19:56:45"
 }
