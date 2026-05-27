@@ -459,11 +459,23 @@ def do_rebal():
     today = max(s.index[-1] for s in closes.values())
 
     # Score
+    # EMA200 추세 penalty (kr_v41~v43 검증): 종가 < EMA200 (하락추세) 종목 -30점.
+    #   - 약세장 방어 (2018 +2.6→+10.1%, 2022 -12.6→-7.8%), 강세장 무해
+    #   - Full 12.2년: Total +21,604→+22,947%, MDD -32.8→-31.1%, Calmar 1.88→2.01
+    #   - walk-forward IS/OOS 둘 다 통과 (IS Sh 1.54 유지 + OOS 1.59→1.61) — robust
+    #   - penalty(30)는 hard filter보다 우수: 종목 7개 항상 유지(hard는 6개로 떨어짐), 총수익↑
+    EMA200_PENALTY = 30
     scored = []
+    ema200_below = {}
     for code, c in closes.items():
         sc = v25_full_score_v2(c, current_proxy=current_proxy)
         if sc is not None:
             mom_raw = mom_score(c, 120)
+            ema200 = c.ewm(span=200, adjust=False).mean().iloc[-1]
+            below = bool(c.iloc[-1] < ema200)
+            ema200_below[code] = below
+            if below:
+                sc -= EMA200_PENALTY
             scored.append((code, sc, mom_raw))
     scored.sort(key=lambda x: -x[1])
 
@@ -505,6 +517,7 @@ def do_rebal():
             'mom120': mom_raw,
             'status': status,
             'close': close_kr,
+            'below_ema200': ema200_below.get(code, False),   # 하락추세 여부 (penalty 적용됨)
         })
 
     # Compute sells (previous holdings not in new picks)

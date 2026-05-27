@@ -145,9 +145,10 @@ function renderMonthly(d) {
                     p.status === 'HOLD' ? 'status-hold' : 'status-sell';
     const statEmoji = p.status === 'BUY' ? '🟢' :
                       p.status === 'HOLD' ? '🔄' : '🔴';
+    const trendMark = p.below_ema200 ? ' <span class="trend-down" title="종가 < EMA200 (하락추세) — 점수 -30 penalty">🔻</span>' : '';
     return `<tr>
       <td>${i+1}</td>
-      <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span></td>
+      <td><span class="ticker">${p.code}</span><span class="name">${p.name}</span>${trendMark}</td>
       <td>${SECTOR_NAMES[p.sector] || p.sector}</td>
       <td class="${momCls}">${fmtPct(p.mom120, 1)}</td>
       <td>${renderFlowCell(p)}</td>
