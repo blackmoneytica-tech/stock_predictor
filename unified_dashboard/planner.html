@@ -1,0 +1,73 @@
+<div class="container">
+  <header>
+    <h1>🧮 포지션 플래너 <span class="pl-sub">변동성 기반 사이징 + 국면 손절 (US·KR 공통)</span></h1>
+  </header>
+
+  <section class="pl-card pl-intro">
+    핵심: <strong>물림 깊이 ≈ 2.7 × 종목 ATR</strong> 이라 못 없앤다 — 대신 <strong>그게 견딜 만한 금액이 되게 사이즈를 잡는다.</strong>
+    손절은 <strong>국면 게이팅</strong>(강세=넓게 −3×ATR / 약세=타이트 −1.5×ATR). <strong>−3% 고정은 네 종목엔 노이즈라 금지.</strong>
+  </section>
+
+  <section class="pl-card">
+    <div class="pl-form">
+      <div class="pl-field">
+        <label>티커 <small>(US: NVDA · KR: 005930.KS)</small></label>
+        <div class="pl-row">
+          <input type="text" id="pl-ticker" placeholder="NVDA" autocomplete="off">
+          <button id="pl-fetch">조회</button>
+        </div>
+      </div>
+      <div class="pl-field">
+        <label>자본</label>
+        <input type="number" id="pl-capital" placeholder="10000000" step="100000">
+      </div>
+      <div class="pl-field">
+        <label>견딜 손실</label>
+        <div class="pl-row">
+          <input type="number" id="pl-tol" value="2" step="0.5" style="max-width:90px;">
+          <select id="pl-tol-mode">
+            <option value="pct">% (자본 대비)</option>
+            <option value="abs">금액(절대)</option>
+          </select>
+        </div>
+      </div>
+      <div class="pl-field">
+        <label>진입가 <small>(비우면 현재가)</small></label>
+        <input type="number" id="pl-entry" placeholder="자동" step="0.01">
+      </div>
+    </div>
+    <div class="pl-status" id="pl-status"></div>
+  </section>
+
+  <section class="pl-card pl-result" id="pl-result" style="display:none;">
+    <div class="pl-badges">
+      <span class="pl-badge" id="pl-regime-badge">국면 -</span>
+      <span class="pl-badge pl-badge-muted" id="pl-quote-badge">-</span>
+    </div>
+
+    <div class="pl-headline">
+      <div class="pl-headline-item">
+        <div class="pl-h-label">매수 주 수</div>
+        <div class="pl-h-value" id="pl-shares">-</div>
+        <div class="pl-h-sub" id="pl-position">-</div>
+      </div>
+      <div class="pl-headline-item">
+        <div class="pl-h-label">손절가 <span id="pl-stop-tag" class="pl-stop-tag"></span></div>
+        <div class="pl-h-value pl-stop" id="pl-stop">-</div>
+        <div class="pl-h-sub" id="pl-stop-risk">-</div>
+      </div>
+    </div>
+
+    <div class="pl-pain" id="pl-pain"></div>
+    <div class="pl-note" id="pl-3pct-note"></div>
+
+    <table class="pl-table">
+      <tbody id="pl-detail"></tbody>
+    </table>
+
+    <div class="pl-foot">
+      사이징 기준: 예상 물림(2.7×ATR)이 "견딜 손실"이 되게 계산. 손절은 advisory(자동주문 X) — 국면이 약세면 보유 중 peak−1.5×ATR로 따라 올림.
+      백테스트 근거: 국면-게이팅 하이브리드 = 강세 업사이드 82% 보존 + 약세/횡보 방어, 물림 −7.4%·빨간불 5.9일.
+    </div>
+  </section>
+</div>

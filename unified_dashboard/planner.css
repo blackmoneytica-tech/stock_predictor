@@ -1,0 +1,59 @@
+/* Position Planner — pre-scoped under #view-planner (build.py injects raw) */
+#view-planner { padding: 16px; min-height: 100vh; background: #0a0e1a; color: #e7eaf0; }
+#view-planner .container { max-width: 760px; margin: 0 auto; }
+#view-planner header { margin-bottom: 20px; }
+#view-planner h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+#view-planner .pl-sub { font-size: 13px; color: #9ca3af; font-weight: 500; display: block; margin-top: 4px; }
+#view-planner .pl-card { background: #121826; border: 1px solid #1f2937; border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+#view-planner .pl-intro { font-size: 13px; color: #cbd5e1; line-height: 1.6; border-color: #334155; }
+#view-planner .pl-intro strong { color: #fde047; }
+#view-planner .pl-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+#view-planner .pl-field { display: flex; flex-direction: column; gap: 6px; }
+#view-planner .pl-field label { font-size: 12px; color: #9ca3af; font-weight: 600; }
+#view-planner .pl-field label small { color: #6b7280; font-weight: 400; }
+#view-planner .pl-row { display: flex; gap: 8px; }
+#view-planner input, #view-planner select {
+  background: #1f2937; border: 1px solid #374151; color: #e7eaf0;
+  padding: 9px 12px; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: inherit; width: 100%;
+}
+#view-planner input:focus, #view-planner select:focus { outline: none; border-color: #3b82f6; }
+#view-planner button {
+  background: #2563eb; color: #fff; border: none; padding: 9px 18px; border-radius: 8px;
+  font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+#view-planner button:hover { background: #1d4ed8; }
+#view-planner button:disabled { background: #4b5563; cursor: not-allowed; }
+#view-planner .pl-status { font-size: 13px; color: #9ca3af; margin-top: 10px; min-height: 18px; }
+#view-planner .pl-status.err { color: #fca5a5; }
+
+#view-planner .pl-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+#view-planner .pl-badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+#view-planner .pl-badge.on { background: #064e3b; color: #6ee7b7; border: 1px solid #10b981; }
+#view-planner .pl-badge.off { background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+#view-planner .pl-badge-muted { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
+
+#view-planner .pl-headline { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+#view-planner .pl-headline-item { background: #0d1320; border: 1px solid #1f2937; border-radius: 10px; padding: 16px; text-align: center; }
+#view-planner .pl-h-label { font-size: 12px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+#view-planner .pl-h-value { font-size: 28px; font-weight: 800; color: #60a5fa; font-variant-numeric: tabular-nums; }
+#view-planner .pl-h-value.pl-stop { color: #fca5a5; }
+#view-planner .pl-h-sub { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+#view-planner .pl-stop-tag { font-size: 11px; font-weight: 600; }
+
+#view-planner .pl-pain { padding: 12px 14px; background: #422006; border: 1px solid #92400e; border-radius: 8px; font-size: 14px; color: #fcd34d; margin-bottom: 12px; line-height: 1.5; }
+#view-planner .pl-pain strong { color: #fde047; }
+#view-planner .pl-note { font-size: 12px; color: #9ca3af; padding: 8px 12px; background: #0d1320; border-radius: 6px; margin-bottom: 12px; }
+#view-planner .pl-note strong { color: #f87171; }
+
+#view-planner .pl-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+#view-planner .pl-table td { padding: 8px 10px; border-bottom: 1px solid #1f2937; }
+#view-planner .pl-table td:first-child { color: #9ca3af; }
+#view-planner .pl-table td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+#view-planner .pl-foot { font-size: 11px; color: #6b7280; margin-top: 14px; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  #view-planner .pl-form { grid-template-columns: 1fr; }
+  #view-planner .pl-headline { grid-template-columns: 1fr; }
+  #view-planner .pl-h-value { font-size: 24px; }
+}
