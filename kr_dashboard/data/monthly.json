@@ -1,118 +1,75 @@
 {
-  "timestamp": "2026-05-27 20:32:55",
-  "last_rebal": "2026-05-27",
+  "timestamp": "2026-05-28 20:34:34",
+  "last_rebal": "2026-05-28",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-06-26",
+  "next_rebal_date": "2026-06-27",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 71.53244898856971,
+  "vkospi_proxy": 69.86769261320366,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 5.342412451361867,
+      "mom120": 6.250980392156863,
       "status": "HOLD",
       "close": 1849000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.08996079525423051,
-      "inst_5d_pct": -0.1248942778492892,
-      "combo_5d_pct": -0.034933482595058706,
-      "flow_rank": 27,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 3.3051546391752575,
+      "mom120": 3.7151767151767148,
       "status": "HOLD",
       "close": 1134000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.3749349836467342,
-      "inst_5d_pct": -0.0034677487402884773,
-      "combo_5d_pct": -0.37840273238702266,
-      "flow_rank": 7,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
-      "mom120": 3.2805343511450378,
+      "mom120": 3.2077205882352944,
       "status": "HOLD",
       "close": 2289000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2870026012756553,
-      "inst_5d_pct": 0.34936503202179087,
-      "combo_5d_pct": 0.06236243074613558,
-      "flow_rank": 38,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "006800",
       "name": "미래에셋증권",
       "sector": "Finance",
-      "mom120": 1.8792072136416391,
+      "mom120": 1.8049221860296778,
       "status": "HOLD",
       "close": 62000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.13962223205268384,
-      "inst_5d_pct": -0.35360170493591186,
-      "combo_5d_pct": -0.49322393698859573,
-      "flow_rank": 1,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 1.7167630057803467,
+      "mom120": 1.6405152224824358,
       "status": "HOLD",
       "close": 225500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.34380479186877544,
-      "inst_5d_pct": 0.21123850761412283,
-      "combo_5d_pct": -0.13256628425465258,
-      "flow_rank": 19,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "005380",
       "name": "현대차",
       "sector": "Auto",
-      "mom120": 1.604206500956023,
+      "mom120": 1.5889101338432123,
       "status": "HOLD",
       "close": 677000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2553284361277003,
-      "inst_5d_pct": 0.08881763790375444,
-      "combo_5d_pct": -0.16651079822394588,
-      "flow_rank": 17,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 1.3383905013192612,
+      "mom120": 1.3305084745762712,
       "status": "HOLD",
       "close": 357500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.08689536938229274,
-      "inst_5d_pct": 0.08714728058359428,
-      "combo_5d_pct": 0.0002519112013015412,
-      "flow_rank": 30,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     }
   ],
-  "sells": [],
-  "flow_updated": "2026-05-28 19:57:28"
+  "sells": []
 }

@@ -8,7 +8,8 @@
     "005380": 0.14285714285714285,
     "032830": 0.14285714285714285
   },
-  "last_rebal_date": "2026-05-27",
+  "last_rebal_date": "2026-05-28",
   "last_hb_exit_date": null,
-  "deployed_pct": 1.0
+  "deployed_pct": 1.0,
+  "pending_hb_exit": null
 }
