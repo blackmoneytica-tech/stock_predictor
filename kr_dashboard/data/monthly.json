@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 6.250980392156863,
       "status": "HOLD",
-      "close": 1849000.0,
-      "below_ema200": false
+      "close": 2127000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.09989313881008523,
+      "inst_5d_pct": -0.18398872242518657,
+      "combo_5d_pct": -0.08409558361510136,
+      "flow_rank": 25,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -22,8 +28,14 @@
       "sector": "Semi",
       "mom120": 3.7151767151767148,
       "status": "HOLD",
-      "close": 1134000.0,
-      "below_ema200": false
+      "close": 1458000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.37615361739995024,
+      "inst_5d_pct": 0.050140423205125094,
+      "combo_5d_pct": -0.32601319419482516,
+      "flow_rank": 9,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "000660",
@@ -31,8 +43,14 @@
       "sector": "Semi",
       "mom120": 3.2077205882352944,
       "status": "HOLD",
-      "close": 2289000.0,
-      "below_ema200": false
+      "close": 2333000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.32838222767888026,
+      "inst_5d_pct": 0.2226737732094211,
+      "combo_5d_pct": -0.10570845446945915,
+      "flow_rank": 22,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "006800",
@@ -40,8 +58,14 @@
       "sector": "Finance",
       "mom120": 1.8049221860296778,
       "status": "HOLD",
-      "close": 62000.0,
-      "below_ema200": false
+      "close": 61400.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.07890824159802758,
+      "inst_5d_pct": -0.3693028116762949,
+      "combo_5d_pct": -0.4482110532743225,
+      "flow_rank": 2,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "066570",
@@ -49,8 +73,14 @@
       "sector": "Tech",
       "mom120": 1.6405152224824358,
       "status": "HOLD",
-      "close": 225500.0,
-      "below_ema200": false
+      "close": 293000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.33073388439268486,
+      "inst_5d_pct": 0.24447360662621243,
+      "combo_5d_pct": -0.08626027776647247,
+      "flow_rank": 24,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "005380",
@@ -58,8 +88,14 @@
       "sector": "Auto",
       "mom120": 1.5889101338432123,
       "status": "HOLD",
-      "close": 677000.0,
-      "below_ema200": false
+      "close": 723000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.24065677917483808,
+      "inst_5d_pct": 0.15078410328557282,
+      "combo_5d_pct": -0.08987267588926527,
+      "flow_rank": 23,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -67,9 +103,16 @@
       "sector": "Finance",
       "mom120": 1.3305084745762712,
       "status": "HOLD",
-      "close": 357500.0,
-      "below_ema200": false
+      "close": 388500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.04408538643266959,
+      "inst_5d_pct": 0.047387475838370205,
+      "combo_5d_pct": 0.0033020894057006105,
+      "flow_rank": 29,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
-  "sells": []
+  "sells": [],
+  "flow_updated": "2026-05-29 19:46:36"
 }
