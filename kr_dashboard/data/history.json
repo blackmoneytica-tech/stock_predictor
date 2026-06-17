@@ -343,6 +343,14 @@
       "lev": 2.0,
       "proxy": 87.52739102375932,
       "gate": "normal"
+    },
+    {
+      "date": "2026-06-17",
+      "zone": "PANIC (MAX BUY)",
+      "zone_label": "panic",
+      "lev": 2.0,
+      "proxy": 84.93983303734532,
+      "gate": "normal"
     }
   ]
 }
