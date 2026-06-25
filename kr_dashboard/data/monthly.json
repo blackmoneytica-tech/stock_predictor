@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 6.809145129224652,
       "status": "HOLD",
-      "close": 1964000.0,
-      "below_ema200": false
+      "close": 1997000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.08725963366620451,
+      "inst_5d_pct": 0.13879557965800265,
+      "combo_5d_pct": 0.05153594599179815,
+      "flow_rank": 33,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -22,8 +28,14 @@
       "sector": "Semi",
       "mom120": 3.417808219178082,
       "status": "HOLD",
-      "close": 2580000.0,
-      "below_ema200": false
+      "close": 2917000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.3302759665272964,
+      "inst_5d_pct": 0.10729700915194736,
+      "combo_5d_pct": -0.22297895737534904,
+      "flow_rank": 15,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -31,8 +43,14 @@
       "sector": "Semi",
       "mom120": 2.4863387978142075,
       "status": "HOLD",
-      "close": 957000.0,
-      "below_ema200": false
+      "close": 953000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.17156431731332375,
+      "inst_5d_pct": -0.2206794677904987,
+      "combo_5d_pct": -0.04911515047717496,
+      "flow_rank": 29,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -40,8 +58,14 @@
       "sector": "Finance",
       "mom120": 1.6418547895057962,
       "status": "HOLD",
-      "close": 433000.0,
-      "below_ema200": false
+      "close": 447000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.024485139842333626,
+      "inst_5d_pct": 0.09687111690533906,
+      "combo_5d_pct": 0.07238597706300544,
+      "flow_rank": 39,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "066570",
@@ -49,8 +73,14 @@
       "sector": "Tech",
       "mom120": 1.2060409924487594,
       "status": "HOLD",
-      "close": 204500.0,
-      "below_ema200": false
+      "close": 203000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.1034894453492438,
+      "inst_5d_pct": -0.015168077418623187,
+      "combo_5d_pct": -0.118657522767867,
+      "flow_rank": 24,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "028260",
@@ -58,8 +88,14 @@
       "sector": "Util",
       "mom120": 1.002079002079002,
       "status": "BUY",
-      "close": 481500.0,
-      "below_ema200": false
+      "close": 519000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.46584469059496114,
+      "inst_5d_pct": 0.19713386492840881,
+      "combo_5d_pct": -0.26871082566655236,
+      "flow_rank": 14,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "005380",
@@ -67,8 +103,14 @@
       "sector": "Auto",
       "mom120": 0.7735191637630663,
       "status": "HOLD",
-      "close": 509000.0,
-      "below_ema200": false
+      "close": 503000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.23876411491471072,
+      "inst_5d_pct": -0.15422670653956633,
+      "combo_5d_pct": -0.39299082145427705,
+      "flow_rank": 6,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     }
   ],
   "sells": [
@@ -77,5 +119,6 @@
       "name": "미래에셋증권",
       "sector": "Finance"
     }
-  ]
+  ],
+  "flow_updated": "2026-06-25 19:16:36"
 }
