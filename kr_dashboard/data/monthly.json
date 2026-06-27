@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-26 19:47:01",
+  "timestamp": "2026-06-27 19:00:23",
   "last_rebal": "2026-06-26",
   "next_rebal": "21일 후",
   "next_rebal_date": "2026-07-26",
@@ -66,16 +66,10 @@
       "name": "SK텔레콤",
       "sector": "Tech",
       "mom120": 0.7062146892655368,
-      "status": "BUY",
+      "status": "HOLD",
       "close": 90600.0,
       "below_ema200": false
     }
   ],
-  "sells": [
-    {
-      "code": "005380",
-      "name": "현대차",
-      "sector": "Auto"
-    }
-  ]
+  "sells": []
 }
