@@ -1,118 +1,81 @@
 {
-  "timestamp": "2026-07-26 18:53:53",
-  "last_rebal": "2026-07-24",
+  "timestamp": "2026-07-27 20:14:45",
+  "last_rebal": "2026-07-27",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-08-23",
+  "next_rebal_date": "2026-08-26",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 99.9151687358777,
+  "vkospi_proxy": 97.29773459150485,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 3.8218181818181822,
+      "mom120": 3.7833935018050537,
       "status": "HOLD",
       "close": 1325000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.18051406114488744,
-      "inst_5d_pct": 0.008172824199982037,
-      "combo_5d_pct": -0.1723412369449054,
-      "flow_rank": 1,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
-    {
-      "code": "000660",
-      "name": "SK하이닉스",
-      "sector": "Semi",
-      "mom120": 1.389945652173913,
-      "status": "HOLD",
-      "close": 1816000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.05130424638458626,
-      "inst_5d_pct": -0.08025986484183337,
-      "combo_5d_pct": -0.13156411122641964,
-      "flow_rank": 4,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 1.2644927536231885,
+      "mom120": 1.3844660194174758,
       "status": "HOLD",
       "close": 614000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.044813914822867375,
-      "inst_5d_pct": -0.16009208338662234,
-      "combo_5d_pct": -0.11527816856375496,
-      "flow_rank": 6,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "sector": "Semi",
+      "mom120": 1.27,
+      "status": "HOLD",
+      "close": 1816000.0,
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.6507317073170731,
+      "mom120": 0.700888450148075,
       "status": "HOLD",
       "close": 172300.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.09442335596677415,
-      "inst_5d_pct": -0.0341221527527125,
-      "combo_5d_pct": 0.06030120321406164,
-      "flow_rank": 17,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.7453347969264545,
+      "mom120": 0.6648850881881347,
       "status": "HOLD",
       "close": 311500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.49046458189961856,
-      "inst_5d_pct": -0.4422101174576884,
-      "combo_5d_pct": 0.04825446444193018,
-      "flow_rank": 14,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "018260",
+      "name": "삼성에스디에스",
+      "sector": "Tech",
+      "mom120": 0.23229461756373948,
+      "status": "BUY",
+      "close": 217500.0,
+      "below_ema200": false
     },
     {
       "code": "017670",
       "name": "SK텔레콤",
       "sector": "Tech",
-      "mom120": 0.6181229773462784,
+      "mom120": 0.4106628242074928,
       "status": "HOLD",
       "close": 97900.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.45313108643217376,
-      "inst_5d_pct": 0.396161436365747,
-      "combo_5d_pct": -0.05696965006642676,
-      "flow_rank": 8,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
+      "below_ema200": false
+    }
+  ],
+  "sells": [
     {
       "code": "010950",
       "name": "S-Oil",
-      "sector": "Oil",
-      "mom120": 0.538148524923703,
-      "status": "HOLD",
-      "close": 136400.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.12039182531730126,
-      "inst_5d_pct": 0.14291082164328658,
-      "combo_5d_pct": 0.26330264696058786,
-      "flow_rank": 37,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "sector": "Oil"
     }
-  ],
-  "sells": [],
-  "flow_updated": "2026-07-27 19:42:07"
+  ]
 }
