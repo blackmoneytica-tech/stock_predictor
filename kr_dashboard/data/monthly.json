@@ -1,124 +1,81 @@
 {
-  "timestamp": "2026-07-27 20:14:45",
-  "last_rebal": "2026-07-27",
+  "timestamp": "2026-07-28 19:29:12",
+  "last_rebal": "2026-07-28",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-08-26",
+  "next_rebal_date": "2026-08-27",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 97.29773459150485,
+  "vkospi_proxy": 108.17309853513129,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 3.7833935018050537,
+      "mom120": 2.9785714285714286,
       "status": "HOLD",
       "close": 1114000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.14034355521336975,
-      "inst_5d_pct": -0.04232665920353409,
-      "combo_5d_pct": -0.18267021441690384,
-      "flow_rank": 5,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
-    {
-      "code": "011070",
-      "name": "LG이노텍",
-      "sector": "Semi",
-      "mom120": 1.3844660194174758,
-      "status": "HOLD",
-      "close": 514000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.023952338129496403,
-      "inst_5d_pct": -0.2648336330935252,
-      "combo_5d_pct": -0.2887859712230216,
-      "flow_rank": 2,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
-      "mom120": 1.27,
+      "mom120": 0.8430439952437574,
       "status": "HOLD",
       "close": 1550000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.17442700628132354,
-      "inst_5d_pct": -0.06390988783850424,
-      "combo_5d_pct": -0.23833689411982778,
-      "flow_rank": 4,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.700888450148075,
+      "mom120": 0.5765765765765767,
       "status": "HOLD",
       "close": 157500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.023131035059327953,
-      "inst_5d_pct": -0.0928854227004819,
-      "combo_5d_pct": -0.06975438764115395,
-      "flow_rank": 9,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
+    },
+    {
+      "code": "011070",
+      "name": "LG이노텍",
+      "sector": "Semi",
+      "mom120": 0.996116504854369,
+      "status": "HOLD",
+      "close": 514000.0,
+      "below_ema200": true
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.6648850881881347,
+      "mom120": 0.4828303850156088,
       "status": "HOLD",
       "close": 285000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.49360502664823724,
-      "inst_5d_pct": -0.398806110685249,
-      "combo_5d_pct": 0.09479891596298823,
-      "flow_rank": 26,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "018260",
       "name": "삼성에스디에스",
       "sector": "Tech",
-      "mom120": 0.23229461756373948,
-      "status": "BUY",
+      "mom120": 0.13597733711048154,
+      "status": "HOLD",
       "close": 200500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.24455789808761233,
-      "inst_5d_pct": 0.4207558951002718,
-      "combo_5d_pct": 0.17619799701265948,
-      "flow_rank": 33,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
-      "code": "017670",
-      "name": "SK텔레콤",
-      "sector": "Tech",
-      "mom120": 0.4106628242074928,
-      "status": "HOLD",
-      "close": 82200.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.4487743895724254,
-      "inst_5d_pct": 0.35189184995344835,
-      "combo_5d_pct": -0.09688253961897707,
-      "flow_rank": 8,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "code": "010950",
+      "name": "S-Oil",
+      "sector": "Oil",
+      "mom120": 0.2885572139303483,
+      "status": "BUY",
+      "close": 129500.0,
+      "below_ema200": false
     }
   ],
   "sells": [
     {
-      "code": "010950",
-      "name": "S-Oil",
-      "sector": "Oil"
+      "code": "017670",
+      "name": "SK텔레콤",
+      "sector": "Tech"
     }
-  ],
-  "flow_updated": "2026-07-28 18:36:50"
+  ]
 }
