@@ -1,124 +1,75 @@
 {
-  "timestamp": "2026-07-28 19:29:12",
-  "last_rebal": "2026-07-28",
+  "timestamp": "2026-07-29 19:34:27",
+  "last_rebal": "2026-07-29",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-08-27",
+  "next_rebal_date": "2026-08-28",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 108.17309853513129,
+  "vkospi_proxy": 107.60304732558679,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 2.9785714285714286,
+      "mom120": 2.6815742397137745,
       "status": "HOLD",
       "close": 1029000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.1750261536049012,
-      "inst_5d_pct": 0.02838122611536801,
-      "combo_5d_pct": -0.1466449274895332,
-      "flow_rank": 8,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
-    {
-      "code": "000660",
-      "name": "SK하이닉스",
-      "sector": "Semi",
-      "mom120": 0.8430439952437574,
-      "status": "HOLD",
-      "close": 1401000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.31242720084047343,
-      "inst_5d_pct": 0.05477444997654615,
-      "combo_5d_pct": -0.2576527508639273,
-      "flow_rank": 2,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.5765765765765767,
+      "mom120": 0.49157581764122904,
       "status": "HOLD",
       "close": 150500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.09664760702878797,
-      "inst_5d_pct": -0.07494230707877078,
-      "combo_5d_pct": -0.17158991410755875,
-      "flow_rank": 5,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "sector": "Semi",
+      "mom120": 0.627177700348432,
+      "status": "HOLD",
+      "close": 1401000.0,
+      "below_ema200": false
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 0.996116504854369,
+      "mom120": 0.846774193548387,
       "status": "HOLD",
       "close": 458000.0,
-      "below_ema200": true,
-      "frgn_5d_pct": -0.019483011313461956,
-      "inst_5d_pct": -0.291440697948597,
-      "combo_5d_pct": -0.310923709262059,
-      "flow_rank": 0,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": true
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.4828303850156088,
+      "mom120": 0.3828125,
       "status": "HOLD",
       "close": 265500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.4958662241840384,
-      "inst_5d_pct": -0.3574443406257048,
-      "combo_5d_pct": 0.1384218835583336,
-      "flow_rank": 30,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "018260",
       "name": "삼성에스디에스",
       "sector": "Tech",
-      "mom120": 0.13597733711048154,
+      "mom120": 0.1146892655367231,
       "status": "HOLD",
       "close": 197300.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2811933801087102,
-      "inst_5d_pct": 0.4580663205126646,
-      "combo_5d_pct": 0.17687294040395443,
-      "flow_rank": 33,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "010950",
       "name": "S-Oil",
       "sector": "Oil",
-      "mom120": 0.2885572139303483,
-      "status": "BUY",
+      "mom120": 0.2602193419740777,
+      "status": "HOLD",
       "close": 126400.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.04906617532692837,
-      "inst_5d_pct": 0.2508345198071332,
-      "combo_5d_pct": 0.2999006951340616,
-      "flow_rank": 37,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     }
   ],
-  "sells": [
-    {
-      "code": "017670",
-      "name": "SK텔레콤",
-      "sector": "Tech"
-    }
-  ],
-  "flow_updated": "2026-07-29 18:37:36"
+  "sells": []
 }
