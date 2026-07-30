@@ -1,118 +1,81 @@
 {
-  "timestamp": "2026-07-29 19:34:27",
-  "last_rebal": "2026-07-29",
+  "timestamp": "2026-07-30 19:17:25",
+  "last_rebal": "2026-07-30",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-08-28",
+  "next_rebal_date": "2026-08-29",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 107.60304732558679,
+  "vkospi_proxy": 104.32934757008375,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 2.6815742397137745,
+      "mom120": 2.150537634408602,
       "status": "HOLD",
       "close": 879000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.27601893898012314,
-      "inst_5d_pct": -0.044359290949429406,
-      "combo_5d_pct": -0.32037822992955256,
-      "flow_rank": 1,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
-    {
-      "code": "066570",
-      "name": "LG전자",
-      "sector": "Tech",
-      "mom120": 0.49157581764122904,
-      "status": "HOLD",
-      "close": 148000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.014605045012325003,
-      "inst_5d_pct": -0.0801478327835003,
-      "combo_5d_pct": -0.0655427877711753,
-      "flow_rank": 12,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "000660",
-      "name": "SK하이닉스",
-      "sector": "Semi",
-      "mom120": 0.627177700348432,
-      "status": "HOLD",
-      "close": 1322000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.3827510535470435,
-      "inst_5d_pct": 0.07117109553937397,
-      "combo_5d_pct": -0.3115799580076695,
-      "flow_rank": 2,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": true
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 0.846774193548387,
+      "mom120": 0.7306122448979593,
       "status": "HOLD",
       "close": 424000.0,
-      "below_ema200": true,
-      "frgn_5d_pct": 0.10962560002339772,
-      "inst_5d_pct": -0.342568118421678,
-      "combo_5d_pct": -0.23294251839828026,
-      "flow_rank": 5,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": true
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.3828125,
+      "mom120": 0.40201805629314924,
       "status": "HOLD",
       "close": 264000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.31475631768953066,
-      "inst_5d_pct": -0.1505119507033487,
-      "combo_5d_pct": 0.164244366986182,
-      "flow_rank": 32,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "066570",
+      "name": "LG전자",
+      "sector": "Tech",
+      "mom120": 0.4934409687184662,
+      "status": "HOLD",
+      "close": 148000.0,
+      "below_ema200": true
     },
     {
       "code": "018260",
       "name": "삼성에스디에스",
       "sector": "Tech",
-      "mom120": 0.1146892655367231,
+      "mom120": 0.14789139225880987,
       "status": "HOLD",
       "close": 198700.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2952146700847595,
-      "inst_5d_pct": 0.46550728654241436,
-      "combo_5d_pct": 0.17029261645765492,
-      "flow_rank": 33,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "010950",
       "name": "S-Oil",
       "sector": "Oil",
-      "mom120": 0.2602193419740777,
+      "mom120": 0.2285174693106704,
       "status": "HOLD",
       "close": 130100.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.14076654138050915,
-      "inst_5d_pct": 0.3009885143423133,
-      "combo_5d_pct": 0.16022197296180413,
-      "flow_rank": 31,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "086790",
+      "name": "하나금융지주",
+      "sector": "Finance",
+      "mom120": 0.2447552447552448,
+      "status": "BUY",
+      "close": 124600.0,
+      "below_ema200": false
     }
   ],
-  "sells": [],
-  "flow_updated": "2026-07-30 18:30:24"
+  "sells": [
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "sector": "Semi"
+    }
+  ]
 }
