@@ -1,124 +1,81 @@
 {
-  "timestamp": "2026-07-30 19:17:25",
-  "last_rebal": "2026-07-30",
+  "timestamp": "2026-07-31 19:32:31",
+  "last_rebal": "2026-07-31",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-08-29",
+  "next_rebal_date": "2026-08-30",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 104.32934757008375,
+  "vkospi_proxy": 144.14049174577235,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 2.150537634408602,
+      "mom120": 3.0353356890459366,
       "status": "HOLD",
       "close": 1142000.0,
-      "below_ema200": true,
-      "frgn_5d_pct": 0.02170779007104441,
-      "inst_5d_pct": 0.061306149090771776,
-      "combo_5d_pct": 0.0830139391618162,
-      "flow_rank": 22,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "sector": "Semi",
+      "mom120": 1.0698795180722893,
+      "status": "BUY",
+      "close": 1718000.0,
+      "below_ema200": false
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 0.7306122448979593,
+      "mom120": 1.1596638655462184,
       "status": "HOLD",
       "close": 514000.0,
-      "below_ema200": true,
-      "frgn_5d_pct": 0.07349210101943958,
-      "inst_5d_pct": -0.3147100648926748,
-      "combo_5d_pct": -0.2412179638732352,
-      "flow_rank": 2,
-      "flow_universe_n": 50,
-      "flow_bottom": true
-    },
-    {
-      "code": "032830",
-      "name": "삼성생명",
-      "sector": "Finance",
-      "mom120": 0.40201805629314924,
-      "status": "HOLD",
-      "close": 311500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.23218474915524182,
-      "inst_5d_pct": 0.00800637066052558,
-      "combo_5d_pct": 0.24019111981576738,
-      "flow_rank": 39,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": true
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.4934409687184662,
+      "mom120": 0.6780538302277432,
       "status": "HOLD",
       "close": 162100.0,
-      "below_ema200": true,
-      "frgn_5d_pct": 0.17297853963191814,
-      "inst_5d_pct": 0.037605474719287754,
-      "combo_5d_pct": 0.2105840143512059,
-      "flow_rank": 36,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "032830",
+      "name": "삼성생명",
+      "sector": "Finance",
+      "mom120": 0.7402234636871508,
+      "status": "HOLD",
+      "close": 311500.0,
+      "below_ema200": false
     },
     {
       "code": "018260",
       "name": "삼성에스디에스",
       "sector": "Tech",
-      "mom120": 0.14789139225880987,
+      "mom120": 0.2269207861822513,
       "status": "HOLD",
       "close": 206000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2750469082375569,
-      "inst_5d_pct": 0.35950786856285705,
-      "combo_5d_pct": 0.08446096032530014,
-      "flow_rank": 23,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "010950",
       "name": "S-Oil",
       "sector": "Oil",
-      "mom120": 0.2285174693106704,
+      "mom120": 0.2603960396039604,
       "status": "HOLD",
       "close": 127300.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.0142790933768842,
-      "inst_5d_pct": -0.01916753106309726,
-      "combo_5d_pct": -0.004888437686213061,
-      "flow_rank": 12,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "086790",
-      "name": "하나금융지주",
-      "sector": "Finance",
-      "mom120": 0.2447552447552448,
-      "status": "BUY",
-      "close": 125400.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.41757003590149133,
-      "inst_5d_pct": 0.270702843426108,
-      "combo_5d_pct": -0.14686719247538332,
-      "flow_rank": 5,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     }
   ],
   "sells": [
     {
-      "code": "000660",
-      "name": "SK하이닉스",
-      "sector": "Semi"
+      "code": "086790",
+      "name": "하나금융지주",
+      "sector": "Finance"
     }
-  ],
-  "flow_updated": "2026-07-31 18:44:45"
+  ]
 }
