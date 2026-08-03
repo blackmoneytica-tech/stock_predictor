@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 3.0353356890459366,
       "status": "HOLD",
-      "close": 1142000.0,
-      "below_ema200": false
+      "close": 1181000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.044329957436393334,
+      "inst_5d_pct": 0.09040999569199992,
+      "combo_5d_pct": 0.13473995312839326,
+      "flow_rank": 28,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -22,8 +28,14 @@
       "sector": "Semi",
       "mom120": 1.0698795180722893,
       "status": "BUY",
-      "close": 1718000.0,
-      "below_ema200": false
+      "close": 1567000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.07662247710023762,
+      "inst_5d_pct": 0.07691500754972033,
+      "combo_5d_pct": 0.0002925304494827203,
+      "flow_rank": 15,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -31,8 +43,14 @@
       "sector": "Semi",
       "mom120": 1.1596638655462184,
       "status": "HOLD",
-      "close": 514000.0,
-      "below_ema200": true
+      "close": 513000.0,
+      "below_ema200": true,
+      "frgn_5d_pct": 0.22656071085054733,
+      "inst_5d_pct": -0.3418678147757981,
+      "combo_5d_pct": -0.11530710392525077,
+      "flow_rank": 4,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "066570",
@@ -40,8 +58,14 @@
       "sector": "Tech",
       "mom120": 0.6780538302277432,
       "status": "HOLD",
-      "close": 162100.0,
-      "below_ema200": false
+      "close": 158800.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.22611128557969568,
+      "inst_5d_pct": 0.03138150569560624,
+      "combo_5d_pct": 0.2574927912753019,
+      "flow_rank": 37,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -49,8 +73,14 @@
       "sector": "Finance",
       "mom120": 0.7402234636871508,
       "status": "HOLD",
-      "close": 311500.0,
-      "below_ema200": false
+      "close": 287500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.23219126797655626,
+      "inst_5d_pct": -0.10059986401934712,
+      "combo_5d_pct": 0.1315914039572091,
+      "flow_rank": 26,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "018260",
@@ -58,8 +88,14 @@
       "sector": "Tech",
       "mom120": 0.2269207861822513,
       "status": "HOLD",
-      "close": 206000.0,
-      "below_ema200": false
+      "close": 203000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.09435546858596972,
+      "inst_5d_pct": 0.2943285938641651,
+      "combo_5d_pct": 0.19997312527819536,
+      "flow_rank": 34,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "010950",
@@ -67,8 +103,14 @@
       "sector": "Oil",
       "mom120": 0.2603960396039604,
       "status": "HOLD",
-      "close": 127300.0,
-      "below_ema200": false
+      "close": 121700.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.01852772200465181,
+      "inst_5d_pct": -0.07688408246029065,
+      "combo_5d_pct": -0.05835636045563883,
+      "flow_rank": 11,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -77,5 +119,6 @@
       "name": "하나금융지주",
       "sector": "Finance"
     }
-  ]
+  ],
+  "flow_updated": "2026-08-03 19:42:57"
 }
