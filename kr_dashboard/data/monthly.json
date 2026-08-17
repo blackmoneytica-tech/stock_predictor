@@ -31,8 +31,8 @@
       "close": 1645000.0,
       "below_ema200": false,
       "frgn_5d_pct": 0.27908773408858817,
-      "inst_5d_pct": 0.02351791342487492,
-      "combo_5d_pct": 0.3026056475134631,
+      "inst_5d_pct": 0.02334078578093202,
+      "combo_5d_pct": 0.3024285198695202,
       "flow_rank": 45,
       "flow_universe_n": 50,
       "flow_bottom": false
@@ -120,5 +120,5 @@
       "sector": "Finance"
     }
   ],
-  "flow_updated": "2026-08-14 18:01:47"
+  "flow_updated": "2026-08-17 16:52:53"
 }
