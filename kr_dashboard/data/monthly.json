@@ -15,9 +15,9 @@
       "status": "HOLD",
       "close": 1316000.0,
       "below_ema200": false,
-      "frgn_5d_pct": -0.3791012708295347,
-      "inst_5d_pct": -0.11172620826177618,
-      "combo_5d_pct": -0.4908274790913109,
+      "frgn_5d_pct": -0.37913757655787095,
+      "inst_5d_pct": -0.11169265702932715,
+      "combo_5d_pct": -0.49083023358719813,
       "flow_rank": 1,
       "flow_universe_n": 50,
       "flow_bottom": true
@@ -75,9 +75,9 @@
       "status": "HOLD",
       "close": 328500.0,
       "below_ema200": false,
-      "frgn_5d_pct": -0.38058114812189936,
-      "inst_5d_pct": 0.24944654299429372,
-      "combo_5d_pct": -0.13113460512760564,
+      "frgn_5d_pct": -0.38060895679431817,
+      "inst_5d_pct": 0.24946476979621066,
+      "combo_5d_pct": -0.1311441869981075,
       "flow_rank": 17,
       "flow_universe_n": 50,
       "flow_bottom": false
@@ -120,5 +120,5 @@
       "sector": "Finance"
     }
   ],
-  "flow_updated": "2026-08-21 17:30:45"
+  "flow_updated": "2026-08-22 17:20:06"
 }
