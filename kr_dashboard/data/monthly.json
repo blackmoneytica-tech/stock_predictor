@@ -1,124 +1,75 @@
 {
-  "timestamp": "2026-08-26 17:35:59",
-  "last_rebal": "2026-08-26",
+  "timestamp": "2026-08-28 03:42:11",
+  "last_rebal": "2026-08-27",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-09-25",
+  "next_rebal_date": "2026-09-26",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 103.38831748298148,
+  "vkospi_proxy": 100.49277659707613,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 2.251833740831296,
+      "mom120": 2.820689655172414,
       "status": "HOLD",
       "close": 1385000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.05809938054090634,
-      "inst_5d_pct": -0.029999647708755094,
-      "combo_5d_pct": 0.028099732832151246,
-      "flow_rank": 18,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "011070",
       "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 1.0456140350877194,
+      "mom120": 1.4268292682926829,
       "status": "HOLD",
       "close": 597000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.3416317122393257,
-      "inst_5d_pct": -0.20224763562977327,
-      "combo_5d_pct": 0.13938407660955246,
-      "flow_rank": 26,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
-      "mom120": 0.79765708200213,
+      "mom120": 1.0376914016489986,
       "status": "HOLD",
       "close": 1730000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.46002995542368513,
-      "inst_5d_pct": -0.009930888433121628,
-      "combo_5d_pct": -0.46996084385680675,
-      "flow_rank": 2,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.5713166144200628,
+      "mom120": 0.8192660550458715,
       "status": "HOLD",
       "close": 198300.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.3762315339177463,
-      "inst_5d_pct": -0.15518158545099908,
-      "combo_5d_pct": 0.2210499484667472,
-      "flow_rank": 34,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.39729119638826194,
+      "mom120": 0.5544303797468355,
       "status": "HOLD",
       "close": 307000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.23622333050213792,
-      "inst_5d_pct": 0.13246122835163932,
-      "combo_5d_pct": -0.10376210215049861,
-      "flow_rank": 10,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "018260",
-      "name": "삼성에스디에스",
-      "sector": "Tech",
-      "mom120": 0.28378378378378377,
-      "status": "HOLD",
-      "close": 234000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.39552370115778485,
-      "inst_5d_pct": -0.13476990932444954,
-      "combo_5d_pct": 0.2607537918333353,
-      "flow_rank": 38,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "006400",
       "name": "삼성SDI",
       "sector": "Battery",
-      "mom120": 0.2647058823529411,
-      "status": "BUY",
+      "mom120": 0.621082621082621,
+      "status": "HOLD",
       "close": 569000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.00015401497795660627,
-      "inst_5d_pct": 0.35690083360606817,
-      "combo_5d_pct": 0.3567468186281116,
-      "flow_rank": 45,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    }
-  ],
-  "sells": [
+      "below_ema200": false
+    },
     {
-      "code": "010950",
-      "name": "S-Oil",
-      "sector": "Oil"
+      "code": "018260",
+      "name": "삼성에스디에스",
+      "sector": "Tech",
+      "mom120": 0.49807938540332897,
+      "status": "HOLD",
+      "close": 234000.0,
+      "below_ema200": false
     }
   ],
-  "flow_updated": "2026-08-28 03:06:39"
+  "sells": []
 }
