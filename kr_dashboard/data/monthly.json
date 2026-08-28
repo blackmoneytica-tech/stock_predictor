@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 2.820689655172414,
       "status": "HOLD",
-      "close": 1385000.0,
-      "below_ema200": false
+      "close": 1421000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.2858671919788249,
+      "inst_5d_pct": 0.13521400778210116,
+      "combo_5d_pct": 0.42108119976092606,
+      "flow_rank": 44,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -22,8 +28,14 @@
       "sector": "Semi",
       "mom120": 1.4268292682926829,
       "status": "HOLD",
-      "close": 597000.0,
-      "below_ema200": false
+      "close": 611000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.3456673351492113,
+      "inst_5d_pct": 0.016253105450627078,
+      "combo_5d_pct": 0.36192044059983836,
+      "flow_rank": 37,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -31,8 +43,14 @@
       "sector": "Semi",
       "mom120": 1.0376914016489986,
       "status": "HOLD",
-      "close": 1730000.0,
-      "below_ema200": false
+      "close": 1653000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.4522614886990657,
+      "inst_5d_pct": -0.1567947806407034,
+      "combo_5d_pct": -0.6090562693397691,
+      "flow_rank": 1,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "066570",
@@ -40,8 +58,14 @@
       "sector": "Tech",
       "mom120": 0.8192660550458715,
       "status": "HOLD",
-      "close": 198300.0,
-      "below_ema200": false
+      "close": 201500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.2297636084444955,
+      "inst_5d_pct": 0.16625231116357292,
+      "combo_5d_pct": 0.3960159196080684,
+      "flow_rank": 41,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -49,8 +73,14 @@
       "sector": "Finance",
       "mom120": 0.5544303797468355,
       "status": "HOLD",
-      "close": 307000.0,
-      "below_ema200": false
+      "close": 310000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.09993175226070636,
+      "inst_5d_pct": 0.009431837570380481,
+      "combo_5d_pct": -0.09049991469032588,
+      "flow_rank": 9,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "006400",
@@ -58,8 +88,14 @@
       "sector": "Battery",
       "mom120": 0.621082621082621,
       "status": "HOLD",
-      "close": 569000.0,
-      "below_ema200": false
+      "close": 571000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.04758926599501733,
+      "inst_5d_pct": 0.4093851333081516,
+      "combo_5d_pct": 0.3617958673131343,
+      "flow_rank": 36,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "018260",
@@ -67,9 +103,16 @@
       "sector": "Tech",
       "mom120": 0.49807938540332897,
       "status": "HOLD",
-      "close": 234000.0,
-      "below_ema200": false
+      "close": 243000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.25050460967759536,
+      "inst_5d_pct": 0.13826305166112052,
+      "combo_5d_pct": 0.3887676613387158,
+      "flow_rank": 40,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
-  "sells": []
+  "sells": [],
+  "flow_updated": "2026-08-29 04:16:35"
 }
