@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-29 22:30:20",
+  "timestamp": "2026-08-30 22:26:48",
   "market_date": "2026-08-28",
   "ks200_close": 1065.7,
   "vkospi_proxy": 98.0684177644111,
@@ -10,7 +10,7 @@
   "deployed_pct": 1.0,
   "macro_gate": "normal",
   "usdkrw": 1371.5,
-  "us_vix": NaN,
+  "us_vix": 14.430000305175781,
   "krw_chg20": -0.04471683036519747,
   "ks200_dd_60d_today": -0.2785773276830804,
   "ks200_dd_60d_lagged": -0.2630684664437255,
