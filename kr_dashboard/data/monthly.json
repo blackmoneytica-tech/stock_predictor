@@ -14,7 +14,13 @@
       "mom120": 2.683435582822086,
       "status": "HOLD",
       "close": 1501000.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": 0.04842309905992198,
+      "inst_5d_pct": 0.22820234060241734,
+      "combo_5d_pct": 0.2766254396623393,
+      "flow_rank": 43,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -23,7 +29,13 @@
       "mom120": 1.3085501858736062,
       "status": "HOLD",
       "close": 1863000.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": -0.2146523513166151,
+      "inst_5d_pct": 0.03135453145811588,
+      "combo_5d_pct": -0.18329781985849922,
+      "flow_rank": 19,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "066570",
@@ -32,7 +44,13 @@
       "mom120": 0.9933712121212122,
       "status": "HOLD",
       "close": 210500.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": 0.1140949184825741,
+      "inst_5d_pct": 0.16564703748214327,
+      "combo_5d_pct": 0.27974195596471735,
+      "flow_rank": 45,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "005930",
@@ -41,7 +59,13 @@
       "mom120": 0.7135167464114833,
       "status": "BUY",
       "close": 286500.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": 0.12831847157713844,
+      "inst_5d_pct": 0.19032509800784966,
+      "combo_5d_pct": 0.31864356958498813,
+      "flow_rank": 47,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "028260",
@@ -50,7 +74,13 @@
       "mom120": 0.4536489151873768,
       "status": "BUY",
       "close": 368500.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": -0.05955528329464362,
+      "inst_5d_pct": 0.09947553950649127,
+      "combo_5d_pct": 0.03992025621184765,
+      "flow_rank": 34,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "010950",
@@ -59,7 +89,13 @@
       "mom120": 0.4862298195631529,
       "status": "BUY",
       "close": 156500.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": 0.32846769689070937,
+      "inst_5d_pct": 0.03889406069633215,
+      "combo_5d_pct": 0.36736175758704154,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -68,7 +104,13 @@
       "mom120": 0.4014251781472684,
       "status": "HOLD",
       "close": 295000.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": -0.3326853494146861,
+      "inst_5d_pct": 0.2461298332742107,
+      "combo_5d_pct": -0.08655551614047535,
+      "flow_rank": 25,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -87,5 +129,6 @@
       "name": "삼성SDI",
       "sector": "Battery"
     }
-  ]
+  ],
+  "flow_updated": "2026-09-25 21:35:21"
 }
