@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-27 22:28:49",
-  "last_rebal": "2026-09-23",
+  "timestamp": "2026-09-29 01:20:06",
+  "last_rebal": "2026-09-28",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-10-23",
+  "next_rebal_date": "2026-10-28",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
   "vkospi_proxy": 71.68615944575316,
@@ -11,108 +11,76 @@
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 2.683435582822086,
+      "mom120": 2.354330708661417,
       "status": "HOLD",
       "close": 1491000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.05160658298777956,
-      "inst_5d_pct": 0.28249909083671,
-      "combo_5d_pct": 0.3341056738244895,
-      "flow_rank": 45,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
-      "mom120": 1.3085501858736062,
+      "mom120": 0.9720044792833147,
       "status": "HOLD",
       "close": 1761000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2238540888874056,
-      "inst_5d_pct": -0.006820084105791916,
-      "combo_5d_pct": -0.2306741729931975,
-      "flow_rank": 14,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "066570",
       "name": "LG전자",
       "sector": "Tech",
-      "mom120": 0.9933712121212122,
+      "mom120": 0.9066666666666667,
       "status": "HOLD",
       "close": 214500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.18467053541322828,
-      "inst_5d_pct": 0.16208312875511938,
-      "combo_5d_pct": 0.3467536641683477,
-      "flow_rank": 46,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
-      "code": "005930",
-      "name": "삼성전자",
+      "code": "011070",
+      "name": "LG이노텍",
       "sector": "Semi",
-      "mom120": 0.7135167464114833,
-      "status": "HOLD",
-      "close": 270000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.05042512386200788,
-      "inst_5d_pct": 0.10761611312314283,
-      "combo_5d_pct": 0.1580412369851507,
-      "flow_rank": 41,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "028260",
-      "name": "삼성물산",
-      "sector": "Util",
-      "mom120": 0.4536489151873768,
-      "status": "HOLD",
-      "close": 345500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2222608361307878,
-      "inst_5d_pct": 0.04503408704396563,
-      "combo_5d_pct": -0.17722674908682215,
-      "flow_rank": 19,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "mom120": 0.6734693877551021,
+      "status": "BUY",
+      "close": 574000.0,
+      "below_ema200": false
     },
     {
       "code": "010950",
       "name": "S-Oil",
       "sector": "Oil",
-      "mom120": 0.4862298195631529,
+      "mom120": 0.45004420866489836,
       "status": "HOLD",
       "close": 164000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.3347734857747084,
-      "inst_5d_pct": 0.04902025575785613,
-      "combo_5d_pct": 0.3837937415325645,
-      "flow_rank": 48,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.4014251781472684,
+      "mom120": 0.29074889867841414,
       "status": "HOLD",
       "close": 293000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.07946242483769733,
-      "inst_5d_pct": 0.15838583714634788,
-      "combo_5d_pct": 0.07892341230865055,
-      "flow_rank": 37,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "018260",
+      "name": "삼성에스디에스",
+      "sector": "Tech",
+      "mom120": 0.3965406790518897,
+      "status": "BUY",
+      "close": 218000.0,
+      "below_ema200": false
     }
   ],
-  "sells": [],
-  "flow_updated": "2026-09-28 23:58:52"
+  "sells": [
+    {
+      "code": "005930",
+      "name": "삼성전자",
+      "sector": "Semi"
+    },
+    {
+      "code": "028260",
+      "name": "삼성물산",
+      "sector": "Util"
+    }
+  ]
 }
