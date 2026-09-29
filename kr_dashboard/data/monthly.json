@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 2.354330708661417,
       "status": "HOLD",
-      "close": 1491000.0,
-      "below_ema200": false
+      "close": 1550000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.009578671958947344,
+      "inst_5d_pct": 0.283870936004211,
+      "combo_5d_pct": 0.27429226404526363,
+      "flow_rank": 44,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -22,8 +28,14 @@
       "sector": "Semi",
       "mom120": 0.9720044792833147,
       "status": "HOLD",
-      "close": 1761000.0,
-      "below_ema200": false
+      "close": 1790000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.5758987944614984,
+      "inst_5d_pct": -0.030922483074556056,
+      "combo_5d_pct": -0.6068212775360544,
+      "flow_rank": 0,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "066570",
@@ -31,8 +43,14 @@
       "sector": "Tech",
       "mom120": 0.9066666666666667,
       "status": "HOLD",
-      "close": 214500.0,
-      "below_ema200": false
+      "close": 216000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.24505430413468057,
+      "inst_5d_pct": 0.15566134396822143,
+      "combo_5d_pct": 0.400715648102902,
+      "flow_rank": 49,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011070",
@@ -40,8 +58,14 @@
       "sector": "Semi",
       "mom120": 0.6734693877551021,
       "status": "BUY",
-      "close": 574000.0,
-      "below_ema200": false
+      "close": 589000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.04737469256071615,
+      "inst_5d_pct": 0.2704038449410679,
+      "combo_5d_pct": 0.22302915238035176,
+      "flow_rank": 42,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "010950",
@@ -49,8 +73,14 @@
       "sector": "Oil",
       "mom120": 0.45004420866489836,
       "status": "HOLD",
-      "close": 164000.0,
-      "below_ema200": false
+      "close": 158200.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.3448202207191171,
+      "inst_5d_pct": 0.04971322336932874,
+      "combo_5d_pct": 0.3945334440884459,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -58,8 +88,14 @@
       "sector": "Finance",
       "mom120": 0.29074889867841414,
       "status": "HOLD",
-      "close": 293000.0,
-      "below_ema200": false
+      "close": 291500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.12243367193862244,
+      "inst_5d_pct": 0.13917105996313917,
+      "combo_5d_pct": 0.016737388024516738,
+      "flow_rank": 33,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "018260",
@@ -68,7 +104,13 @@
       "mom120": 0.3965406790518897,
       "status": "BUY",
       "close": 218000.0,
-      "below_ema200": false
+      "below_ema200": false,
+      "frgn_5d_pct": 0.34151071108428005,
+      "inst_5d_pct": -0.06294934416332802,
+      "combo_5d_pct": 0.278561366920952,
+      "flow_rank": 45,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -82,5 +124,6 @@
       "name": "삼성물산",
       "sector": "Util"
     }
-  ]
+  ],
+  "flow_updated": "2026-09-29 22:45:56"
 }
