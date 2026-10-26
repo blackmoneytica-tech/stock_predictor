@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 0.4098984771573604,
       "status": "HOLD",
-      "close": 1111000.0,
-      "below_ema200": false
+      "close": 1118000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.36559965290064284,
+      "inst_5d_pct": 0.050485701532063554,
+      "combo_5d_pct": -0.3151139513685793,
+      "flow_rank": 8,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "018260",
@@ -22,8 +28,14 @@
       "sector": "Tech",
       "mom120": 0.24852767962308597,
       "status": "HOLD",
-      "close": 212000.0,
-      "below_ema200": false
+      "close": 215000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.18758070676390884,
+      "inst_5d_pct": 0.3553280104759653,
+      "combo_5d_pct": 0.16774730371205646,
+      "flow_rank": 39,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "010950",
@@ -31,8 +43,14 @@
       "sector": "Oil",
       "mom120": 0.102177554438861,
       "status": "HOLD",
-      "close": 131600.0,
-      "below_ema200": false
+      "close": 127200.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.36074993083782003,
+      "inst_5d_pct": -0.47225532548785937,
+      "combo_5d_pct": -0.11150539465003936,
+      "flow_rank": 20,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "096770",
@@ -40,8 +58,14 @@
       "sector": "Oil",
       "mom120": 0.03686982693754692,
       "status": "BUY",
-      "close": 137800.0,
-      "below_ema200": false
+      "close": 136100.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.096041262853576,
+      "inst_5d_pct": 0.0778606393114097,
+      "combo_5d_pct": -0.0181806235421663,
+      "flow_rank": 30,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "033780",
@@ -49,8 +73,14 @@
       "sector": "Consumer",
       "mom120": 0.07491486946651538,
       "status": "BUY",
-      "close": 189400.0,
-      "below_ema200": false
+      "close": 189800.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.1995002882952143,
+      "inst_5d_pct": -0.21899453611927186,
+      "combo_5d_pct": -0.41849482441448616,
+      "flow_rank": 6,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "011200",
@@ -58,8 +88,14 @@
       "sector": "Logistics",
       "mom120": 0.06635071090047395,
       "status": "BUY",
-      "close": 22500.0,
-      "below_ema200": false
+      "close": 22450.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.411712307848926,
+      "inst_5d_pct": 0.02384709355594014,
+      "combo_5d_pct": 0.43555940140486615,
+      "flow_rank": 49,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "068270",
@@ -67,8 +103,14 @@
       "sector": "Bio",
       "mom120": -0.03318591844827845,
       "status": "BUY",
-      "close": 192600.0,
-      "below_ema200": false
+      "close": 190000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.013164650281065284,
+      "inst_5d_pct": 0.4224207158936823,
+      "combo_5d_pct": 0.409256065612617,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -92,5 +134,6 @@
       "name": "삼성생명",
       "sector": "Finance"
     }
-  ]
+  ],
+  "flow_updated": "2026-10-26 22:54:46"
 }
