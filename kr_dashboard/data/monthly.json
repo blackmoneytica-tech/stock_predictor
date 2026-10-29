@@ -1,134 +1,75 @@
 {
-  "timestamp": "2026-10-28 23:46:11",
-  "last_rebal": "2026-10-28",
+  "timestamp": "2026-10-29 23:52:13",
+  "last_rebal": "2026-10-29",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-11-27",
+  "next_rebal_date": "2026-11-28",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 74.13351259640405,
+  "vkospi_proxy": 72.03687739874796,
   "picks": [
     {
       "code": "009150",
       "name": "삼성전기",
       "sector": "Semi",
-      "mom120": 0.5900846432889963,
+      "mom120": 0.5408653846153846,
       "status": "HOLD",
       "close": 1282000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.009325928146653862,
-      "inst_5d_pct": 0.24024258253344782,
-      "combo_5d_pct": 0.23091665438679398,
-      "flow_rank": 43,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "018260",
-      "name": "삼성에스디에스",
-      "sector": "Tech",
-      "mom120": 0.3131609870740306,
-      "status": "HOLD",
-      "close": 204500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.2769109005655281,
-      "inst_5d_pct": 0.42354327049176554,
-      "combo_5d_pct": 0.14663236992623746,
-      "flow_rank": 35,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "sector": "Semi",
-      "mom120": 0.16627996906419185,
-      "status": "BUY",
+      "mom120": 0.17884914463452573,
+      "status": "HOLD",
       "close": 1516000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.04505238089814987,
-      "inst_5d_pct": 0.21616141676652717,
-      "combo_5d_pct": 0.1711090358683773,
-      "flow_rank": 37,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "018260",
+      "name": "삼성에스디에스",
+      "sector": "Tech",
+      "mom120": 0.23044524669073407,
+      "status": "HOLD",
+      "close": 204500.0,
+      "below_ema200": false
     },
     {
       "code": "032830",
       "name": "삼성생명",
       "sector": "Finance",
-      "mom120": 0.10119047619047628,
-      "status": "BUY",
+      "mom120": 0.12024048096192375,
+      "status": "HOLD",
       "close": 279500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.42382330553487635,
-      "inst_5d_pct": 0.49962777392075347,
-      "combo_5d_pct": 0.07580446838587716,
-      "flow_rank": 32,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "005930",
       "name": "삼성전자",
       "sector": "Semi",
-      "mom120": 0.08407079646017701,
-      "status": "BUY",
+      "mom120": 0.0453514739229024,
+      "status": "HOLD",
       "close": 230500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.028135674085220774,
-      "inst_5d_pct": 0.24944005819906773,
-      "combo_5d_pct": 0.2775757322842885,
-      "flow_rank": 45,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     },
     {
       "code": "033780",
       "name": "KT&G",
       "sector": "Consumer",
-      "mom120": 0.06005665722379594,
+      "mom120": 0.08356702187324738,
       "status": "HOLD",
       "close": 193200.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.27662933832344083,
-      "inst_5d_pct": -0.44840794128826644,
-      "combo_5d_pct": -0.7250372796117073,
-      "flow_rank": 0,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "011200",
       "name": "HMM",
       "sector": "Logistics",
-      "mom120": 0.06746987951807237,
+      "mom120": 0.09756097560975618,
       "status": "HOLD",
       "close": 22500.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.34738815296175957,
-      "inst_5d_pct": -0.1601599600099975,
-      "combo_5d_pct": 0.18722819295176205,
-      "flow_rank": 41,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     }
   ],
-  "sells": [
-    {
-      "code": "010950",
-      "name": "S-Oil",
-      "sector": "Oil"
-    },
-    {
-      "code": "096770",
-      "name": "SK이노베이션",
-      "sector": "Oil"
-    },
-    {
-      "code": "068270",
-      "name": "셀트리온",
-      "sector": "Bio"
-    }
-  ],
-  "flow_updated": "2026-10-29 22:57:24"
+  "sells": []
 }
