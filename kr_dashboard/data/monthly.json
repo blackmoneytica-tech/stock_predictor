@@ -13,8 +13,14 @@
       "sector": "Semi",
       "mom120": 0.5900846432889963,
       "status": "HOLD",
-      "close": 1315000.0,
-      "below_ema200": false
+      "close": 1282000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.009325928146653862,
+      "inst_5d_pct": 0.24024258253344782,
+      "combo_5d_pct": 0.23091665438679398,
+      "flow_rank": 43,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "018260",
@@ -22,8 +28,14 @@
       "sector": "Tech",
       "mom120": 0.3131609870740306,
       "status": "HOLD",
-      "close": 223500.0,
-      "below_ema200": false
+      "close": 204500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.2769109005655281,
+      "inst_5d_pct": 0.42354327049176554,
+      "combo_5d_pct": 0.14663236992623746,
+      "flow_rank": 35,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "000660",
@@ -31,8 +43,14 @@
       "sector": "Semi",
       "mom120": 0.16627996906419185,
       "status": "BUY",
-      "close": 1508000.0,
-      "below_ema200": false
+      "close": 1516000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.04505238089814987,
+      "inst_5d_pct": 0.21616141676652717,
+      "combo_5d_pct": 0.1711090358683773,
+      "flow_rank": 37,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "032830",
@@ -40,8 +58,14 @@
       "sector": "Finance",
       "mom120": 0.10119047619047628,
       "status": "BUY",
-      "close": 277500.0,
-      "below_ema200": false
+      "close": 279500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.42382330553487635,
+      "inst_5d_pct": 0.49962777392075347,
+      "combo_5d_pct": 0.07580446838587716,
+      "flow_rank": 32,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "005930",
@@ -49,8 +73,14 @@
       "sector": "Semi",
       "mom120": 0.08407079646017701,
       "status": "BUY",
-      "close": 245000.0,
-      "below_ema200": false
+      "close": 230500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.028135674085220774,
+      "inst_5d_pct": 0.24944005819906773,
+      "combo_5d_pct": 0.2775757322842885,
+      "flow_rank": 45,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "033780",
@@ -58,8 +88,14 @@
       "sector": "Consumer",
       "mom120": 0.06005665722379594,
       "status": "HOLD",
-      "close": 187100.0,
-      "below_ema200": false
+      "close": 193200.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.27662933832344083,
+      "inst_5d_pct": -0.44840794128826644,
+      "combo_5d_pct": -0.7250372796117073,
+      "flow_rank": 0,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "011200",
@@ -67,8 +103,14 @@
       "sector": "Logistics",
       "mom120": 0.06746987951807237,
       "status": "HOLD",
-      "close": 22150.0,
-      "below_ema200": false
+      "close": 22500.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.34738815296175957,
+      "inst_5d_pct": -0.1601599600099975,
+      "combo_5d_pct": 0.18722819295176205,
+      "flow_rank": 41,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -87,5 +129,6 @@
       "name": "셀트리온",
       "sector": "Bio"
     }
-  ]
+  ],
+  "flow_updated": "2026-10-29 22:57:24"
 }
