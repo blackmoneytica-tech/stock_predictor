@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-30 23:45:18",
+  "timestamp": "2026-10-31 23:08:30",
   "last_rebal": "2026-10-30",
   "next_rebal": "21일 후",
   "next_rebal_date": "2026-11-29",
@@ -48,7 +48,7 @@
       "name": "셀트리온",
       "sector": "Bio",
       "mom120": 0.008825900623753657,
-      "status": "BUY",
+      "status": "HOLD",
       "close": 190200.0,
       "below_ema200": false
     },
@@ -57,7 +57,7 @@
       "name": "하나금융지주",
       "sector": "Finance",
       "mom120": -0.0545023696682464,
-      "status": "BUY",
+      "status": "HOLD",
       "close": 119700.0,
       "below_ema200": false
     },
@@ -66,26 +66,10 @@
       "name": "SK이노베이션",
       "sector": "Oil",
       "mom120": -0.12010981468771453,
-      "status": "BUY",
+      "status": "HOLD",
       "close": 128200.0,
       "below_ema200": false
     }
   ],
-  "sells": [
-    {
-      "code": "000660",
-      "name": "SK하이닉스",
-      "sector": "Semi"
-    },
-    {
-      "code": "032830",
-      "name": "삼성생명",
-      "sector": "Finance"
-    },
-    {
-      "code": "005930",
-      "name": "삼성전자",
-      "sector": "Semi"
-    }
-  ]
+  "sells": []
 }
