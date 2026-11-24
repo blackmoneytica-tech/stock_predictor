@@ -13,8 +13,14 @@
       "sector": "Bio",
       "mom120": 0.11816058442526556,
       "status": "HOLD",
-      "close": 202500.0,
-      "below_ema200": false
+      "close": 207000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.1954373173326173,
+      "inst_5d_pct": 0.23666463559470818,
+      "combo_5d_pct": 0.4321019529273255,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011200",
@@ -22,8 +28,14 @@
       "sector": "Logistics",
       "mom120": 0.08363080061193262,
       "status": "HOLD",
-      "close": 21250.0,
-      "below_ema200": false
+      "close": 21950.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.46907556141256923,
+      "inst_5d_pct": -0.010328922764589604,
+      "combo_5d_pct": 0.45874663864797965,
+      "flow_rank": 49,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "033780",
@@ -31,8 +43,14 @@
       "sector": "Consumer",
       "mom120": -0.023407729994556314,
       "status": "HOLD",
-      "close": 179400.0,
-      "below_ema200": false
+      "close": 183300.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.6600838135149293,
+      "inst_5d_pct": -0.06612100576217915,
+      "combo_5d_pct": -0.7262048192771084,
+      "flow_rank": 0,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "086790",
@@ -40,8 +58,14 @@
       "sector": "Finance",
       "mom120": 0.02341717259323506,
       "status": "HOLD",
-      "close": 118000.0,
-      "below_ema200": true
+      "close": 122100.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.3440499677085453,
+      "inst_5d_pct": 0.3586386276574098,
+      "combo_5d_pct": 0.01458865994886449,
+      "flow_rank": 19,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "055550",
@@ -49,8 +73,14 @@
       "sector": "Finance",
       "mom120": -0.10991379310344829,
       "status": "BUY",
-      "close": 82600.0,
-      "below_ema200": true
+      "close": 85500.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.12282645344636578,
+      "inst_5d_pct": 0.1549540002890034,
+      "combo_5d_pct": 0.03212754684263764,
+      "flow_rank": 21,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "316140",
@@ -58,8 +88,14 @@
       "sector": "Finance",
       "mom120": 0.01830282861896837,
       "status": "BUY",
-      "close": 30600.0,
-      "below_ema200": true
+      "close": 31150.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.36386428709184504,
+      "inst_5d_pct": 0.4151349266396665,
+      "combo_5d_pct": 0.05127063954782144,
+      "flow_rank": 23,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "051900",
@@ -67,8 +103,14 @@
       "sector": "Consumer",
       "mom120": -0.012096774193548376,
       "status": "BUY",
-      "close": 245000.0,
-      "below_ema200": true
+      "close": 247000.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.14633070518828914,
+      "inst_5d_pct": 0.4250427303302641,
+      "combo_5d_pct": 0.27871202514197496,
+      "flow_rank": 42,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -87,5 +129,6 @@
       "name": "SK이노베이션",
       "sector": "Oil"
     }
-  ]
+  ],
+  "flow_updated": "2026-11-25 03:39:56"
 }
