@@ -1092,9 +1092,9 @@
       "date": "2026-11-25",
       "zone": "PANIC (MAX BUY)",
       "zone_label": "panic",
-      "lev": 1.0,
+      "lev": 2.0,
       "proxy": 79.45821377379762,
-      "gate": "caution"
+      "gate": "normal"
     }
   ]
 }

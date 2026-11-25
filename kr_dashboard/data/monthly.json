@@ -1,129 +1,75 @@
 {
-  "timestamp": "2026-11-25 04:16:52",
-  "last_rebal": "2026-11-24",
+  "timestamp": "2026-11-26 03:20:36",
+  "last_rebal": "2026-11-25",
   "next_rebal": "21일 후",
-  "next_rebal_date": "2026-12-24",
+  "next_rebal_date": "2026-12-25",
   "zone": "PANIC",
   "squeeze_weight": 0.3,
-  "vkospi_proxy": 75.35856601143072,
+  "vkospi_proxy": 79.45821377379762,
   "picks": [
     {
       "code": "068270",
       "name": "셀트리온",
       "sector": "Bio",
-      "mom120": 0.1258260136513203,
+      "mom120": 0.17665086853252476,
       "status": "HOLD",
       "close": 215000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.19102206985215342,
-      "inst_5d_pct": 0.284693950432112,
-      "combo_5d_pct": 0.4757160202842654,
-      "flow_rank": 48,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "011200",
-      "name": "HMM",
-      "sector": "Logistics",
-      "mom120": 0.1221881390593047,
-      "status": "HOLD",
-      "close": 21900.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.40268767377201115,
-      "inst_5d_pct": 0.05071120602812588,
-      "combo_5d_pct": 0.453398879800137,
-      "flow_rank": 47,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "086790",
-      "name": "하나금융지주",
-      "sector": "Finance",
-      "mom120": 0.06081668114682892,
-      "status": "HOLD",
-      "close": 121200.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.3555892355463552,
-      "inst_5d_pct": 0.3977746562176549,
-      "combo_5d_pct": 0.04218542067129972,
-      "flow_rank": 19,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "128940",
-      "name": "한미약품",
-      "sector": "Bio",
-      "mom120": -0.08248472505091653,
-      "status": "BUY",
-      "close": 462000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.32615349657827203,
-      "inst_5d_pct": 0.4441362810094098,
-      "combo_5d_pct": 0.11798278443113773,
-      "flow_rank": 26,
-      "flow_universe_n": 50,
-      "flow_bottom": false
-    },
-    {
-      "code": "033780",
-      "name": "KT&G",
-      "sector": "Consumer",
-      "mom120": -0.007579859231185759,
-      "status": "HOLD",
-      "close": 184200.0,
-      "below_ema200": false,
-      "frgn_5d_pct": -0.6546546182303353,
-      "inst_5d_pct": -0.001916429134574565,
-      "combo_5d_pct": -0.6565710473649099,
-      "flow_rank": 0,
-      "flow_universe_n": 50,
-      "flow_bottom": true
+      "below_ema200": false
     },
     {
       "code": "316140",
       "name": "우리금융지주",
       "sector": "Finance",
-      "mom120": 0.04882154882154888,
+      "mom120": 0.06802721088435382,
       "status": "HOLD",
       "close": 31400.0,
-      "below_ema200": true,
-      "frgn_5d_pct": -0.344209001980081,
-      "inst_5d_pct": 0.41930431184797706,
-      "combo_5d_pct": 0.07509530986789609,
-      "flow_rank": 23,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
+    },
+    {
+      "code": "086790",
+      "name": "하나금융지주",
+      "sector": "Finance",
+      "mom120": 0.06409130816505715,
+      "status": "HOLD",
+      "close": 121200.0,
+      "below_ema200": false
+    },
+    {
+      "code": "011200",
+      "name": "HMM",
+      "sector": "Logistics",
+      "mom120": 0.10773899848254942,
+      "status": "HOLD",
+      "close": 21900.0,
+      "below_ema200": false
+    },
+    {
+      "code": "033780",
+      "name": "KT&G",
+      "sector": "Consumer",
+      "mom120": -0.004862236628849326,
+      "status": "HOLD",
+      "close": 184200.0,
+      "below_ema200": false
+    },
+    {
+      "code": "128940",
+      "name": "한미약품",
+      "sector": "Bio",
+      "mom120": -0.1428571428571429,
+      "status": "HOLD",
+      "close": 462000.0,
+      "below_ema200": false
     },
     {
       "code": "086280",
       "name": "현대글로비스",
       "sector": "Auto",
-      "mom120": -0.17525773195876293,
-      "status": "BUY",
+      "mom120": -0.13118279569892477,
+      "status": "HOLD",
       "close": 202000.0,
-      "below_ema200": false,
-      "frgn_5d_pct": 0.27627201348533914,
-      "inst_5d_pct": 0.15459344364104158,
-      "combo_5d_pct": 0.4308654571263807,
-      "flow_rank": 45,
-      "flow_universe_n": 50,
-      "flow_bottom": false
+      "below_ema200": false
     }
   ],
-  "sells": [
-    {
-      "code": "055550",
-      "name": "신한지주",
-      "sector": "Finance"
-    },
-    {
-      "code": "051900",
-      "name": "LG생활건강",
-      "sector": "Consumer"
-    }
-  ],
-  "flow_updated": "2026-11-26 02:49:15"
+  "sells": []
 }
