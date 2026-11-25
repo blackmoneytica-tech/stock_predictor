@@ -13,8 +13,14 @@
       "sector": "Bio",
       "mom120": 0.1258260136513203,
       "status": "HOLD",
-      "close": 207000.0,
-      "below_ema200": false
+      "close": 215000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.19102206985215342,
+      "inst_5d_pct": 0.284693950432112,
+      "combo_5d_pct": 0.4757160202842654,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011200",
@@ -22,8 +28,14 @@
       "sector": "Logistics",
       "mom120": 0.1221881390593047,
       "status": "HOLD",
-      "close": 21950.0,
-      "below_ema200": false
+      "close": 21900.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.40268767377201115,
+      "inst_5d_pct": 0.05071120602812588,
+      "combo_5d_pct": 0.453398879800137,
+      "flow_rank": 47,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "086790",
@@ -31,8 +43,14 @@
       "sector": "Finance",
       "mom120": 0.06081668114682892,
       "status": "HOLD",
-      "close": 122100.0,
-      "below_ema200": false
+      "close": 121200.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.3555892355463552,
+      "inst_5d_pct": 0.3977746562176549,
+      "combo_5d_pct": 0.04218542067129972,
+      "flow_rank": 19,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "128940",
@@ -40,8 +58,14 @@
       "sector": "Bio",
       "mom120": -0.08248472505091653,
       "status": "BUY",
-      "close": 450500.0,
-      "below_ema200": false
+      "close": 462000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.32615349657827203,
+      "inst_5d_pct": 0.4441362810094098,
+      "combo_5d_pct": 0.11798278443113773,
+      "flow_rank": 26,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "033780",
@@ -49,8 +73,14 @@
       "sector": "Consumer",
       "mom120": -0.007579859231185759,
       "status": "HOLD",
-      "close": 183300.0,
-      "below_ema200": false
+      "close": 184200.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.6546546182303353,
+      "inst_5d_pct": -0.001916429134574565,
+      "combo_5d_pct": -0.6565710473649099,
+      "flow_rank": 0,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "316140",
@@ -58,8 +88,14 @@
       "sector": "Finance",
       "mom120": 0.04882154882154888,
       "status": "HOLD",
-      "close": 31150.0,
-      "below_ema200": true
+      "close": 31400.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.344209001980081,
+      "inst_5d_pct": 0.41930431184797706,
+      "combo_5d_pct": 0.07509530986789609,
+      "flow_rank": 23,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "086280",
@@ -67,8 +103,14 @@
       "sector": "Auto",
       "mom120": -0.17525773195876293,
       "status": "BUY",
-      "close": 200000.0,
-      "below_ema200": false
+      "close": 202000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.27627201348533914,
+      "inst_5d_pct": 0.15459344364104158,
+      "combo_5d_pct": 0.4308654571263807,
+      "flow_rank": 45,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -82,5 +124,6 @@
       "name": "LG생활건강",
       "sector": "Consumer"
     }
-  ]
+  ],
+  "flow_updated": "2026-11-26 02:49:15"
 }
