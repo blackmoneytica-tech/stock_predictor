@@ -13,8 +13,14 @@
       "sector": "Bio",
       "mom120": 0.20882188721384698,
       "status": "HOLD",
-      "close": 216500.0,
-      "below_ema200": false
+      "close": 221000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.07893916495345726,
+      "inst_5d_pct": 0.3553584323443413,
+      "combo_5d_pct": 0.43429759729779854,
+      "flow_rank": 45,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "011200",
@@ -22,8 +28,14 @@
       "sector": "Logistics",
       "mom120": 0.13531522296258336,
       "status": "HOLD",
-      "close": 22150.0,
-      "below_ema200": false
+      "close": 22350.0,
+      "below_ema200": false,
+      "frgn_5d_pct": 0.33401898342048525,
+      "inst_5d_pct": 0.14215261083988004,
+      "combo_5d_pct": 0.4761715942603653,
+      "flow_rank": 48,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "086790",
@@ -31,8 +43,14 @@
       "sector": "Finance",
       "mom120": 0.01965811965811959,
       "status": "HOLD",
-      "close": 119300.0,
-      "below_ema200": false
+      "close": 118400.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.4342083317295973,
+      "inst_5d_pct": 0.4069704784265425,
+      "combo_5d_pct": -0.027237853303054796,
+      "flow_rank": 13,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "128940",
@@ -40,8 +58,14 @@
       "sector": "Bio",
       "mom120": -0.07100591715976334,
       "status": "HOLD",
-      "close": 471000.0,
-      "below_ema200": false
+      "close": 491000.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.3248724115214579,
+      "inst_5d_pct": 0.4401425498646729,
+      "combo_5d_pct": 0.11527013834321499,
+      "flow_rank": 20,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "033780",
@@ -49,8 +73,14 @@
       "sector": "Consumer",
       "mom120": -0.02654387865655472,
       "status": "HOLD",
-      "close": 179700.0,
-      "below_ema200": false
+      "close": 176600.0,
+      "below_ema200": false,
+      "frgn_5d_pct": -0.6349797225186766,
+      "inst_5d_pct": 0.06294130202774813,
+      "combo_5d_pct": -0.5720384204909285,
+      "flow_rank": 1,
+      "flow_universe_n": 50,
+      "flow_bottom": true
     },
     {
       "code": "316140",
@@ -58,8 +88,14 @@
       "sector": "Finance",
       "mom120": 0.041806020066889715,
       "status": "HOLD",
-      "close": 31150.0,
-      "below_ema200": true
+      "close": 31100.0,
+      "below_ema200": true,
+      "frgn_5d_pct": -0.4214496151532446,
+      "inst_5d_pct": 0.3287162005830544,
+      "combo_5d_pct": -0.09273341457019019,
+      "flow_rank": 11,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     },
     {
       "code": "051900",
@@ -68,7 +104,13 @@
       "mom120": 0.032786885245901676,
       "status": "BUY",
       "close": 252000.0,
-      "below_ema200": true
+      "below_ema200": true,
+      "frgn_5d_pct": -0.01383863965267728,
+      "inst_5d_pct": 0.2076700434153401,
+      "combo_5d_pct": 0.1938314037626628,
+      "flow_rank": 30,
+      "flow_universe_n": 50,
+      "flow_bottom": false
     }
   ],
   "sells": [
@@ -77,5 +119,6 @@
       "name": "현대글로비스",
       "sector": "Auto"
     }
-  ]
+  ],
+  "flow_updated": "2026-11-28 02:14:39"
 }
